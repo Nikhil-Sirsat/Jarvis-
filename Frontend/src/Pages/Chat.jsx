@@ -1,0 +1,269 @@
+
+import { useState, useEffect, useContext } from 'react';
+import { Outlet, Link } from 'react-router-dom';
+import { styled, useTheme } from '@mui/material/styles';
+import MenuIcon from '@mui/icons-material/Menu';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import MuiAppBar from '@mui/material/AppBar';
+import axiosInstance from '../AxiosInstance.jsx';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import logo from '../assets/jarvis-logo2.png';
+import EditDocumentIcon from '@mui/icons-material/EditDocument';
+import AccountCircleRoundedIcon from '@mui/icons-material/AccountCircleRounded';
+import { Brightness4, Brightness7 } from "@mui/icons-material";
+import { ThemeContext } from "../context/ThemeContext";
+import LogoutButton from '../Components/Logout.jsx';
+
+import {
+    Box,
+    CssBaseline,
+    Typography,
+    IconButton,
+    Drawer,
+    Toolbar,
+    List,
+    Divider,
+    ListItem,
+    ListItemButton,
+    ListItemIcon,
+    ListItemText,
+    Avatar,
+    Menu,
+    MenuItem
+} from '@mui/material';
+
+const drawerWidth = 260;
+
+const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
+    ({ theme }) => ({
+        flexGrow: 1,
+        padding: theme.spacing(3),
+        transition: theme.transitions.create('margin', {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.leavingScreen,
+        }),
+        marginLeft: `-${drawerWidth}px`,
+        variants: [
+            {
+                props: ({ open }) => open,
+                style: {
+                    transition: theme.transitions.create('margin', {
+                        easing: theme.transitions.easing.easeOut,
+                        duration: theme.transitions.duration.enteringScreen,
+                    }),
+                    marginLeft: 0,
+                },
+            },
+        ],
+    }),
+);
+
+const AppBar = styled(MuiAppBar, {
+    shouldForwardProp: (prop) => prop !== 'open',
+})(({ theme }) => ({
+    transition: theme.transitions.create(['margin', 'width'], {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.leavingScreen,
+    }),
+    variants: [
+        {
+            props: ({ open }) => open,
+            style: {
+                width: `calc(100% - ${drawerWidth}px)`,
+                marginLeft: `${drawerWidth}px`,
+                transition: theme.transitions.create(['margin', 'width'], {
+                    easing: theme.transitions.easing.easeOut,
+                    duration: theme.transitions.duration.enteringScreen,
+                }),
+            },
+        },
+    ],
+}));
+
+const DrawerHeader = styled('div')(({ theme }) => ({
+    display: 'flex',
+    alignItems: 'center',
+    padding: theme.spacing(0, 1),
+    // necessary for content to be below app bar
+    ...theme.mixins.toolbar,
+    justifyContent: 'flex-end',
+}));
+
+export default function Chat() {
+    const theme = useTheme();
+    const [open, setOpen] = useState(true);
+    const [conversations, setConversations] = useState([]);
+    const [conversationLoading, setConversationLoading] = useState(true);
+    const [anchorEl, setAnchorEl] = useState(null);
+    const [anchorE2, setAnchorE2] = useState(null);
+    const [idToDel, setIdToDel] = useState(null);
+    const { mode, toggleTheme } = useContext(ThemeContext);
+
+    const acOpen = Boolean(anchorE2);
+    const isOpen = Boolean(anchorEl);
+
+    // conv del menu sys
+    const handleClick = (e, convId) => {
+        setAnchorEl(e.currentTarget);
+        setIdToDel(convId);
+    };
+    const handleClose = () => {
+        setAnchorEl(null);
+        setIdToDel(null);
+    };
+
+    // Account menu sys
+    const handleAcClick = (e) => {
+        setAnchorE2(e.currentTarget);
+    };
+    const handleAcClose = () => {
+        setAnchorE2(null);
+    };
+
+    const deleteConv = async () => {
+        if (!idToDel) return;
+        try {
+            const response = await axiosInstance.delete(`/api/chat/${idToDel}`);
+            const data = await response.data;
+            console.log(data);
+            setConversations(conversations.filter((conv) => conv._id !== idToDel));
+            handleClose();
+        } catch (error) {
+            console.error('Error deleting conversation:', error);
+        }
+    }
+
+    // fetch conversation history
+    useEffect(() => {
+        const fetchConversations = async () => {
+            try {
+                const response = await axiosInstance.get(`/api/chat/conversations`);
+                const data = await response.data;
+                setConversations(data);
+            } catch (error) {
+                console.error('Error fetching conversations:', error);
+            } finally {
+                setConversationLoading(false);
+            }
+        };
+        fetchConversations();
+    });
+
+    const handleDrawerOpen = () => {
+        setOpen(true);
+    };
+
+    const handleDrawerClose = () => {
+        setOpen(false);
+    };
+
+    return (
+        <Box sx={{ display: 'flex' }}>
+            <CssBaseline />
+            <AppBar position="fixed" open={open} sx={{ backgroundColor: mode == 'dark' ? 'black' : 'white', boxShadow: 'none' }}>
+                <Toolbar>
+                    <IconButton
+                        aria-label="open drawer"
+                        onClick={handleDrawerOpen}
+                        edge="start"
+                        sx={[
+                            {
+                                mr: 2,
+                            },
+                            open && { display: 'none' },
+                        ]}
+                    >
+                        <MenuIcon />
+                    </IconButton>
+                    <IconButton onClick={handleAcClick}>
+                        <AccountCircleRoundedIcon />
+                    </IconButton>
+                    <Typography variant='body' sx={{ ml: 2, color: mode === 'dark' ? 'white' : 'black' }}> Jarvis</Typography>
+                    <IconButton onClick={toggleTheme} color="inherit" sx={{ ml: 2 }}>
+                        {mode === "dark" ? <Brightness7 /> : <Brightness4 sx={{ color: 'black' }} />}
+                    </IconButton>
+                </Toolbar>
+            </AppBar>
+            <Drawer
+                sx={{
+                    width: drawerWidth,
+                    flexShrink: 0,
+                    '& .MuiDrawer-paper': {
+                        width: drawerWidth,
+                        boxSizing: 'border-box',
+                    },
+                }}
+                variant="persistent"
+                anchor="left"
+                open={open}
+            >
+                <DrawerHeader sx={{ display: 'flex', justifyContent: 'space-between', position: 'sticky', top: 0, zIndex: 9, borderBottom: '1px solid grey', backgroundColor: mode == 'light' ? '#f5f5f5' : '#1e1e1e' }}>
+                    <IconButton onClick={handleDrawerClose}>
+                        {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+                    </IconButton>
+                    <IconButton component={Link} to={'/new-chat'}>
+                        <EditDocumentIcon />
+                    </IconButton>
+                </DrawerHeader>
+
+                {conversationLoading ? (<p>loading... </p>) : (
+                    conversations.length === 0 ? (
+                        <Typography variant='body2' sx={{ m: 'auto' }}>
+                            <i>no conversation yet</i>
+                        </Typography>
+                    ) : (
+                        <List>
+                            {conversations.map((conv, index) => (
+
+                                <ListItem key={index} disablePadding>
+                                    <ListItemButton >
+                                        <ListItemIcon
+                                            aria-label="more"
+                                            aria-controls={isOpen ? 'long-menu' : undefined}
+                                            aria-expanded={isOpen ? 'true' : undefined}
+                                            aria-haspopup="true"
+                                            onClick={(e) => { handleClick(e, conv._id) }}
+                                        >
+                                            <MoreHorizIcon />
+                                        </ListItemIcon>
+                                        <ListItemText component={Link} to={`/${conv._id}`} primary={conv.title} sx={{ textDecoration: 'none', color: mode === 'dark' ? 'white' : 'black' }} />
+                                    </ListItemButton>
+                                </ListItem>
+                            ))}
+                        </List>
+                    )
+                )}
+            </Drawer>
+            {/* conv menu */}
+            <Menu
+                id="long-menu"
+                anchorEl={anchorEl}
+                open={isOpen}
+                onClose={handleClose}
+            >
+                <MenuItem onClick={deleteConv}>
+                    delete
+                </MenuItem>
+            </Menu>
+
+            {/* account menu */}
+            <Menu
+                id="long-menu"
+                anchorEl={anchorE2}
+                open={acOpen}
+                onClose={handleAcClose}
+            >
+                <MenuItem component={Link} to={'/About'}>
+                    About
+                </MenuItem>
+                <MenuItem>
+                    <LogoutButton />
+                </MenuItem>
+            </Menu>
+            <Main open={open} sx={{ height: '85vh', width: 'auto' }}>
+                <Outlet />
+            </Main>
+        </Box>
+    );
+}
