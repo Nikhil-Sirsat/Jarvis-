@@ -15,6 +15,9 @@ import ReactMarkdown from 'react-markdown';
 import { ThemeContext } from "../Context/ThemeContext.jsx";
 import GraphicEqRoundedIcon from '@mui/icons-material/GraphicEqRounded';
 import ReplyLoad from "../Components/ReplyLoad.jsx";
+import VolumeUpIcon from '@mui/icons-material/VolumeUp';
+import VolumeOffIcon from '@mui/icons-material/VolumeOff';
+import { speek, stopSpeaking } from "../aiVoice.js";
 
 export default function ViewConv() {
     const [input, setInput] = useState("");
@@ -23,6 +26,7 @@ export default function ViewConv() {
     const [convLoad, setConvLoad] = useState(false);
     const [msgLoading, setMsgLoading] = useState(false);
     const { mode } = useContext(ThemeContext)
+    const [aiSpeaking, setAiSpeaking] = useState(false);
 
     // Ref for auto-scrolling
     const messagesEndRef = useRef(null);
@@ -96,6 +100,17 @@ export default function ViewConv() {
         }
     };
 
+    // speek the AI response
+    const handleSpeak = (message) => {
+        setAiSpeaking(true);
+        speek(message);
+    }
+
+    const handleStopSpeaking = () => {
+        stopSpeaking();
+        setAiSpeaking(false);
+    }
+
     if (convLoad) {
         return (
             <CircularProgress />
@@ -117,6 +132,7 @@ export default function ViewConv() {
                 }}
             >
                 {messages.map((msg, index) => (
+
                     <Box
                         key={index}
                         display="flex"
@@ -145,6 +161,22 @@ export default function ViewConv() {
                                     {msg.message}
                                 </ReactMarkdown>
                             </Typography>
+
+
+                            {/* response bottom ops */}
+                            {msg.sender === "ai" ? (
+                                <>
+                                    <br />
+                                    {aiSpeaking ? (
+                                        <VolumeOffIcon onClick={handleStopSpeaking} />
+                                    ) : (
+                                        <VolumeUpIcon onClick={() => handleSpeak(msg.message)} />
+                                    )}
+
+                                </>
+                            ) :
+                                null}
+
                         </Paper>
                     </Box>
                 ))}
