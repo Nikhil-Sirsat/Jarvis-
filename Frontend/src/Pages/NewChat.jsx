@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import {
     Box,
@@ -11,11 +11,15 @@ import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import axiosInstance from '../AxiosInstance.jsx';
 import PendingIcon from '@mui/icons-material/Pending';
 import GraphicEqRoundedIcon from '@mui/icons-material/GraphicEqRounded';
+let SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
 export default function NewChat() {
     const [input, setInput] = useState("");
     const [msgLoading, setMsgLoading] = useState(false);
+    const [mikeActive, setMikeActive] = useState(false);
+    const recognitionRef = useRef(null);
     const navigate = useNavigate();
+    let recognition = null;
 
     const handleSend = async () => {
         console.log('send message called');
@@ -38,6 +42,49 @@ export default function NewChat() {
         } finally {
             setMsgLoading(false);
         }
+    };
+
+    // Listen & Initialized speech recognition 
+    const startListening = () => {
+        if (!SpeechRecognition) {
+            console.log("Speech Recognition API not supported in this browser.");
+            return;
+        }
+
+        if (mikeActive && recognitionRef.current) {
+            console.log("Stopping previous recognition...");
+            recognitionRef.current.stop();
+            return; // Wait for `onend` to restart
+        }
+
+        console.log("Initializing speech recognition...");
+
+        recognition = new SpeechRecognition();
+        recognition.lang = "en-US";
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+
+        recognitionRef.current = recognition;
+        setMikeActive(true);
+
+        recognition.onresult = (event) => {
+            const transcript = event.results[0][0].transcript;
+            console.log("Transcript:", transcript);
+            setInput(transcript);
+            setMikeActive(false);
+        };
+
+        recognition.onerror = (event) => {
+            console.log("Speech recognition error:", event.error);
+            setMikeActive(false);
+        };
+
+        recognition.onend = () => {
+            console.log("Speech recognition ended.");
+            setMikeActive(false);
+        };
+
+        recognition.start();
     };
 
     return (
@@ -63,7 +110,7 @@ export default function NewChat() {
                 <TextField
                     fullWidth
                     variant="outlined"
-                    placeholder="Ask something to JARVIS..."
+                    placeholder={recognition || mikeActive ? "Listening..." : "Ask something to JARVIS..."}
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     sx={{
@@ -89,7 +136,7 @@ export default function NewChat() {
                             <ArrowUpwardIcon />
                         </IconButton>
                     ) : (
-                        <IconButton color="white" sx={{ ml: 1, border: '3px solid rgb(255, 255, 255)', ":hover": { cursor: 'default' } }}>
+                        <IconButton color="white" sx={{ ml: 1, border: '3px solid rgb(255, 255, 255)' }} onClick={startListening}>
                             <GraphicEqRoundedIcon />
                         </IconButton>
                     )
