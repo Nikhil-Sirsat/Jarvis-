@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useContext } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 import { useParams } from "react-router-dom";
 import {
     Box,
@@ -17,7 +17,6 @@ import GraphicEqRoundedIcon from '@mui/icons-material/GraphicEqRounded';
 import ReplyLoad from "../Components/ReplyLoad.jsx";
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import VolumeOffIcon from '@mui/icons-material/VolumeOff';
-import { speek, stopSpeaking } from "../aiVoice.js";
 
 export default function ViewConv() {
     const [input, setInput] = useState("");
@@ -26,7 +25,7 @@ export default function ViewConv() {
     const [convLoad, setConvLoad] = useState(false);
     const [msgLoading, setMsgLoading] = useState(false);
     const { mode } = useContext(ThemeContext)
-    const [aiSpeaking, setAiSpeaking] = useState(false);
+    const [speakingMsgIndex, setSpeakingMsgIndex] = useState(null);
 
     // Ref for auto-scrolling
     const messagesEndRef = useRef(null);
@@ -100,15 +99,33 @@ export default function ViewConv() {
         }
     };
 
-    // speek the AI response
-    const handleSpeak = (message) => {
-        setAiSpeaking(true);
-        speek(message);
+    // handle ai voice response
+    const aiVoiceRes = (message, index) => {
+        if ('speechSynthesis' in window) {
+            setSpeakingMsgIndex(index);
+            const utterance = new SpeechSynthesisUtterance(message);
+            utterance.lang = 'en-US';
+            window.speechSynthesis.speak(utterance);
+
+            // stop any ongoing speech before starting a new one
+            utterance.onend = () => {
+                setSpeakingMsgIndex(null);
+            };
+        } else {
+            console.error("Speech Synthesis not supported in this browser.");
+            setSpeakingMsgIndex(null);
+        }
     }
 
-    const handleStopSpeaking = () => {
-        stopSpeaking();
-        setAiSpeaking(false);
+    // handle and stop ai voice response
+    const stopAiVoiceRes = () => {
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+            setSpeakingMsgIndex(null);
+        } else {
+            console.error("Speech Synthesis not supported in this browser.");
+            setSpeakingMsgIndex(null);
+        }
     }
 
     if (convLoad) {
@@ -167,10 +184,10 @@ export default function ViewConv() {
                             {msg.sender === "ai" ? (
                                 <>
                                     <br />
-                                    {aiSpeaking ? (
-                                        <VolumeOffIcon onClick={handleStopSpeaking} />
+                                    {speakingMsgIndex === index ? (
+                                        <VolumeOffIcon onClick={stopAiVoiceRes} />
                                     ) : (
-                                        <VolumeUpIcon onClick={() => handleSpeak(msg.message)} />
+                                        <VolumeUpIcon onClick={() => aiVoiceRes(msg.message, index)} />
                                     )}
 
                                 </>
