@@ -17,6 +17,7 @@ import GraphicEqRoundedIcon from '@mui/icons-material/GraphicEqRounded';
 import ReplyLoad from "../Components/ReplyLoad.jsx";
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import VolumeOffIcon from '@mui/icons-material/VolumeOff';
+let SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
 export default function ViewConv() {
     const [input, setInput] = useState("");
@@ -26,6 +27,9 @@ export default function ViewConv() {
     const [msgLoading, setMsgLoading] = useState(false);
     const { mode } = useContext(ThemeContext)
     const [speakingMsgIndex, setSpeakingMsgIndex] = useState(null);
+    const [mikeActive, setMikeActive] = useState(false);
+    const recognitionRef = useRef(null);
+    let recognition = null;
 
     // Ref for auto-scrolling
     const messagesEndRef = useRef(null);
@@ -128,6 +132,49 @@ export default function ViewConv() {
         }
     }
 
+    // Listen & Initialized speech recognition 
+    const startListening = () => {
+        if (!SpeechRecognition) {
+            console.log("Speech Recognition API not supported in this browser.");
+            return;
+        }
+
+        if (mikeActive && recognitionRef.current) {
+            console.log("Stopping previous recognition...");
+            recognitionRef.current.stop();
+            return; // Wait for `onend` to restart
+        }
+
+        console.log("Initializing speech recognition...");
+
+        recognition = new SpeechRecognition();
+        recognition.lang = "en-US";
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+
+        recognitionRef.current = recognition;
+        setMikeActive(true);
+
+        recognition.onresult = (event) => {
+            const transcript = event.results[0][0].transcript;
+            console.log("Transcript:", transcript);
+            setInput(transcript);
+            setMikeActive(false);
+        };
+
+        recognition.onerror = (event) => {
+            console.log("Speech recognition error:", event.error);
+            setMikeActive(false);
+        };
+
+        recognition.onend = () => {
+            console.log("Speech recognition ended.");
+            setMikeActive(false);
+        };
+
+        recognition.start();
+    };
+
     if (convLoad) {
         return (
             <CircularProgress />
@@ -228,7 +275,7 @@ export default function ViewConv() {
                     <TextField
                         fullWidth
                         variant="outlined"
-                        placeholder="Ask anything"
+                        placeholder={recognition || mikeActive ? "Listening..." : "Ask something to JARVIS..."}
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         sx={{
@@ -254,7 +301,7 @@ export default function ViewConv() {
                                 <ArrowUpwardIcon />
                             </IconButton>
                         ) : (
-                            <IconButton color="white" sx={{ ml: 1, border: '3px solid rgb(255, 255, 255)', ":hover": { cursor: 'default' } }}>
+                            <IconButton color="white" sx={{ ml: 1, border: '3px solid rgb(255, 255, 255)' }} onClick={startListening}>
                                 <GraphicEqRoundedIcon />
                             </IconButton>
                         )
