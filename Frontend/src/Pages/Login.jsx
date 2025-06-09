@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import { useState, useContext } from 'react';
 import {
     Box,
     Button,
@@ -49,8 +49,6 @@ export default function Login() {
     return (
         <Box
             sx={{
-                minHeight: '100vh',
-                backgroundColor: '#f4f6f8',
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
@@ -83,11 +81,10 @@ export default function Login() {
                     </Alert>
                 </Collapse>
 
-                <Card elevation={4}>
+                <Card elevation={4} sx={{ backgroundColor: 'black' }}>
                     <CardHeader
-                        title="Login to JARVIS"
-                        titleTypographyProps={{ align: 'center', variant: 'h5' }}
-                        sx={{ backgroundColor: '#1976d2', color: 'white' }}
+                        title="Welcome back"
+                        titleTypographyProps={{ align: 'center', variant: 'h4', color: '#0ca37f' }}
                     />
                     <CardContent>
                         <Box component="form" onSubmit={handleSubmit} noValidate>
@@ -115,13 +112,24 @@ export default function Login() {
                                 fullWidth
                                 type="submit"
                                 variant="contained"
-                                color="primary"
-                                sx={{ mt: 2, py: 1.2 }}
+                                sx={{ mt: 2, py: 1.2, backgroundColor: '#0ca37f', color: 'white', fontWeight: 'bold' }}
                                 disabled={loading}
                             >
                                 {loading ? <CircularProgress size={24} color="inherit" /> : 'Login'}
                             </Button>
                         </Box>
+
+                        <Typography variant="body2" align="center" sx={{ mt: 2, color: 'white' }}>
+                            Don't have an account?{' '}
+                            <Button
+                                onClick={() => navigate('/Signup')}
+                                variant="text"
+                                sx={{ textTransform: 'none', fontWeight: 'bold', color: '#0ca37f' }}
+                            >
+                                Register
+                            </Button>
+                        </Typography>
+
                         {message && (
                             <Alert severity="error" sx={{ mt: 2 }}>
                                 {message}

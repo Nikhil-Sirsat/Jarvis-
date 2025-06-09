@@ -55,8 +55,6 @@ export default function Signup() {
     return (
         <Box
             sx={{
-                minHeight: '100vh',
-                backgroundColor: '#f0f2f5',
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
@@ -64,11 +62,10 @@ export default function Signup() {
             }}
         >
             <Box sx={{ width: '100%', maxWidth: 450 }}>
-                <Card elevation={4}>
+                <Card elevation={4} sx={{ backgroundColor: 'black' }}>
                     <CardHeader
-                        title="Create Your JARVIS Account"
-                        titleTypographyProps={{ align: 'center', variant: 'h5' }}
-                        sx={{ backgroundColor: '#1976d2', color: 'white' }}
+                        title="Create Account"
+                        titleTypographyProps={{ align: 'center', variant: 'h4', color: '#0ca37f' }}
                     />
                     <CardContent>
                         <Box component="form" onSubmit={handleSubmit} noValidate>
@@ -115,13 +112,23 @@ export default function Signup() {
                                 type="submit"
                                 variant="contained"
                                 fullWidth
-                                color="primary"
-                                sx={{ mt: 2, py: 1.3 }}
+                                sx={{ mt: 2, py: 1.3, backgroundColor: '#0ca37f', color: 'white', fontWeight: 'bold' }}
                                 disabled={loading}
                             >
                                 {loading ? <CircularProgress size={24} color="inherit" /> : 'Sign Up'}
                             </Button>
                         </Box>
+
+                        <Typography variant="body2" align="center" sx={{ mt: 2, color: 'white' }}>
+                            Already have an account?{' '}
+                            <Button
+                                onClick={() => navigate('/Login')}
+                                variant="text"
+                                sx={{ textTransform: 'none', fontWeight: 'bold', color: '#0ca37f' }}
+                            >
+                                Login
+                            </Button>
+                        </Typography>
 
                         {message && (
                             <Alert severity="error" sx={{ mt: 2 }}>
