@@ -8,7 +8,6 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import MuiAppBar from '@mui/material/AppBar';
 import axiosInstance from '../AxiosInstance.jsx';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import logo from '../assets/jarvis-logo2.png';
 import EditDocumentIcon from '@mui/icons-material/EditDocument';
 import AccountCircleRoundedIcon from '@mui/icons-material/AccountCircleRounded';
 import { Brightness4, Brightness7 } from "@mui/icons-material";

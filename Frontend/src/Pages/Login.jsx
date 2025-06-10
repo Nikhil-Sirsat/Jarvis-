@@ -10,11 +10,18 @@ import {
     Alert,
     Collapse,
     IconButton,
-    CircularProgress
+    CircularProgress,
+    FormControl,
+    InputLabel,
+    OutlinedInput,
+    InputAdornment,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../Context/AuthContext.jsx';
+import logo from '../assets/jarvisLogo.png';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 export default function Login() {
     const [formData, setFormData] = useState({ email: '', password: '' });
@@ -23,6 +30,12 @@ export default function Login() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [showCookieAlert, setShowCookieAlert] = useState(true);
+    const [showPassword, setShowPassword] = useState(false);
+
+
+    const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+    const handleMouseDownPassword = (event) => event.preventDefault();
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -56,6 +69,12 @@ export default function Login() {
             }}
         >
             <Box sx={{ width: '100%', maxWidth: 400 }}>
+
+                {/* logo */}
+                <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2 }}>
+                    <img src={logo} alt="Jarvis Logo" style={{ width: '100px', height: '100px' }} />
+                </Box>
+
                 <Collapse in={showCookieAlert}>
                     <Alert
                         severity="warning"
@@ -87,7 +106,7 @@ export default function Login() {
                         titleTypographyProps={{ align: 'center', variant: 'h4', color: '#0ca37f' }}
                     />
                     <CardContent>
-                        <Box component="form" onSubmit={handleSubmit} noValidate>
+                        <Box component="form" onSubmit={handleSubmit}>
                             <TextField
                                 fullWidth
                                 label="Email"
@@ -97,17 +116,26 @@ export default function Login() {
                                 onChange={handleChange}
                                 margin="normal"
                                 required
+                                sx={{ '& .MuiInputLabel-root': { color: '#0ca37f' } }}
                             />
-                            <TextField
-                                fullWidth
-                                label="Password"
-                                name="password"
-                                type="password"
-                                value={formData.password}
-                                onChange={handleChange}
-                                margin="normal"
-                                required
-                            />
+                            <FormControl fullWidth variant="outlined">
+                                <InputLabel sx={{ color: '#0ca37f' }}>Password</InputLabel>
+                                <OutlinedInput
+                                    type={showPassword ? 'text' : 'password'}
+                                    endAdornment={
+                                        <InputAdornment position="end">
+                                            <IconButton onClick={handleClickShowPassword} onMouseDown={handleMouseDownPassword} edge="end">
+                                                {showPassword ? <VisibilityOff sx={{ color: '#0ca37f' }} /> : <Visibility sx={{ color: '#0ca37f' }} />}
+                                            </IconButton>
+                                        </InputAdornment>
+                                    }
+                                    name="password"
+                                    value={formData.password}
+                                    onChange={handleChange}
+                                    required
+                                    sx={{ color: '#fff' }}
+                                />
+                            </FormControl>
                             <Button
                                 fullWidth
                                 type="submit"

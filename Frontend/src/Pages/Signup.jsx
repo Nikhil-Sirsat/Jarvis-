@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import { useState, useContext } from 'react';
 import {
     Box,
     Button,
@@ -8,11 +8,19 @@ import {
     CardContent,
     CardHeader,
     Alert,
-    CircularProgress
+    CircularProgress,
+    FormControl,
+    InputLabel,
+    OutlinedInput,
+    InputAdornment,
+    IconButton,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../Context/AuthContext.jsx';
 import axiosInstance from '../axiosInstance.jsx';
+import logo from '../assets/jarvisLogo.png';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 export default function Signup() {
     const [formData, setFormData] = useState({
@@ -25,6 +33,11 @@ export default function Signup() {
     const [loading, setLoading] = useState(false);
     const { login } = useContext(AuthContext);
     const navigate = useNavigate();
+    const [showPassword, setShowPassword] = useState(false);
+
+    const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+    const handleMouseDownPassword = (event) => event.preventDefault();
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -62,13 +75,20 @@ export default function Signup() {
             }}
         >
             <Box sx={{ width: '100%', maxWidth: 450 }}>
+
+                {/* logo */}
+                <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2 }}>
+                    <img src={logo} alt="Jarvis Logo" style={{ width: '100px', height: '100px' }} />
+                </Box>
+
+
                 <Card elevation={4} sx={{ backgroundColor: 'black' }}>
                     <CardHeader
                         title="Create Account"
                         titleTypographyProps={{ align: 'center', variant: 'h4', color: '#0ca37f' }}
                     />
                     <CardContent>
-                        <Box component="form" onSubmit={handleSubmit} noValidate>
+                        <Box component="form" onSubmit={handleSubmit}>
                             <TextField
                                 label="Name"
                                 name="name"
@@ -77,6 +97,7 @@ export default function Signup() {
                                 fullWidth
                                 required
                                 margin="normal"
+                                sx={{ '& .MuiInputLabel-root': { color: '#0ca37f' } }}
                             />
                             <TextField
                                 label="Email"
@@ -87,6 +108,7 @@ export default function Signup() {
                                 fullWidth
                                 required
                                 margin="normal"
+                                sx={{ '& .MuiInputLabel-root': { color: '#0ca37f' } }}
                             />
                             <TextField
                                 label="Age"
@@ -97,8 +119,9 @@ export default function Signup() {
                                 fullWidth
                                 required
                                 margin="normal"
+                                sx={{ '& .MuiInputLabel-root': { color: '#0ca37f' } }}
                             />
-                            <TextField
+                            {/* <TextField
                                 label="Password"
                                 name="password"
                                 type="password"
@@ -107,7 +130,27 @@ export default function Signup() {
                                 fullWidth
                                 required
                                 margin="normal"
-                            />
+                                sx={{ '& .MuiInputLabel-root': { color: '#0ca37f' } }}
+                            /> */}
+
+                            <FormControl fullWidth variant="outlined">
+                                <InputLabel sx={{ color: '#0ca37f' }}>Password</InputLabel>
+                                <OutlinedInput
+                                    type={showPassword ? 'text' : 'password'}
+                                    endAdornment={
+                                        <InputAdornment position="end">
+                                            <IconButton onClick={handleClickShowPassword} onMouseDown={handleMouseDownPassword} edge="end">
+                                                {showPassword ? <VisibilityOff sx={{ color: '#0ca37f' }} /> : <Visibility sx={{ color: '#0ca37f' }} />}
+                                            </IconButton>
+                                        </InputAdornment>
+                                    }
+                                    name="password"
+                                    value={formData.password}
+                                    onChange={handleChange}
+                                    required
+                                    sx={{ color: '#fff' }}
+                                />
+                            </FormControl>
                             <Button
                                 type="submit"
                                 variant="contained"

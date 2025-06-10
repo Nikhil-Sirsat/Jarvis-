@@ -3,9 +3,10 @@ const router = express.Router();
 import User from '../models/User.js';
 import passport from 'passport';
 import { auth } from '../Middleware/AuthMid.js';
+import { validateUser } from '../Middleware/ValidationMid.js';
 
 // signup
-router.post('/SignUp', async (req, res) => {
+router.post('/SignUp', validateUser, async (req, res) => {
     try {
         let { name, email, age, password } = req.body;
         const newUser = new User({ name, email, age });
