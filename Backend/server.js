@@ -7,6 +7,8 @@ if (process.env.NODE_ENV != "production") {
 import express from 'express';
 import mongoose from 'mongoose';
 
+import connectDB from './ConnectDB/connectDB.js';
+
 import session from 'express-session';
 import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
@@ -52,15 +54,8 @@ passport.use(new LocalStrategy({ usernameField: 'email' }, User.authenticate()))
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-// database setup
-const MONGO_URL = process.env.DB_URL
-
-mongoose.connect(MONGO_URL, {
-}).then(() => {
-    console.log("DB connected successfully!");
-}).catch((err) => {
-    console.error("DB connection error:", err);
-});
+// database connection
+connectDB();
 
 // home 
 app.use('/api/user', userRoutes);
