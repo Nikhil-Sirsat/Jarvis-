@@ -5,7 +5,7 @@ export const auth = (req, res, next) => {
     if (req.isAuthenticated()) {
         return next();
     }
-    res.status(401).json({ message: 'Not authenticated' });
+    return res.status(401).json({ message: 'Not authenticated' });
 };
 
 // is owner of the conversation

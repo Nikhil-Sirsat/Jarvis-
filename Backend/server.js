@@ -5,7 +5,6 @@ if (process.env.NODE_ENV != "production") {
 }
 
 import express from 'express';
-import mongoose from 'mongoose';
 
 import connectDB from './ConnectDB/connectDB.js';
 
@@ -19,6 +18,9 @@ import chatRoutes from './routes/chat.js';
 
 // import models
 import User from './models/User.js';
+
+// import error handler
+import errorHandler from './Middleware/errorHandler.js';
 
 import cors from 'cors';
 
@@ -60,6 +62,9 @@ connectDB();
 // home 
 app.use('/api/user', userRoutes);
 app.use('/api/chat', chatRoutes);
+
+// error handler
+app.use(errorHandler);
 
 app.listen(PORT, () => {
     console.log(`server live on port : ${PORT}`);

@@ -1,4 +1,5 @@
 import { userSchema } from "../SchemaValidation/Schema.js";
+import ExpressError from "../Utils/ExpressError.js";
 
 export const validateUser = async (req, res, next) => {
     const userData = {
@@ -7,7 +8,7 @@ export const validateUser = async (req, res, next) => {
 
     let { error } = userSchema.validate(userData);
     if (error) {
-        return res.status(400).json({ error: error.details[0].message });
+        throw new ExpressError(400, `Validation error: ${error.details[0].message}`);
     } else {
         next();
     }

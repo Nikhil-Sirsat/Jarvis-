@@ -1,5 +1,6 @@
 
 import ai from '../config/ai.js';
+import ExpressError from './ExpressError.js';
 
 export default async function createContext(prevContext, userMsg, aiReply) {
     try {
@@ -32,7 +33,7 @@ Now, update the context to reflect the current state of the conversation. Ensure
 
         // Check if we actually got a non-empty title
         if (!newContext || newContext.length === 0) {
-            throw new Error('Empty context from Gemini');
+            throw new ExpressError(500, 'Failed to generate a valid context. The response was empty or invalid.');
         }
 
         console.log('context : ', newContext);

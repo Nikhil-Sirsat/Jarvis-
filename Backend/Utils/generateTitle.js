@@ -1,5 +1,6 @@
 
 import ai from '../config/ai.js';
+import ExpressError from './ExpressError.js';
 
 // utils/generateTitle.js
 export default async function generateTitle(message) {
@@ -14,7 +15,7 @@ export default async function generateTitle(message) {
 
         // Check if we actually got a non-empty title
         if (!title || title.length === 0) {
-            throw new Error('Empty title from Gemini');
+            throw new ExpressError(500, 'Title generation returned an empty response');
         }
 
         return { title, status: true };

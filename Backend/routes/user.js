@@ -4,9 +4,10 @@ import passport from 'passport';
 import { auth } from '../Middleware/AuthMid.js';
 import { validateUser } from '../Middleware/ValidationMid.js';
 import { signUp, login, logout, protectedRoute } from '../controllers/user.js';
+import { asyncHandler } from '../Middleware/asyncHandler.js';
 
 // signup
-router.post('/SignUp', validateUser, signUp);
+router.post('/SignUp', validateUser, asyncHandler(signUp));
 
 // Login 
 router.post('/Login', passport.authenticate('local'), login);
