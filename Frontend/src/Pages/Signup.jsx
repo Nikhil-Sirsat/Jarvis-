@@ -7,7 +7,7 @@ import {
     Card,
     CardContent,
     CardHeader,
-    Alert,
+    Avatar,
     CircularProgress,
     FormControl,
     InputLabel,
@@ -79,7 +79,11 @@ export default function Signup() {
 
                 {/* logo */}
                 <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2 }}>
-                    <img src={logo} alt="Jarvis Logo" style={{ width: '100px', height: '100px' }} />
+                    <Avatar
+                        src={logo}
+                        alt="Jarvis Logo"
+                        sx={{ width: 90, height: 90, mb: 2, backgroundColor: 'transparent' }}
+                    />
                 </Box>
 
 

@@ -14,6 +14,7 @@ import { Brightness4, Brightness7 } from "@mui/icons-material";
 import { ThemeContext } from "../context/ThemeContext";
 import LogoutButton from '../Components/Logout.jsx';
 import { useSnackbar } from '../Context/SnackBarContext.jsx';
+import logo from '../assets/jarvisLogo.png';
 
 import {
     Box,
@@ -23,7 +24,6 @@ import {
     Drawer,
     Toolbar,
     List,
-    Divider,
     ListItem,
     ListItemButton,
     ListItemIcon,
@@ -183,9 +183,17 @@ export default function Chat() {
                     <IconButton onClick={handleAcClick}>
                         <AccountCircleRoundedIcon />
                     </IconButton>
-                    <Typography variant='body' sx={{ ml: 2, color: mode === 'dark' ? 'white' : 'black' }}> Jarvis</Typography>
+
                     <IconButton onClick={toggleTheme} color="inherit" sx={{ ml: 2 }}>
                         {mode === "dark" ? <Brightness7 /> : <Brightness4 sx={{ color: 'black' }} />}
+                    </IconButton>
+
+                    <IconButton sx={{ right: 20, position: 'absolute' }}>
+                        <Avatar
+                            src={logo}
+                            alt="Jarvis Logo"
+                            sx={{ width: 35, height: 35, p: 0.5, backgroundColor: 'black' }}
+                        />
                     </IconButton>
                 </Toolbar>
             </AppBar>

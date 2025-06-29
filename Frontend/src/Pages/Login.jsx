@@ -8,6 +8,7 @@ import {
     CardContent,
     CardHeader,
     Alert,
+    Avatar,
     Collapse,
     IconButton,
     CircularProgress,
@@ -26,7 +27,6 @@ import { useSnackbar } from '../Context/SnackBarContext';
 
 export default function Login() {
     const [formData, setFormData] = useState({ email: '', password: '' });
-    // const [message, setMessage] = useState('');
     const { login } = useContext(AuthContext);
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
@@ -57,7 +57,6 @@ export default function Login() {
             navigate('/');
             setLoading(false);
         } else {
-            // setMessage('Invalid credentials');
             showSnackbar('Invalid credentials');
             setLoading(false);
         }
@@ -76,7 +75,12 @@ export default function Login() {
 
                 {/* logo */}
                 <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2 }}>
-                    <img src={logo} alt="Jarvis Logo" style={{ width: '100px', height: '100px' }} />
+                    <Avatar
+                        src={logo}
+                        alt="Jarvis Logo"
+                        sx={{ width: 90, height: 90, mb: 2, backgroundColor: 'transparent' }}
+                    />
+
                 </Box>
 
                 <Collapse in={showCookieAlert}>
