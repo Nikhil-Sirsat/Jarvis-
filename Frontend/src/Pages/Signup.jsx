@@ -21,6 +21,7 @@ import axiosInstance from '../axiosInstance.jsx';
 import logo from '../assets/jarvisLogo.png';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import { useSnackbar } from '../Context/SnackBarContext';
 
 export default function Signup() {
     const [formData, setFormData] = useState({
@@ -29,11 +30,12 @@ export default function Signup() {
         age: '',
         password: '',
     });
-    const [message, setMessage] = useState('');
     const [loading, setLoading] = useState(false);
     const { login } = useContext(AuthContext);
     const navigate = useNavigate();
     const [showPassword, setShowPassword] = useState(false);
+
+    const showSnackbar = useSnackbar();
 
     const handleClickShowPassword = () => setShowPassword((show) => !show);
 
@@ -47,7 +49,6 @@ export default function Signup() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        setMessage('');
 
         try {
             await axiosInstance.post('/api/user/SignUp', formData);
@@ -55,11 +56,11 @@ export default function Signup() {
             if (success) {
                 navigate('/');
             } else {
-                setMessage('Error logging in after registration');
+                showSnackbar("Error Logging in after registration");
             }
         } catch (err) {
             const errorMsg = err.response?.data?.error || 'Registration failed';
-            setMessage(errorMsg);
+            showSnackbar("Error in Registration : ", errorMsg);
         } finally {
             setLoading(false);
         }
@@ -121,17 +122,6 @@ export default function Signup() {
                                 margin="normal"
                                 sx={{ '& .MuiInputLabel-root': { color: '#0ca37f' } }}
                             />
-                            {/* <TextField
-                                label="Password"
-                                name="password"
-                                type="password"
-                                value={formData.password}
-                                onChange={handleChange}
-                                fullWidth
-                                required
-                                margin="normal"
-                                sx={{ '& .MuiInputLabel-root': { color: '#0ca37f' } }}
-                            /> */}
 
                             <FormControl fullWidth variant="outlined">
                                 <InputLabel sx={{ color: '#0ca37f' }}>Password</InputLabel>
@@ -172,12 +162,6 @@ export default function Signup() {
                                 Login
                             </Button>
                         </Typography>
-
-                        {message && (
-                            <Alert severity="error" sx={{ mt: 2 }}>
-                                {message}
-                            </Alert>
-                        )}
                     </CardContent>
                 </Card>
             </Box>

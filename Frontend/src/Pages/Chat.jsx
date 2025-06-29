@@ -13,6 +13,7 @@ import AccountCircleRoundedIcon from '@mui/icons-material/AccountCircleRounded';
 import { Brightness4, Brightness7 } from "@mui/icons-material";
 import { ThemeContext } from "../context/ThemeContext";
 import LogoutButton from '../Components/Logout.jsx';
+import { useSnackbar } from '../Context/SnackBarContext.jsx';
 
 import {
     Box,
@@ -99,6 +100,8 @@ export default function Chat() {
     const [idToDel, setIdToDel] = useState(null);
     const { mode, toggleTheme } = useContext(ThemeContext);
 
+    const showSnackbar = useSnackbar();
+
     const acOpen = Boolean(anchorE2);
     const isOpen = Boolean(anchorEl);
 
@@ -129,7 +132,8 @@ export default function Chat() {
             setConversations(conversations.filter((conv) => conv._id !== idToDel));
             handleClose();
         } catch (error) {
-            console.error('Error deleting conversation:', error);
+            console.log('Error deleting conversation:', error);
+            showSnackbar("Error deleting conversation", error.message);
         }
     }
 
@@ -141,7 +145,8 @@ export default function Chat() {
                 const data = await response.data;
                 setConversations(data);
             } catch (error) {
-                console.error('Error fetching conversations:', error);
+                console.log('Error fetching conversations:', error);
+                showSnackbar("Error fetching conversations", error.message);
             } finally {
                 setConversationLoading(false);
             }

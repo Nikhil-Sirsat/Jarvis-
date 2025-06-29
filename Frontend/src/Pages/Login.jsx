@@ -22,15 +22,18 @@ import { AuthContext } from '../Context/AuthContext.jsx';
 import logo from '../assets/jarvisLogo.png';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import { useSnackbar } from '../Context/SnackBarContext';
 
 export default function Login() {
     const [formData, setFormData] = useState({ email: '', password: '' });
-    const [message, setMessage] = useState('');
+    // const [message, setMessage] = useState('');
     const { login } = useContext(AuthContext);
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [showCookieAlert, setShowCookieAlert] = useState(true);
     const [showPassword, setShowPassword] = useState(false);
+
+    const showSnackbar = useSnackbar();
 
 
     const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -54,7 +57,8 @@ export default function Login() {
             navigate('/');
             setLoading(false);
         } else {
-            setMessage('Invalid credentials');
+            // setMessage('Invalid credentials');
+            showSnackbar('Invalid credentials');
             setLoading(false);
         }
     };
@@ -157,12 +161,6 @@ export default function Login() {
                                 Register
                             </Button>
                         </Typography>
-
-                        {message && (
-                            <Alert severity="error" sx={{ mt: 2 }}>
-                                {message}
-                            </Alert>
-                        )}
                     </CardContent>
                 </Card>
             </Box>

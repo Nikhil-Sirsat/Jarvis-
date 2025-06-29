@@ -12,10 +12,11 @@ import NewChat from './Pages/NewChat.jsx';
 import ViewConv from './Pages/ViewConv.jsx';
 import LostPage from './Pages/Lost.jsx';
 import Intro from './Components/Intro.jsx';
-import SpeetchTest from './Pages/SpeetchTest.jsx';
 
 import { AuthProvider } from './context/AuthContext.jsx';
 import ProtectedRoute from './ProtectedRoutes/ProtectedRoutes.jsx';
+
+import { SnackbarProvider } from './Context/SnackBarContext.jsx';
 
 const router = createBrowserRouter([
   {
@@ -52,10 +53,6 @@ const router = createBrowserRouter([
         path: '/Signup',
         element: <Signup />
       },
-      {
-        path: '/Speetch',
-        element: <ProtectedRoute><SpeetchTest /></ProtectedRoute>
-      }
     ]
   },
   {
@@ -67,7 +64,9 @@ const router = createBrowserRouter([
 ReactDOM.createRoot(document.getElementById('root')).render(
   <StrictMode>
     <AuthProvider>
-      <RouterProvider router={router} />
+      <SnackbarProvider>
+        <RouterProvider router={router} />
+      </SnackbarProvider>
     </AuthProvider>
   </StrictMode>
 );

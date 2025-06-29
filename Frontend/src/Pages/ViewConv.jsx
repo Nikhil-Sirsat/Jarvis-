@@ -17,6 +17,7 @@ import GraphicEqRoundedIcon from '@mui/icons-material/GraphicEqRounded';
 import ReplyLoad from "../Components/ReplyLoad.jsx";
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import VolumeOffIcon from '@mui/icons-material/VolumeOff';
+import { useSnackbar } from '../Context/SnackBarContext';
 let SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
 export default function ViewConv() {
@@ -30,6 +31,7 @@ export default function ViewConv() {
     const [mikeActive, setMikeActive] = useState(false);
     const recognitionRef = useRef(null);
     let recognition = null;
+    const showSnackbar = useSnackbar();
 
     // Ref for auto-scrolling
     const messagesEndRef = useRef(null);
@@ -53,6 +55,7 @@ export default function ViewConv() {
                 setTimeout(scrollToBottom, 100);
             } catch (err) {
                 console.log("Error fetching messages:", err);
+                showSnackbar("Error fetching messages : ", err);
             } finally {
                 setConvLoad(false);
             }
@@ -98,6 +101,7 @@ export default function ViewConv() {
 
         } catch (err) {
             console.log("Message send error:", err);
+            showSnackbar(err.response.data.message);
         } finally {
             setMsgLoading(false);
         }
@@ -117,6 +121,7 @@ export default function ViewConv() {
             };
         } else {
             console.error("Speech Synthesis not supported in this browser.");
+            showSnackbar("Speetch Synthesis not supported in this browser");
             setSpeakingMsgIndex(null);
         }
     }
@@ -136,6 +141,7 @@ export default function ViewConv() {
     const startListening = () => {
         if (!SpeechRecognition) {
             console.log("Speech Recognition API not supported in this browser.");
+            showSnackbar("Speech Recognition API not supported in this browser.");
             return;
         }
 
@@ -164,6 +170,7 @@ export default function ViewConv() {
 
         recognition.onerror = (event) => {
             console.log("Speech recognition error:", event.error);
+            showSnackbar("Speech recognition error : ", event.error);
             setMikeActive(false);
         };
 

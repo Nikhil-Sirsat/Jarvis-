@@ -12,6 +12,7 @@ import axiosInstance from '../AxiosInstance.jsx';
 import PendingIcon from '@mui/icons-material/Pending';
 import GraphicEqRoundedIcon from '@mui/icons-material/GraphicEqRounded';
 let SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+import { useSnackbar } from '../Context/SnackBarContext';
 
 export default function NewChat() {
     const [input, setInput] = useState("");
@@ -20,6 +21,7 @@ export default function NewChat() {
     const recognitionRef = useRef(null);
     const navigate = useNavigate();
     let recognition = null;
+    const showSnackbar = useSnackbar();
 
     const handleSend = async () => {
         console.log('send message called');
@@ -39,6 +41,7 @@ export default function NewChat() {
             setInput("");
         } catch (err) {
             console.log("Message send error:", err);
+            showSnackbar(err.response.data.message);
         } finally {
             setMsgLoading(false);
         }
