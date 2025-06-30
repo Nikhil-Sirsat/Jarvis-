@@ -11,9 +11,6 @@ const conversationSchema = new Schema({
         type: String,
         default: 'New Chat',
     },
-    context: {
-        type: String,
-    },
     createdAt: {
         type: Date,
         default: Date.now,

@@ -1,88 +1,78 @@
 import generateTitle from '../Utils/generateTitle.js';
-import createContext from '../Utils/createContext.js';
 import ChatMessage from '../models/ChatMessage.js';
 import Conversation from '../models/Conversation.js';
 import ai from '../config/ai.js';
 import ExpressError from '../Utils/ExpressError.js';
+import { getCachedChatHistory, cacheChatMessage, cacheChatHistoryBulk } from '../Utils/redisHelper.js';
 
 export const askQuestion = async (req, res) => {
     const { message, conversationId } = req.body;
     const userId = req.user._id;
 
-    let convoId = conversationId;
-    let prevContext = 'you are an AI assistant named Jarvis created By Nikhil Sirsat';
+    let convId = conversationId || null;
+    let historyMessages = [];
 
-    // If conversation exists, fetch it with current context
-    let conversation;
-    if (conversationId) {
-        conversation = await Conversation.findById(conversationId);
-        if (!conversation) {
-            throw new ExpressError(404, 'Conversation not found');
-        }
-        prevContext = conversation.context || '';
-    } else {
+    if (!convId) {
         // Create new conversation if not provided
-        conversation = new Conversation({ userId });
+        let conversation = new Conversation({ userId });
 
         const { title, status, err } = await generateTitle(message);
         conversation.title = title;
         await conversation.save();
-        convoId = conversation._id;
+        convId = conversation._id;
 
         if (!status) {
             console.warn('Gemini failed to generate title, used fallback:', err?.message || err);
         }
+    } else {
+
+        // Try Redis for history
+        historyMessages = (await getCachedChatHistory(convId.toString()));
+
+        console.log("historyMessages from Redis : ", historyMessages);
+
+        // If Redis empty → fetch from DB and cache
+        if (historyMessages.length === 0) {
+            console.log("history length malformed : ", historyMessages);
+            const dbMessages = await ChatMessage.find({ conversationId: convId })
+                .sort({ createdAt: 1 })
+                .select("sender message");
+            historyMessages = dbMessages.map(m => ({ sender: m.sender, message: m.message }));
+            await cacheChatHistoryBulk(convId.toString(), historyMessages);
+        }
     }
 
-    // Construct full message for AI prompt
-    const promptParts = [];
-
-    if (prevContext) {
-        promptParts.push({ text: `Context: ${prevContext}` });
+    // If no messages in history, initialize as empty array
+    if (!Array.isArray(historyMessages)) {
+        historyMessages = [];
     }
+    const promptParts = [
+        { text: "You are Jarvis, an AI assistant created by Nikhil Sirsat." },
+        ...historyMessages.map((msg) => ({
+            text: `${msg.sender === "user" ? "user" : "ai"}: ${msg.message}`,
+        })),
+        { text: `Users next question : ${message}` },
+    ];
 
-    promptParts.push({ text: `User: ${message}` });
-
-    // Request to Gemini
+    // Gemini response
     const response = await ai.models.generateContent({
         model: "gemini-2.0-flash-lite",
         contents: promptParts,
     });
 
     const aiReply = response.text?.trim();
-
-    if (!aiReply) {
-        throw new ExpressError(500, 'AI did not return a valid response');
-    }
+    if (!aiReply) { throw new ExpressError(500, 'AI did not return a valid response'); }
 
     // Save both messages
-    const userMsg = new ChatMessage({
-        conversationId: convoId,
-        sender: 'user',
-        message: message,
-    });
+    await new ChatMessage({ conversationId: convId, sender: "user", message: message }).save();
+    await new ChatMessage({ conversationId: convId, sender: "ai", message: aiReply }).save();
 
-    const aiMsg = new ChatMessage({
-        conversationId: convoId,
-        sender: 'ai',
-        message: aiReply,
-    });
+    // Push both to Redis (memory)
+    await cacheChatMessage(convId.toString(), "user", message);
+    await cacheChatMessage(convId.toString(), "ai", aiReply);
 
-    await userMsg.save();
-    await aiMsg.save();
-
-    // 🔁 Generate updated context and save to conversation
-    const { newContext, status } = await createContext(prevContext, message, aiReply);
-
-    if (status) {
-        conversation.context = newContext;
-        await conversation.save();
-    } else {
-        console.warn('Context update failed:', contextErr?.message || contextErr);
-    }
-
-    return res.status(200).json({ reply: aiReply, conversationId: convoId });
-}
+    return res.status(200).json({ reply: aiReply, conversationId: convId });
+};
 
 export const getMessages = async (req, res) => {
     const messages = await ChatMessage.find({
@@ -90,7 +80,7 @@ export const getMessages = async (req, res) => {
     }).sort({ createdAt: 1 });
 
     return res.json(messages);
-}
+};
 
 export const getConversations = async (req, res) => {
     const userId = req.user._id;
@@ -99,7 +89,7 @@ export const getConversations = async (req, res) => {
         .sort({ updatedAt: -1 });
 
     return res.status(200).json(conversations);
-}
+};
 
 export const deleteConversation = async (req, res) => {
     const { conversationId } = req.params;
@@ -111,4 +101,4 @@ export const deleteConversation = async (req, res) => {
     await Conversation.findByIdAndDelete(conversationId);
 
     return res.status(200).json({ message: 'Conversation deleted successfully' });
-}
+};
