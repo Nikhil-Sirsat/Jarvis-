@@ -6,7 +6,7 @@ export default function Intro() {
     const navigate = useNavigate();
 
     const start = () => {
-        navigate('/new-chat');
+        navigate('/chat/new-chat');
     }
 
     return (

@@ -5,7 +5,7 @@ export default function LostPage() {
     const navigate = useNavigate();
 
     const goHome = () => {
-        navigate('/');
+        navigate('/chat');
     }
 
     return (

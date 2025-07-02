@@ -18,7 +18,7 @@ body {
 }
 
 .hero-cont {
-  min-height: calc(100vh - 74px - 129.03px);
+  min-height: 100vh;
   display: flex;
   flex-wrap: wrap;
   align-items: center;

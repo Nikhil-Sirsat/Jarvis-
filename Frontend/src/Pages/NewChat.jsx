@@ -139,7 +139,7 @@ export default function NewChat() {
                             <ArrowUpwardIcon />
                         </IconButton>
                     ) : (
-                        <IconButton color="white" sx={{ ml: 1, border: '3px solid rgb(255, 255, 255)' }} onClick={startListening}>
+                        <IconButton sx={{ ml: 1, border: '3px solid rgb(255, 255, 255)', color: recognition || mikeActive ? "#0ca37f" : "white" }} onClick={startListening}>
                             <GraphicEqRoundedIcon />
                         </IconButton>
                     )

@@ -214,7 +214,7 @@ export default function Chat() {
                     <IconButton onClick={handleDrawerClose}>
                         {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
                     </IconButton>
-                    <IconButton component={Link} to={'/new-chat'}>
+                    <IconButton component={Link} to={'/chat/new-chat'}>
                         <EditDocumentIcon />
                     </IconButton>
                 </DrawerHeader>
@@ -239,7 +239,7 @@ export default function Chat() {
                                         >
                                             <MoreHorizIcon />
                                         </ListItemIcon>
-                                        <ListItemText component={Link} to={`/${conv._id}`} primary={conv.title} sx={{ textDecoration: 'none', color: mode === 'dark' ? 'white' : 'black' }} />
+                                        <ListItemText component={Link} to={`/chat/${conv._id}`} primary={conv.title} sx={{ textDecoration: 'none', color: mode === 'dark' ? 'white' : 'black' }} />
                                     </ListItemButton>
                                 </ListItem>
                             ))}
