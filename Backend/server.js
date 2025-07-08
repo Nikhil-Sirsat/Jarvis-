@@ -15,6 +15,7 @@ import { Strategy as LocalStrategy } from 'passport-local';
 // import routes
 import userRoutes from './routes/user.js';
 import chatRoutes from './routes/chat.js';
+import favouriteRoutes from './routes/favourite.js';
 
 // import models
 import User from './models/User.js';
@@ -62,6 +63,7 @@ connectDB();
 // home 
 app.use('/api/user', userRoutes);
 app.use('/api/chat', chatRoutes);
+app.use('/api/favourite', favouriteRoutes);
 
 // error handler
 app.use(errorHandler);

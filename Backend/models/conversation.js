@@ -21,5 +21,8 @@ const conversationSchema = new Schema({
     },
 }, { timestamps: true });
 
+// indexes
+conversationSchema.index({ userId: 1, createdAt: -1 });
+
 const Conversation = mongoose.model('Conversation', conversationSchema);
 export default Conversation;

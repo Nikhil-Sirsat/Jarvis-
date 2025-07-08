@@ -52,6 +52,7 @@ export default function ViewConv() {
             try {
                 const res = await axiosInstance.get(`/api/Chat/${convId}/messages`);
                 setMessages(res.data);
+                console.log(res.data);
                 setTimeout(scrollToBottom, 100);
             } catch (err) {
                 console.log("Error fetching messages:", err);

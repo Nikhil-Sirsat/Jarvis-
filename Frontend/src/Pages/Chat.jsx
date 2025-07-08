@@ -5,6 +5,7 @@ import { styled, useTheme } from '@mui/material/styles';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import StarIcon from '@mui/icons-material/Star';
 import MuiAppBar from '@mui/material/AppBar';
 import axiosInstance from '../AxiosInstance.jsx';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
@@ -186,6 +187,10 @@ export default function Chat() {
 
                     <IconButton onClick={toggleTheme} color="inherit" sx={{ ml: 2 }}>
                         {mode === "dark" ? <Brightness7 /> : <Brightness4 sx={{ color: 'black' }} />}
+                    </IconButton>
+
+                    <IconButton component={Link} to={'/chat/Favourites'}>
+                        <StarIcon />
                     </IconButton>
 
                     <IconButton sx={{ right: 20, position: 'absolute' }}>

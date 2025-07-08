@@ -37,7 +37,7 @@ export default function NewChat() {
                 },
             );
 
-            navigate(`/${res.data.conversationId}`);
+            navigate(`/chat/${res.data.conversationId}`);
             setInput("");
         } catch (err) {
             console.log("Message send error:", err);
