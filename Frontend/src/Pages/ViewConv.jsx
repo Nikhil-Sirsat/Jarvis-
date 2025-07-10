@@ -19,6 +19,7 @@ import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import VolumeOffIcon from '@mui/icons-material/VolumeOff';
 import { useSnackbar } from '../Context/SnackBarContext';
 let SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+import MarkFavBtn from "../Components/markFavBtn.jsx";
 
 export default function ViewConv() {
     const [input, setInput] = useState("");
@@ -51,7 +52,21 @@ export default function ViewConv() {
             setConvLoad(true);
             try {
                 const res = await axiosInstance.get(`/api/Chat/${convId}/messages`);
-                setMessages(res.data);
+
+                const isfavRes = await Promise.all(
+                    res.data.map(async (msg) => {
+                        let msgId = msg._id;
+                        const favRes = await axiosInstance.get(`/api/favourite/isFavourite/${msgId}`);
+                        return favRes.data.isFavourite;
+                    })
+                );
+
+                setMessages(
+                    res.data.map((msg, index) => ({
+                        ...msg,
+                        isFavourite: isfavRes[index],
+                    }))
+                );
                 console.log(res.data);
                 setTimeout(scrollToBottom, 100);
             } catch (err) {
@@ -234,16 +249,25 @@ export default function ViewConv() {
                                 </ReactMarkdown>
                             </Typography>
 
-
                             {/* response bottom ops */}
                             {msg.sender === "ai" ? (
                                 <>
                                     <br />
                                     {speakingMsgIndex === index ? (
-                                        <VolumeOffIcon onClick={stopAiVoiceRes} />
+                                        <IconButton onClick={stopAiVoiceRes}>
+                                            <VolumeOffIcon sx={{ color: "#0ca37f" }} />
+                                        </IconButton>
+
                                     ) : (
-                                        <VolumeUpIcon onClick={() => aiVoiceRes(msg.message, index)} />
+                                        <IconButton onClick={() => aiVoiceRes(msg.message, index)}>
+                                            <VolumeUpIcon />
+                                        </IconButton>
                                     )}
+
+                                    <MarkFavBtn
+                                        msgId={msg._id}
+                                        isFav={msg.isFavourite}
+                                    />
 
                                 </>
                             ) :

@@ -153,7 +153,7 @@ export default function Chat() {
             }
         };
         fetchConversations();
-    });
+    }, []);
 
     const handleDrawerOpen = () => {
         setOpen(true);
