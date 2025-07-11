@@ -100,6 +100,7 @@ export default function Chat() {
     const [anchorE2, setAnchorE2] = useState(null);
     const [idToDel, setIdToDel] = useState(null);
     const { mode, toggleTheme } = useContext(ThemeContext);
+    const [fetchConv, setFetchConv] = useState(false);
 
     const showSnackbar = useSnackbar();
 
@@ -153,7 +154,12 @@ export default function Chat() {
             }
         };
         fetchConversations();
-    }, []);
+    }, [fetchConv]);
+
+    // refetch the conversation after new created
+    const reFreshFetchConvHist = () => {
+        setFetchConv(!fetchConv);
+    }
 
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -279,7 +285,7 @@ export default function Chat() {
                 </MenuItem>
             </Menu>
             <Main open={open} sx={{ height: '85vh', width: 'auto' }}>
-                <Outlet />
+                <Outlet context={{ reFreshFetchConvHist }} />
             </Main>
         </Box>
     );

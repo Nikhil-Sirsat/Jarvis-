@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
 import {
     Box,
     TextField,
@@ -14,10 +14,12 @@ import GraphicEqRoundedIcon from '@mui/icons-material/GraphicEqRounded';
 let SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 import { useSnackbar } from '../Context/SnackBarContext';
 
+
 export default function NewChat() {
     const [input, setInput] = useState("");
     const [msgLoading, setMsgLoading] = useState(false);
     const [mikeActive, setMikeActive] = useState(false);
+    const { reFreshFetchConvHist } = useOutletContext(); // Get the function to refresh conversation history
     const recognitionRef = useRef(null);
     const navigate = useNavigate();
     let recognition = null;
@@ -37,6 +39,7 @@ export default function NewChat() {
                 },
             );
 
+            reFreshFetchConvHist(); // Refresh conversation history
             navigate(`/chat/${res.data.conversationId}`);
             setInput("");
         } catch (err) {

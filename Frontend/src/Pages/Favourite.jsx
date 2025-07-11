@@ -99,9 +99,30 @@ export default function Favourite() {
                             fontSize: '16px',
                             p: 1
                         }}>
-                            <ReactMarkdown>
+                            <ReactMarkdown
+                                components={{
+                                    h1: ({ node, ...props }) => (
+                                        <Typography variant="h4" sx={{ mt: 5, mb: 3, fontWeight: 700 }} {...props} />
+                                    ),
+                                    h2: ({ node, ...props }) => (
+                                        <Typography variant="h5" sx={{ mt: 4, mb: 3, fontWeight: 700 }} {...props} />
+                                    ),
+                                    h3: ({ node, ...props }) => (
+                                        <Typography variant="h6" sx={{ mt: 4, mb: 2.5, fontWeight: 600 }} {...props} />
+                                    ),
+                                    p: ({ node, ...props }) => (
+                                        <Typography sx={{ mb: 2.5, lineHeight: 1.8 }} {...props} />
+                                    ),
+                                    li: ({ node, ...props }) => (
+                                        <li style={{ marginBottom: 8 }}>
+                                            <Typography component="span" sx={{ lineHeight: 2 }} {...props} />
+                                        </li>
+                                    ),
+                                }}
+                            >
                                 {fav.msgId.message}
                             </ReactMarkdown>
+
                         </Typography>
 
 

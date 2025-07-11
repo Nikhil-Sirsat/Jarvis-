@@ -231,12 +231,12 @@ export default function ViewConv() {
                             sx={{
                                 display: "inline-block",
                                 maxWidth: msg.sender === "user" ? '70%' : '100%',
-                                px: 2,
-                                py: 1.5,
+                                px: 2.5,
+                                py: 2.5,
                                 borderRadius: 7,
                                 wordBreak: "break-word",
                                 backgroundColor: msg.sender === "user" ? 'none' : mode == 'dark' ? 'black' : 'white',
-                                boxShadow: 'none'
+                                boxShadow: 'none',
                             }}
                         >
                             <Typography sx={{
@@ -244,9 +244,30 @@ export default function ViewConv() {
                                 fontSize: '16px',
                                 p: 1
                             }}>
-                                <ReactMarkdown>
+                                <ReactMarkdown
+                                    components={{
+                                        h1: ({ node, ...props }) => (
+                                            <Typography variant="h4" sx={{ mt: 5, mb: 3, fontWeight: 700 }} {...props} />
+                                        ),
+                                        h2: ({ node, ...props }) => (
+                                            <Typography variant="h5" sx={{ mt: 4, mb: 3, fontWeight: 700 }} {...props} />
+                                        ),
+                                        h3: ({ node, ...props }) => (
+                                            <Typography variant="h6" sx={{ mt: 4, mb: 2.5, fontWeight: 600 }} {...props} />
+                                        ),
+                                        p: ({ node, ...props }) => (
+                                            <Typography sx={{ mb: 2.5, lineHeight: 1.8 }} {...props} />
+                                        ),
+                                        li: ({ node, ...props }) => (
+                                            <li style={{ marginBottom: 8 }}>
+                                                <Typography component="span" sx={{ lineHeight: 2 }} {...props} />
+                                            </li>
+                                        ),
+                                    }}
+                                >
                                     {msg.message}
                                 </ReactMarkdown>
+
                             </Typography>
 
                             {/* response bottom ops */}
