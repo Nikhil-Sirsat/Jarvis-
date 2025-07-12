@@ -5,6 +5,7 @@ import User from '../models/User.js';
 import ai from '../config/ai.js';
 import ExpressError from '../Utils/ExpressError.js';
 import { getCachedChatHistory, cacheChatMessage, cacheChatHistoryBulk } from '../Utils/redisHelper.js';
+import { searchMemory, storeMemory, shouldStoreMemory } from '../memory/memoryUtils.js';
 
 export const askQuestion = async (req, res) => {
     const { message, conversationId } = req.body;
@@ -33,11 +34,8 @@ export const askQuestion = async (req, res) => {
         // Try Redis for history
         historyMessages = (await getCachedChatHistory(convId.toString()));
 
-        // console.log("historyMessages from Redis : ", historyMessages);
-
         // If Redis empty → fetch from DB and cache
         if (historyMessages.length === 0) {
-            // console.log("history length malformed : ", historyMessages);
             const dbMessages = await ChatMessage.find({ conversationId: convId })
                 .sort({ createdAt: 1 })
                 .select("sender message");
@@ -51,7 +49,10 @@ export const askQuestion = async (req, res) => {
         historyMessages = [];
     }
 
-    // Intellegent Prompt Parts
+    //  Load Memory
+    const relevantMemories = await searchMemory(userId.toString(), message, 5);
+
+    // Build Prompt
     const promptParts = [
         {
             text: `
@@ -61,18 +62,15 @@ Your primary goal is to help the ${userName} as clearly, efficiently, and accura
 Before generating your answer:
 1. Decide whether the user's question is SIMPLE (factual, direct, definitional) or COMPLEX (needs reasoning, breakdown, or multiple steps).
 2. If it's SIMPLE — answer directly and concisely in 1-5 lines. Avoid unnecessary steps or reflections.
-3. If it's COMPLEX — use a chain-of-thought approach: 
-3.1. Analyze and deeply understand the user’s query.
-3.2. Reflect on what the user might really mean.
-3.3. Break the task down into multiple logical steps.
-3.4. For each step, reason clearly and justify your logic.
-3.5. Once all steps are verified, synthesize the best possible final answer.
-3.6. Double-check your conclusion. If anything seems unclear or illogical, re-evaluate your steps before responding.
+3. If it's COMPLEX — use a chain-of-thought approach: reflect on intent, break into logical steps, reason through each clearly, and synthesize a well-justified, accurate answer. Double-check before responding.
 4. Always double-check your logic before giving the final response.
 
 Keep your tone helpful and professional and present the information clearly.
 `,
         },
+        ...(relevantMemories.length > 0
+            ? [{ text: `Here are some important memories about ${userName}: \n${relevantMemories.map(m => `- ${m}`).join('\n')}` }]
+            : []),
         ...historyMessages.map((msg) => ({
             text: `${msg.sender === "user" ? "user" : "ai"}: ${msg.message}`,
         })),
@@ -100,6 +98,11 @@ Keep your tone helpful and professional and present the information clearly.
     // Push both to Redis (memory)
     await cacheChatMessage(convId.toString(), "user", message);
     await cacheChatMessage(convId.toString(), "ai", aiReply);
+
+    // Save to Memory if relevant
+    if (shouldStoreMemory(message)) {
+        await storeMemory(userId.toString(), message);
+    }
 
     return res.status(200).json({ reply: aiReply, conversationId: convId });
 };
@@ -132,41 +135,3 @@ export const deleteConversation = async (req, res) => {
 
     return res.status(200).json({ message: 'Conversation deleted successfully' });
 };
-
-
-
-
-
-
-
-
-
-// Intellegent Prompt Parts
-//     const promptParts = [
-//         {
-//             text: `
-// You are Jarvis, a highly intelligent, self-improving AI assistant built by Nikhil Sirsat.
-// You are designed to reason, reflect, question yourself, and think like a chain of intelligent thoughts before delivering any answer.
-
-// Your mission is to never rush to conclusions. Always follow this process:
-// 1. Analyze and deeply understand the user’s query.
-// 2. Reflect on what the user might really mean.
-// 3. Break the task down into multiple logical steps.
-// 4. For each step, reason clearly and justify your logic.
-// 5. Once all steps are verified, synthesize the best possible final answer.
-// 6. Double-check your conclusion. If anything seems unclear or illogical, re-evaluate your steps before responding.
-
-// Only once your internal reasoning is fully sound, output your final answer with explanation.
-// Be thoughtful, structured, and precise. Think like a human researcher combined with an autonomous planner.
-// `,
-//         },
-//         ...historyMessages.map((msg) => ({
-//             text: `${msg.sender === "user" ? "user" : "ai"}: ${msg.message}`,
-//         })),
-//         {
-//             text: `
-// Now, here is the ${userName}'s next question. Begin the chain-of-thought reasoning immediately:
-// User: ${message}
-// `,
-//         },
-//     ];
