@@ -4,6 +4,8 @@ import { v4 as uuidv4 } from 'uuid';
 const COLLECTION_NAME = 'jarvis_memory';
 import ExpressError from '../Utils/ExpressError.js';
 
+import ai from '../config/ai.js';
+
 const memoryTriggers = [
     'remember',
     'note that',
@@ -101,8 +103,46 @@ export function shouldStoreMemory(text) {
     const hasMemoryTrigger = memoryTriggers.some(trigger => lower.includes(trigger));
     const isLongEnough = lower.length > 30;
 
-    console.log('should Store : ', hasMemoryTrigger || isLongEnough);
-
     return hasMemoryTrigger || isLongEnough;
 }
 
+
+export const validateMemoryLLM = async (text) => {
+    console.log('is memory valid LLM called');
+    const prompt = `
+    You are Jarvis, a highly intelligent assistant managing long-term memory.
+
+The user just said: 
+"${text}"
+
+Your task is to decide if this message contains **useful long-term memory information** that will help you personalize future conversations with the user.
+
+ You should store the message ONLY IF it contains:
+- personal facts (e.g., "my name is...", "I live in...", "I want to...")
+- preferences (e.g., "I like...", "I enjoy...", "I prefer...")
+- goals or plans (e.g., "I want to become a...", "I plan to...")
+- opinions (e.g., "I believe that...", "I hate...")
+- past actions or achievements (e.g., "I built...", "I studied...")
+
+ Do NOT store if the message is:
+- a general question or help request (e.g., "what should I build next?", "suggest me a project")
+- vague or speculative (e.g., "maybe I should learn React")
+- small talk (e.g., "how are you?")
+- commands or task requests (e.g., "tell me a joke", "summarize this")
+
+ Respond with only one word:
+"YES" — if the message should be stored for future memory.
+"NO" — if it should be ignored.
+
+Be strict. Do not guess. Only say YES if you're absolutely sure.`;
+
+    const res = await ai.models.generateContent({
+        model: "gemini-2.0-flash-lite",
+        contents: prompt,
+        generationConfig: { temperature: 0.2 },
+    });
+
+    console.log(res.text?.trim().toUpperCase() === "YES");
+
+    return res.text?.trim().toUpperCase() === "YES";
+};

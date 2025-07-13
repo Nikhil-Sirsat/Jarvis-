@@ -5,11 +5,12 @@ import User from '../models/User.js';
 import ai from '../config/ai.js';
 import ExpressError from '../Utils/ExpressError.js';
 import { getCachedChatHistory, cacheChatMessage, cacheChatHistoryBulk } from '../Utils/redisHelper.js';
-import { searchMemory, storeMemory, shouldStoreMemory } from '../memory/memoryUtils.js';
+import { searchMemory, shouldStoreMemory } from '../memory/memoryUtils.js';
+import { pushToMemoryQueue } from '../memory/memoryQueue.js';
 
 export const askQuestion = async (req, res) => {
     const { message, conversationId } = req.body;
-    const userId = req.user._id;
+    const userId = req.user._id.toString();
 
     const currUser = await User.findById(userId).select('name').lean();
     const userName = currUser.name;
@@ -50,7 +51,7 @@ export const askQuestion = async (req, res) => {
     }
 
     //  Load Memory
-    const relevantMemories = await searchMemory(userId.toString(), message, 5);
+    const relevantMemories = await searchMemory(userId, message, 5);
 
     // Build Prompt
     const promptParts = [
@@ -101,7 +102,7 @@ Keep your tone helpful and professional and present the information clearly.
 
     // Save to Memory if relevant
     if (shouldStoreMemory(message)) {
-        await storeMemory(userId.toString(), message);
+        await pushToMemoryQueue({ userId, message });
     }
 
     return res.status(200).json({ reply: aiReply, conversationId: convId });
