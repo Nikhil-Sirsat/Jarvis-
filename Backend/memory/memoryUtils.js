@@ -66,35 +66,38 @@ export async function storeMemory(userId, text) {
 
 // Search memory
 export async function searchMemory(userId, query, topK = 5) {
+    let lastError;
+    for (let attempt = 1; attempt <= 3; attempt++) {
+        try {
+            const vector = await getEmbedding(query);
 
-    try {
-        const vector = await getEmbedding(query);
+            if (!vector || vector.length !== 384) {
+                throw new ExpressError("Invalid embedding vector received for query.");
+            }
 
-        if (!vector || vector.length !== 384) {
-            throw new ExpressError("Invalid embedding vector received for query.");
+            const result = await client.search(COLLECTION_NAME, {
+                vector,
+                limit: topK,
+                filter: {
+                    must: [
+                        {
+                            key: 'userId',
+                            match: { value: userId },
+                        },
+                    ],
+                },
+            });
+
+            console.log("fetched memory : ", result.map(item => item.payload.text));
+            return result.map(item => item.payload.text);
+        } catch (error) {
+            lastError = error;
+            console.warn(`Qdrant search attempt ${attempt} failed:`, error.message || error);
+            // Wait a bit before retrying
+            await new Promise(res => setTimeout(res, 300 * attempt));
         }
-
-        const result = await client.search(COLLECTION_NAME, {
-            vector,
-            limit: topK,
-            filter: {
-                must: [
-                    {
-                        key: 'userId',
-                        match: { value: userId },
-                    },
-                ],
-            },
-        });
-
-        console.log("fetched memory : ", result.map(item => item.payload.text));
-
-        return result.map(item => item.payload.text);
-    } catch (error) {
-        throw new ExpressError("Error in Searching Qdrant ");
-
     }
-
+    throw new ExpressError("Error in Searching Qdrant: " + (lastError?.message || lastError));
 }
 
 // check weather to store in memory or not
