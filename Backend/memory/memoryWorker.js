@@ -20,13 +20,13 @@ const memoryWorker = new Worker(
     async job => {
         const { userId, message } = job.data;
 
-        console.log('memory worker is working');
+        const canonicalMemory = await validateMemoryLLM(message);
 
-        const isValid = await validateMemoryLLM(message);
-        console.log('isStored : ', isValid);
-        if (!isValid) return;
+        console.log('isStored : ', canonicalMemory);
 
-        await storeMemory(userId, message);
+        if (!canonicalMemory) return;
+
+        await storeMemory(userId, canonicalMemory);
 
 
     },

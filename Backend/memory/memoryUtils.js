@@ -133,11 +133,17 @@ Your task is to decide if this message contains **useful long-term memory inform
 - small talk (e.g., "how are you?")
 - commands or task requests (e.g., "tell me a joke", "summarize this")
 
- Respond with only one word:
-"YES" — if the message should be stored for future memory.
-"NO" — if it should be ignored.
+Be strict. Do not guess.
 
-Be strict. Do not guess. Only say YES if you're absolutely sure.`;
+If YES:
+→ Convert it into a third-person factual format like:
+  - "User has a goal to become a software engineer."
+  - "User prefers working at night."
+  - "User has already built an app called LinkSpace."
+  and return exactly only the converted message and no extra text.
+
+If NO:
+→ Reply exactly with "NO".`;
 
     const res = await ai.models.generateContent({
         model: "gemini-2.0-flash-lite",
@@ -145,7 +151,9 @@ Be strict. Do not guess. Only say YES if you're absolutely sure.`;
         generationConfig: { temperature: 0.2 },
     });
 
-    console.log(res.text?.trim().toUpperCase() === "YES");
+    const data = res.text?.trim();
 
-    return res.text?.trim().toUpperCase() === "YES";
+    if (!data || data.toUpperCase() === "NO") return null;
+
+    return data;
 };
