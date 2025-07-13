@@ -33,7 +33,7 @@ export const cacheChatMessage = async (conversationId, sender, message) => {
 
     try {
         await redis.rpush(key, entry);       // This is now a valid JSON string
-        await redis.expire(key, 1800);       // 30 min TTL
+        await redis.expire(key, 900);       // 30 min TTL
         console.log(" Cached message to Redis");
     } catch (err) {
         console.error(" cacheChatMessage Redis error:", err);
@@ -51,7 +51,7 @@ export const cacheChatHistoryBulk = async (conversationId, messages) => {
                 key,
                 ...messages.map(m => JSON.stringify(m))
             );
-            await redis.expire(key, 1800); // Set TTL to 30 minutes
+            await redis.expire(key, 900); // Set TTL to 30 minutes
         }
     } catch (err) {
         console.error(' cacheChatHistoryBulk error:', err);

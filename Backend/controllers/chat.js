@@ -38,7 +38,8 @@ export const askQuestion = async (req, res) => {
         // If Redis empty → fetch from DB and cache
         if (historyMessages.length === 0) {
             const dbMessages = await ChatMessage.find({ conversationId: convId })
-                .sort({ createdAt: 1 })
+                .sort({ createdAt: -1 })
+                .limit(10)
                 .select("sender message");
             historyMessages = dbMessages.map(m => ({ sender: m.sender, message: m.message }));
             await cacheChatHistoryBulk(convId.toString(), historyMessages);
