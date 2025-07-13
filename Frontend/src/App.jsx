@@ -11,6 +11,7 @@ import NewChat from './Pages/NewChat.jsx';
 import ViewConv from './Pages/ViewConv.jsx';
 import LostPage from './Pages/Lost.jsx';
 import Favourite from './Pages/Favourite.jsx';
+import Settings from './Pages/Settings.jsx';
 
 // import components
 import Intro from './Components/Intro.jsx';
@@ -36,6 +37,7 @@ export default function App() {
               <Route index element={<Intro />} />
               <Route path="new-chat" element={<NewChat />} />
               <Route path="Favourites" element={<Favourite />} />
+               <Route path="settings" element={<Settings />} />
               <Route path=":convId" element={<ViewConv />} />
             </Route>
           </Route>

@@ -283,6 +283,9 @@ export default function Chat() {
                 <MenuItem>
                     <LogoutButton />
                 </MenuItem>
+                <MenuItem component={Link} to={'/chat/settings'}>
+                    Settings
+                </MenuItem>
             </Menu>
             <Main open={open} sx={{ height: '85vh', width: 'auto' }}>
                 <Outlet context={{ reFreshFetchConvHist }} />
