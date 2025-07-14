@@ -179,3 +179,31 @@ export const getAllVectorMemory = async (userId) => {
         throw new ExpressError("Error fetching all vector memory");
     }
 };
+
+export const getMemoryById = async (memoryId) => {
+    try {
+        const result = await client.retrieve(COLLECTION_NAME, {
+            ids: [memoryId],
+        });
+        if (result && result.length > 0) {
+            // console.log('Fetched memory by ID:', result[0]);
+            return result[0];
+        }
+        return null;
+    } catch (error) {
+        console.error("Error fetching memory by ID:", error);
+        throw new ExpressError("Error fetching memory by ID");
+    }
+};
+
+export const deleteMemoryById = async (memoryId) => {
+    try {
+        await client.delete(COLLECTION_NAME, {
+            points: [memoryId],
+        });
+        return true;
+    } catch (error) {
+        console.error("Error deleting memory by ID:", error);
+        throw new ExpressError("Error deleting memory by ID");
+    }
+};

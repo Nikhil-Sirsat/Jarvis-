@@ -1,6 +1,6 @@
 import User from '../models/User.js';
 import ExpressError from '../Utils/ExpressError.js';
-import { getAllVectorMemory } from '../memory/memoryUtils.js';
+import { getAllVectorMemory, getMemoryById, deleteMemoryById } from '../memory/memoryUtils.js';
 import { client } from '../memory/vectorClient.js';
 
 export const signUp = async (req, res) => {
@@ -37,5 +37,26 @@ export const getMemory = async (req, res) => {
         return res.status(200).json({ memory: memory });
     } catch (error) {
         throw new ExpressError(500, 'Error fetching memory: ' + (error.message || error));
+    }
+}
+
+export const deleteOneMemory = async (req, res) => {
+    const memoryId = req.params.id.toString();
+    const userId = req.user._id.toString();
+
+    try {
+        const memory = await getMemoryById(memoryId);
+        if (!memory) {
+            return res.status(404).json({ message: 'Memory not found' });
+        }
+
+        if (memory.payload.userId !== userId) {
+            return res.status(403).json({ message: 'Unauthorized to delete this memory' });
+        }
+
+        await deleteMemoryById(memoryId);
+        return res.status(200).json({ message: 'Memory deleted successfully' });
+    } catch (error) {
+        throw new ExpressError(500, 'Error deleting memory: ' + (error.message || error));
     }
 }
