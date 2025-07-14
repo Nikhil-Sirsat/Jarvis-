@@ -157,3 +157,25 @@ If NO:
 
     return data;
 };
+
+export const getAllVectorMemory = async (userId) => {
+    try {
+        const result = await client.scroll(COLLECTION_NAME, {
+            filter: {
+                must: [
+                    {
+                        key: 'userId',
+                        match: { value: userId },
+                    },
+                ],
+            },
+            limit: 100, // or any reasonable number
+        });
+
+        console.log("all vec memo : ", result.points.map(item => item.payload.text));
+        return result.points;
+    } catch (error) {
+        console.error("Error fetching all vector memory:", error);
+        throw new ExpressError("Error fetching all vector memory");
+    }
+};

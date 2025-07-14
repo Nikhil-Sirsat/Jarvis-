@@ -1,5 +1,7 @@
 import User from '../models/User.js';
 import ExpressError from '../Utils/ExpressError.js';
+import { getAllVectorMemory } from '../memory/memoryUtils.js';
+import { client } from '../memory/vectorClient.js';
 
 export const signUp = async (req, res) => {
     let { name, email, age, password } = req.body;
@@ -24,4 +26,16 @@ export const logout = (req, res) => {
 
 export const protectedRoute = (req, res) => {
     return res.status(200).json({ user: req.user, message: 'This is a protected route' });
+}
+
+export const getMemory = async (req, res) => {
+    const userId = req.user._id.toString();
+
+    try {
+        const memory = await getAllVectorMemory(userId);
+
+        return res.status(200).json({ memory: memory });
+    } catch (error) {
+        throw new ExpressError(500, 'Error fetching memory: ' + (error.message || error));
+    }
 }

@@ -28,7 +28,7 @@ function AuthProvider({ children }) {
         try {
             const response = await axiosInstance.post('/api/user/Login', { email, password });
             setUser(response.data.user);
-            console.log("User set in login");
+            console.log("User set in login : ", response.data.user);
             return true;
         } catch (err) {
             console.log("Error in login:", err);
