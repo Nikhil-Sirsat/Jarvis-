@@ -1,6 +1,6 @@
 
 import { useState, useEffect, useContext } from 'react';
-import { Outlet, Link } from 'react-router-dom';
+import { Outlet, Link, useNavigate } from 'react-router-dom';
 import { styled, useTheme } from '@mui/material/styles';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
@@ -11,7 +11,6 @@ import axiosInstance from '../AxiosInstance.jsx';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import EditDocumentIcon from '@mui/icons-material/EditDocument';
 import AccountCircleRoundedIcon from '@mui/icons-material/AccountCircleRounded';
-import { Brightness4, Brightness7 } from "@mui/icons-material";
 import { ThemeContext } from "../context/ThemeContext";
 import LogoutButton from '../Components/Logout.jsx';
 import { useSnackbar } from '../Context/SnackBarContext.jsx';
@@ -99,8 +98,9 @@ export default function Chat() {
     const [anchorEl, setAnchorEl] = useState(null);
     const [anchorE2, setAnchorE2] = useState(null);
     const [idToDel, setIdToDel] = useState(null);
-    const { mode, toggleTheme } = useContext(ThemeContext);
+    const { mode } = useContext(ThemeContext);
     const [fetchConv, setFetchConv] = useState(false);
+    const navigate = useNavigate();
 
     const showSnackbar = useSnackbar();
 
@@ -137,6 +137,12 @@ export default function Chat() {
             console.log('Error deleting conversation:', error);
             showSnackbar("Error deleting conversation", error.message);
         }
+    }
+
+    const handleSettingClick = () => {
+        handleAcClose();
+        localStorage.setItem('lastRouteBeforeSettings', window.location.pathname);
+        navigate('/chat/settings/theme');
     }
 
     // fetch conversation history
@@ -189,10 +195,6 @@ export default function Chat() {
                     </IconButton>
                     <IconButton onClick={handleAcClick}>
                         <AccountCircleRoundedIcon />
-                    </IconButton>
-
-                    <IconButton onClick={toggleTheme} color="inherit" sx={{ ml: 2 }}>
-                        {mode === "dark" ? <Brightness7 /> : <Brightness4 sx={{ color: 'black' }} />}
                     </IconButton>
 
                     <IconButton component={Link} to={'/chat/Favourites'}>
@@ -283,7 +285,7 @@ export default function Chat() {
                 <MenuItem>
                     <LogoutButton />
                 </MenuItem>
-                <MenuItem component={Link} to={'/chat/settings'}>
+                <MenuItem onClick={handleSettingClick}>
                     Settings
                 </MenuItem>
             </Menu>
