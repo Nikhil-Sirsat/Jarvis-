@@ -3,8 +3,6 @@ import { styled } from '@mui/material/styles';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
-import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
 import { ThemeContext } from '../Context/ThemeContext';
 
 const MaterialUISwitch = styled(Switch)(({ theme }) => ({
@@ -63,16 +61,18 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
     },
 }));
 
-
 export default function ThemeButton() {
     const { mode, toggleTheme } = useContext(ThemeContext);
 
     return (
-        <FormGroup>
-            <FormControlLabel onClick={toggleTheme}
-                control={<MaterialUISwitch sx={{ m: 1 }} defaultChecked />}
-                label={mode === 'dark' ? 'Light Mode' : 'Dark Mode'}
-            />
-        </FormGroup>
+        <>
+            <FormGroup sx={{ mt: 2 }}>
+                <FormControlLabel onClick={toggleTheme}
+                    control={<MaterialUISwitch sx={{ m: 1 }} defaultChecked />}
+                    label={mode === 'dark' ? 'Light Mode' : 'Dark Mode'}
+                />
+            </FormGroup>
+            <hr style={{ border: 'none', borderTop: '1px solid #eee', margin: '16px 0', width: '40vw' }} />
+        </>
     );
 }
