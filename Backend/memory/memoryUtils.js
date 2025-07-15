@@ -33,12 +33,31 @@ const memoryTriggers = [
 
 // Store memory
 export async function storeMemory(userId, text) {
-
     try {
         const vector = await getEmbedding(text);
 
         if (!vector || vector.length !== 384) {
             throw new ExpressError("Invalid embedding vector received for query.");
+        }
+
+        // 1. Check for similar memory for this user
+        const similar = await client.search(COLLECTION_NAME, {
+            vector,
+            limit: 3, // check top 3 similar
+            score_threshold: 0.75, // only consider very similar (adjust as needed)
+            filter: {
+                must: [
+                    {
+                        key: 'userId',
+                        match: { value: userId },
+                    },
+                ],
+            },
+        });
+
+        if (similar && similar.length > 0) {
+            console.log("Duplicate or highly similar memory detected, skipping store.");
+            return; // Prevent duplicate entry
         }
 
         const id = uuidv4();
@@ -61,7 +80,6 @@ export async function storeMemory(userId, text) {
     } catch (error) {
         throw new ExpressError("Error in Storing Qdrant");
     }
-
 }
 
 // Search memory
