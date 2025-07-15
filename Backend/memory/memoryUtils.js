@@ -40,11 +40,18 @@ export async function storeMemory(userId, text) {
             throw new ExpressError("Invalid embedding vector received for query.");
         }
 
-        // 1. Check for similar memory for this user
+        // 1. Check if User exceed the limit of storing memory which is (60)
+        const allMemory = await getAllVectorMemory(userId);
+        if (allMemory.length >= 60) {
+            console.log("Memory limit reached for user, skipping store.");
+            return; // Stop storing if limit reached
+        }
+
+        // 2. Check for similar memory for this user
         const similar = await client.search(COLLECTION_NAME, {
             vector,
             limit: 3, // check top 3 similar
-            score_threshold: 0.75, // only consider very similar (adjust as needed)
+            score_threshold: 0.7, // only consider very similar (adjust as needed)
             filter: {
                 must: [
                     {
