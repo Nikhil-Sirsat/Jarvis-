@@ -113,7 +113,7 @@ export async function searchMemory(userId, query, topK = 5) {
                 },
             });
 
-            console.log("fetched memory : ", result.map(item => item.payload.text));
+            // console.log("fetched memory : ", result.map(item => item.payload.text));
             return result.map(item => item.payload.text);
         } catch (error) {
             lastError = error;
@@ -197,7 +197,7 @@ export const getAllVectorMemory = async (userId) => {
             limit: 100, // or any reasonable number
         });
 
-        console.log("all vec memo : ", result.points.map(item => item.payload.text));
+        // console.log("all vec memo : ", result.points.map(item => item.payload.text));
         return result.points;
     } catch (error) {
         console.error("Error fetching all vector memory:", error);

@@ -106,7 +106,7 @@ Keep your tone helpful and professional and present the information clearly.
         await pushToMemoryQueue({ userId, message });
     }
 
-    return res.status(200).json({ reply: aiReply, conversationId: convId });
+    return res.status(200).json({ reply: aiReply, conversationId: convId, memoryUsed: relevantMemories });
 };
 
 export const getMessages = async (req, res) => {

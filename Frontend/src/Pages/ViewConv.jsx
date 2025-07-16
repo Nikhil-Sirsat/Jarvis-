@@ -111,6 +111,8 @@ export default function ViewConv() {
                 {
                     sender: "ai",
                     message: res.data.reply,
+                    memoryUsed: res.data.memoryUsed,
+
                 },
             ]);
             setTimeout(scrollToBottom, 100);
@@ -244,6 +246,16 @@ export default function ViewConv() {
                                 fontSize: '16px',
                                 p: 1
                             }}>
+
+                                {/* memory Used */}
+                                {msg.memoryUsed && msg.memoryUsed.length > 0 && (
+                                    <Typography variant="body2" sx={{ color: 'text.secondary', mb: 1 }}>
+                                        Memory Used: 
+                                        <br />
+                                        {msg.memoryUsed.map(m => ` ${m}`).join('\n')}
+                                    </Typography>
+                                )}
+
                                 <ReactMarkdown
                                     components={{
                                         h1: ({ node, ...props }) => (
