@@ -1,7 +1,6 @@
 import generateTitle from '../Utils/generateTitle.js';
 import ChatMessage from '../models/ChatMessage.js';
 import Conversation from '../models/Conversation.js';
-import User from '../models/User.js';
 import ai from '../config/ai.js';
 import ExpressError from '../Utils/ExpressError.js';
 import { getCachedChatHistory, cacheChatMessage, cacheChatHistoryBulk } from '../Utils/redisHelper.js';
@@ -11,9 +10,7 @@ import { pushToMemoryQueue } from '../memory/memoryQueue.js';
 export const askQuestion = async (req, res) => {
     const { message, conversationId } = req.body;
     const userId = req.user._id.toString();
-
-    const currUser = await User.findById(userId).select('name').lean();
-    const userName = currUser.name;
+    const userName = req.user.name;
 
     let convId = conversationId || null;
     let historyMessages = [];

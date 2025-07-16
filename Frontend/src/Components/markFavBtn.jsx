@@ -1,5 +1,5 @@
 import { IconButton } from "@mui/material";
-import StarIcon from '@mui/icons-material/Star';
+import StarOutlineOutlinedIcon from '@mui/icons-material/StarOutlineOutlined';
 import { useState } from "react";
 import { useSnackbar } from "../Context/SnackBarContext";
 import axiosInstance from "../AxiosInstance";
@@ -31,7 +31,7 @@ export default function MarkFavBtn({ msgId, isFav }) {
 
     return (
         <IconButton onClick={toggleFavourite}>
-            <StarIcon sx={{ color: isFavourite ? "#0ca37f" : "#ccc" }} />
+            <StarOutlineOutlinedIcon sx={{ color: isFavourite ? "#0ca37f" : "#ccc" }} />
         </IconButton>
     );
 }

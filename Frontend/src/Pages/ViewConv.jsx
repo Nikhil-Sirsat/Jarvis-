@@ -15,8 +15,9 @@ import ReactMarkdown from 'react-markdown';
 import { ThemeContext } from "../Context/ThemeContext.jsx";
 import GraphicEqRoundedIcon from '@mui/icons-material/GraphicEqRounded';
 import ReplyLoad from "../Components/ReplyLoad.jsx";
-import VolumeUpIcon from '@mui/icons-material/VolumeUp';
-import VolumeOffIcon from '@mui/icons-material/VolumeOff';
+import VolumeUpOutlinedIcon from '@mui/icons-material/VolumeUpOutlined';
+import VolumeOffOutlinedIcon from '@mui/icons-material/VolumeOffOutlined';
+import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined';
 import { useSnackbar } from '../Context/SnackBarContext';
 let SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 import MarkFavBtn from "../Components/markFavBtn.jsx";
@@ -200,6 +201,14 @@ export default function ViewConv() {
         recognition.start();
     };
 
+    // copy response
+    const handleCopy = (msg) => {
+        console.log('msg : ', msg);
+        navigator.clipboard.writeText(msg)
+            .then(() => console.log("Copied!"))
+            .catch(() => showSnackbar("Failed to copy"));
+    };
+
     if (convLoad) {
         return (
             <CircularProgress />
@@ -250,7 +259,7 @@ export default function ViewConv() {
                                 {/* memory Used */}
                                 {msg.memoryUsed && msg.memoryUsed.length > 0 && (
                                     <Typography variant="body2" sx={{ color: 'text.secondary', mb: 1 }}>
-                                        Memory Used: 
+                                        Memory Used:
                                         <br />
                                         {msg.memoryUsed.map(m => ` ${m}`).join('\n')}
                                     </Typography>
@@ -288,12 +297,12 @@ export default function ViewConv() {
                                     <br />
                                     {speakingMsgIndex === index ? (
                                         <IconButton onClick={stopAiVoiceRes}>
-                                            <VolumeOffIcon sx={{ color: "#0ca37f" }} />
+                                            <VolumeOffOutlinedIcon sx={{ color: "#0ca37f" }} />
                                         </IconButton>
 
                                     ) : (
                                         <IconButton onClick={() => aiVoiceRes(msg.message, index)}>
-                                            <VolumeUpIcon />
+                                            <VolumeUpOutlinedIcon />
                                         </IconButton>
                                     )}
 
@@ -301,6 +310,10 @@ export default function ViewConv() {
                                         msgId={msg._id}
                                         isFav={msg.isFavourite}
                                     />
+
+                                    <IconButton sx={{ ml: 1 }} onClick={() => handleCopy(msg.message)}>
+                                        <ContentCopyOutlinedIcon sx={{ fontSize: 20 }} />
+                                    </IconButton>
 
                                 </>
                             ) :
