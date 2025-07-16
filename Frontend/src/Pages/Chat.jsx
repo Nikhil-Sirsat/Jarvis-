@@ -238,11 +238,11 @@ export default function Chat() {
                             <i>no conversation yet</i>
                         </Typography>
                     ) : (
-                        <List>
+                        <List sx={{p: 1}}>
                             {conversations.map((conv, index) => (
 
                                 <ListItem key={index} disablePadding>
-                                    <ListItemButton >
+                                    <ListItemButton sx={{borderRadius: 3}} >
                                         <ListItemIcon
                                             aria-label="more"
                                             aria-controls={isOpen ? 'long-menu' : undefined}
@@ -252,7 +252,9 @@ export default function Chat() {
                                         >
                                             <MoreHorizIcon />
                                         </ListItemIcon>
-                                        <ListItemText component={Link} to={`/chat/${conv._id}`} primary={conv.title} sx={{ textDecoration: 'none', color: mode === 'dark' ? 'white' : 'black' }} />
+                                        <Typography type='body2' component={Link} to={`/chat/${conv._id}`} sx={{ textDecoration: 'none', color: mode === 'dark' ? 'white' : 'black', fontSize: '0.875rem' }}>
+                                            {conv.title}
+                                        </Typography>
                                     </ListItemButton>
                                 </ListItem>
                             ))}

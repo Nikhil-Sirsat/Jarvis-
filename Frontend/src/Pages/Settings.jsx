@@ -5,8 +5,6 @@ import { useNavigate, Outlet, Link } from 'react-router-dom';
 import Drawer from '@mui/material/Drawer';
 import Toolbar from '@mui/material/Toolbar';
 import List from '@mui/material/List';
-import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -14,7 +12,6 @@ import ListItemText from '@mui/material/ListItemText';
 import ContrastIcon from '@mui/icons-material/Contrast';
 import EditNoteRoundedIcon from '@mui/icons-material/EditNoteRounded';
 import MemoryRoundedIcon from '@mui/icons-material/MemoryRounded';
-import DocumentScannerRoundedIcon from '@mui/icons-material/DocumentScannerRounded';
 import AccountCircleRoundedIcon from '@mui/icons-material/AccountCircleRounded';
 
 const style = {
@@ -32,7 +29,6 @@ const style = {
 };
 
 const listItemStyl = {
-    backgroundColor: "black",
     borderRadius: "15px",
 }
 
@@ -78,11 +74,11 @@ export default function Settings() {
                             anchor="left"
                         >
                             <Toolbar />
-                            <List sx={{ color: "white" }}>
+                            <List>
                                 <ListItem>
                                     <ListItemButton sx={listItemStyl} component={Link} to="/chat/settings/theme">
                                         <ListItemIcon>
-                                            <ContrastIcon sx={{ color: "white" }} />
+                                            <ContrastIcon />
                                         </ListItemIcon>
                                         <ListItemText primary={"Theme"} />
                                     </ListItemButton>
@@ -91,7 +87,7 @@ export default function Settings() {
                                 <ListItem>
                                     <ListItemButton sx={listItemStyl} component={Link} to="/chat/settings/personalization">
                                         <ListItemIcon>
-                                            <EditNoteRoundedIcon sx={{ color: "white" }} />
+                                            <EditNoteRoundedIcon />
                                         </ListItemIcon>
                                         <ListItemText primary={"Personalization"} />
                                     </ListItemButton>
@@ -100,25 +96,16 @@ export default function Settings() {
                                 <ListItem>
                                     <ListItemButton sx={listItemStyl} component={Link} to="/chat/settings/memory">
                                         <ListItemIcon>
-                                            <MemoryRoundedIcon sx={{ color: "white" }} />
+                                            <MemoryRoundedIcon />
                                         </ListItemIcon>
                                         <ListItemText primary={"Memory"} />
                                     </ListItemButton>
                                 </ListItem>
 
                                 <ListItem>
-                                    <ListItemButton sx={listItemStyl} component={Link} to="/chat/settings/data-control">
-                                        <ListItemIcon>
-                                            <DocumentScannerRoundedIcon sx={{ color: "white" }} />
-                                        </ListItemIcon>
-                                        <ListItemText primary={"Data Control"} />
-                                    </ListItemButton>
-                                </ListItem>
-
-                                <ListItem>
                                     <ListItemButton sx={listItemStyl} component={Link} to="/chat/settings/account">
                                         <ListItemIcon>
-                                            <AccountCircleRoundedIcon sx={{ color: "white" }} />
+                                            <AccountCircleRoundedIcon />
                                         </ListItemIcon>
                                         <ListItemText primary={"Account"} />
                                     </ListItemButton>

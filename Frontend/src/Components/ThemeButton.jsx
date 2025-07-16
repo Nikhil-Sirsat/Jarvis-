@@ -65,14 +65,11 @@ export default function ThemeButton() {
     const { mode, toggleTheme } = useContext(ThemeContext);
 
     return (
-        <>
-            <FormGroup sx={{ mt: 2 }}>
-                <FormControlLabel onClick={toggleTheme}
-                    control={<MaterialUISwitch sx={{ m: 1 }} defaultChecked />}
-                    label={mode === 'dark' ? 'Light Mode' : 'Dark Mode'}
-                />
-            </FormGroup>
-            <hr style={{ border: 'none', borderTop: '1px solid #eee', margin: '16px 0', width: '40vw' }} />
-        </>
+        <FormGroup sx={{ mt: 2 }}>
+            <FormControlLabel onClick={toggleTheme}
+                control={<MaterialUISwitch sx={{ m: 1 }} defaultChecked />}
+                label={mode === 'dark' ? 'Light Mode' : 'Dark Mode'}
+            />
+        </FormGroup>
     );
 }
