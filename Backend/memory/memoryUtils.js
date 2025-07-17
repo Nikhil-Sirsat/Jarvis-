@@ -236,7 +236,7 @@ export async function getMemoryByUserIdWithinDays(userId, days = 7) {
     try {
         const sinceTimestamp = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
 
-        console.log("Fetching memories for user:", userId, "since:", sinceTimestamp);
+        // console.log("Fetching memories for user:", userId, "since:", sinceTimestamp);
 
         const searchResult = await client.scroll(COLLECTION_NAME, {
             filter: {
@@ -249,7 +249,7 @@ export async function getMemoryByUserIdWithinDays(userId, days = 7) {
             with_payload: true,
         });
 
-        console.log("Fetched memory within days:", searchResult.points.map(item => item.payload.text));
+        // console.log("Fetched memory within days:", searchResult.points.map(item => item.payload.text));
 
         return searchResult.points || [];
     } catch (error) {
@@ -262,7 +262,7 @@ export async function callLLMForReflection(memoryTexts) {
 
     try {
 
-        console.log("Calling LLM for reflection with memories:", memoryTexts);
+        // console.log("Calling LLM for reflection with memories:", memoryTexts);
 
         const prompt = `
 You are JARVIS, an intelligent assistant.
@@ -288,9 +288,14 @@ Output in JSON format like:
             generationConfig: { temperature: 0.3 },
         });
 
-        const data = res.text?.trim();
+        let data = res.text?.trim();
 
-        console.log("Reflection LLM response:", JSON.parse(data));
+        // Remove Markdown code block if present
+        if (data.startsWith("```")) {
+            data = data.replace(/^```[a-zA-Z]*\n?/, '').replace(/```$/, '').trim();
+        }
+
+        // console.log("Reflection LLM response:", data);
 
         return JSON.parse(data); // Gemini returns raw JSON text
     } catch (error) {
