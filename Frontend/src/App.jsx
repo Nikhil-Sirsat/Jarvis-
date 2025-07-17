@@ -12,6 +12,7 @@ import ViewConv from './Pages/ViewConv.jsx';
 import LostPage from './Pages/Lost.jsx';
 import Favourite from './Pages/Favourite.jsx';
 import Settings from './Pages/Settings.jsx';
+import Reflection from './Pages/Reflection.jsx';
 
 // import components
 import Intro from './Components/Intro.jsx';
@@ -42,6 +43,7 @@ export default function App() {
               <Route index element={<Intro />} />
               <Route path="new-chat" element={<NewChat />} />
               <Route path="Favourites" element={<Favourite />} />
+              <Route path="reflection" element={<Reflection />} />
               <Route path="settings" element={<Settings />}>
                 <Route path="theme" element={<ThemeButton />} />
                 <Route path="personalization" element={<Personalization />} />

@@ -15,6 +15,7 @@ import { ThemeContext } from "../context/ThemeContext";
 import LogoutButton from '../Components/Logout.jsx';
 import { useSnackbar } from '../Context/SnackBarContext.jsx';
 import logo from '../assets/jarvisLogo.png';
+import BubbleChartIcon from '@mui/icons-material/BubbleChart';
 
 import {
     Box,
@@ -201,6 +202,10 @@ export default function Chat() {
                         <StarIcon />
                     </IconButton>
 
+                    <IconButton component={Link} to={'/chat/reflection'}>
+                        <BubbleChartIcon />
+                    </IconButton>
+
                     <IconButton sx={{ right: 20, position: 'absolute' }}>
                         <Avatar
                             src={logo}
@@ -238,11 +243,11 @@ export default function Chat() {
                             <i>no conversation yet</i>
                         </Typography>
                     ) : (
-                        <List sx={{p: 1}}>
+                        <List sx={{ p: 1 }}>
                             {conversations.map((conv, index) => (
 
                                 <ListItem key={index} disablePadding>
-                                    <ListItemButton sx={{borderRadius: 3}} >
+                                    <ListItemButton sx={{ borderRadius: 3 }} >
                                         <ListItemIcon
                                             aria-label="more"
                                             aria-controls={isOpen ? 'long-menu' : undefined}

@@ -78,7 +78,7 @@ export default function Settings() {
                                 <ListItem>
                                     <ListItemButton sx={listItemStyl} component={Link} to="/chat/settings/theme">
                                         <ListItemIcon>
-                                            <ContrastIcon />
+                                            <ContrastIcon sx={{ color: '#0ca37f' }} />
                                         </ListItemIcon>
                                         <ListItemText primary={"Theme"} />
                                     </ListItemButton>
@@ -87,7 +87,7 @@ export default function Settings() {
                                 <ListItem>
                                     <ListItemButton sx={listItemStyl} component={Link} to="/chat/settings/personalization">
                                         <ListItemIcon>
-                                            <EditNoteRoundedIcon />
+                                            <EditNoteRoundedIcon sx={{ color: '#0ca37f' }} />
                                         </ListItemIcon>
                                         <ListItemText primary={"Personalization"} />
                                     </ListItemButton>
@@ -96,7 +96,7 @@ export default function Settings() {
                                 <ListItem>
                                     <ListItemButton sx={listItemStyl} component={Link} to="/chat/settings/memory">
                                         <ListItemIcon>
-                                            <MemoryRoundedIcon />
+                                            <MemoryRoundedIcon sx={{ color: '#0ca37f' }} />
                                         </ListItemIcon>
                                         <ListItemText primary={"Memory"} />
                                     </ListItemButton>
@@ -105,7 +105,7 @@ export default function Settings() {
                                 <ListItem>
                                     <ListItemButton sx={listItemStyl} component={Link} to="/chat/settings/account">
                                         <ListItemIcon>
-                                            <AccountCircleRoundedIcon />
+                                            <AccountCircleRoundedIcon sx={{ color: '#0ca37f' }} />
                                         </ListItemIcon>
                                         <ListItemText primary={"Account"} />
                                     </ListItemButton>
