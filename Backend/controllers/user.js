@@ -27,6 +27,19 @@ export const protectedRoute = (req, res) => {
     return res.status(200).json({ user: req.user, message: 'This is a protected route' });
 }
 
+export const setPersona = async (req, res) => {
+    const userId = req.user._id;
+    const { nickname, userRole, traits, extraNotes } = req.body;
+
+    await User.findByIdAndUpdate(userId, {
+        persona: { nickname, userRole, traits, extraNotes }
+    });
+
+    res.status(200).json({ message: "Persona updated successfully" });
+}
+
+
+//memory controllers
 export const getMemory = async (req, res) => {
     const userId = req.user._id.toString();
 

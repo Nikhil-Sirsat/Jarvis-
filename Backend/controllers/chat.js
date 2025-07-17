@@ -10,7 +10,7 @@ import { pushToMemoryQueue } from '../memory/memoryQueue.js';
 export const askQuestion = async (req, res) => {
     const { message, conversationId } = req.body;
     const userId = req.user._id.toString();
-    const userName = req.user.name;
+    const { nickname, userRole, traits, extraNotes } = req.user.persona || {};
 
     let convId = conversationId || null;
     let historyMessages = [];
@@ -51,12 +51,20 @@ export const askQuestion = async (req, res) => {
     //  Load Memory
     const relevantMemories = await searchMemory(userId, message, 5);
 
+    // personality prefix
+    const personaPrefix = `
+You are speaking to ${nickname || 'the user'}.
+They are: ${userRole || 'a valued user'}.
+Be ${traits?.join(', ') || 'friendly'}.
+Notes: ${extraNotes || 'No extra instructions.'}
+`;
+
     // Build Prompt
     const promptParts = [
         {
             text: `
-You are Jarvis, a highly intelligent, self-improving AI assistant built by Nikhil Sirsat and you are currently talking to ${userName}.
-Your primary goal is to help the ${userName} as clearly, efficiently, and accurately as possible.
+You are Jarvis, a highly intelligent, self-improving AI assistant built by Nikhil Sirsat.
+Your primary goal is to help the ${nickname || 'user'} as clearly, efficiently, and accurately as possible.
 
 Before generating your answer:
 1. Decide whether the user's question is SIMPLE (factual, direct, definitional) or COMPLEX (needs reasoning, breakdown, or multiple steps).
@@ -67,14 +75,19 @@ Before generating your answer:
 Keep your tone helpful and professional and present the information clearly.
 `,
         },
+
+        {
+            text: personaPrefix,
+        },
+
         ...(relevantMemories.length > 0
-            ? [{ text: `Here are some important memories about ${userName}: \n${relevantMemories.map(m => `- ${m}`).join('\n')}` }]
+            ? [{ text: `some important memories about ${nickname || 'user'}: \n${relevantMemories.map(m => `- ${m}`).join('\n')}` }]
             : []),
         ...historyMessages.map((msg) => ({
             text: `${msg.sender === "user" ? "user" : "ai"}: ${msg.message}`,
         })),
         {
-            text: ` Now, here is the ${userName}'s next question : User: ${message}`,
+            text: `next question : ${nickname || 'User'}: ${message}`,
         },
     ];
 
