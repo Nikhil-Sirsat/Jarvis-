@@ -30,7 +30,6 @@ const memoryTriggers = [
     'live',
 ];
 
-
 // Store memory
 export async function storeMemory(userId, text) {
     try {
@@ -77,7 +76,7 @@ export async function storeMemory(userId, text) {
                     payload: {
                         userId,
                         text,
-                        timestamp: Date.now(),
+                        timestamp: new Date().toISOString()
                     },
                 },
             ],
@@ -133,7 +132,6 @@ export function shouldStoreMemory(text) {
 
     return hasMemoryTrigger || isLongEnough;
 }
-
 
 export const validateMemoryLLM = async (text) => {
     console.log('is memory valid LLM called');
@@ -232,3 +230,73 @@ export const deleteMemoryById = async (memoryId) => {
         throw new ExpressError("Error deleting memory by ID");
     }
 };
+
+export async function getMemoryByUserIdWithinDays(userId, days = 7) {
+
+    try {
+        const sinceTimestamp = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
+
+        console.log("Fetching memories for user:", userId, "since:", sinceTimestamp);
+
+        const searchResult = await client.scroll(COLLECTION_NAME, {
+            filter: {
+                must: [
+                    { key: 'userId', match: { value: userId } },
+                    { key: 'timestamp', range: { gte: sinceTimestamp } }
+                ]
+            },
+            limit: 100,
+            with_payload: true,
+        });
+
+        console.log("Fetched memory within days:", searchResult.points.map(item => item.payload.text));
+
+        return searchResult.points || [];
+    } catch (error) {
+        console.error("Error fetching memories:", error);
+        throw new ExpressError("Error fetching memories");
+    }
+};
+
+export async function callLLMForReflection(memoryTexts) {
+
+    try {
+
+        console.log("Calling LLM for reflection with memories:", memoryTexts);
+
+        const prompt = `
+You are JARVIS, an intelligent assistant.
+The user has shared the following thoughts/memories over the past week:
+
+${memoryTexts.map((text, i) => `${i + 1}. "${text}"`).join('\n')}
+
+Based on this:
+1. Give a short 4-5 sentence summary of what the user has been focused on.
+2. Identify 2-3 key themes from their thoughts.
+3. Suggest 3-4 helpful AI-generated suggestions to help them next week.
+Output in JSON format like:
+{
+  "summary": "...",
+  "themes": ["Theme1", "Theme2"],
+  "suggestions": ["Suggestion1", "Suggestion2"]
+}
+`;
+
+        const res = await ai.models.generateContent({
+            model: "gemini-2.0-flash-lite",
+            contents: prompt,
+            generationConfig: { temperature: 0.3 },
+        });
+
+        const data = res.text?.trim();
+
+        console.log("Reflection LLM response:", JSON.parse(data));
+
+        return JSON.parse(data); // Gemini returns raw JSON text
+    } catch (error) {
+        console.error("Error calling LLM for reflection:", error);
+        throw new ExpressError("Error calling LLM for reflection");
+    }
+
+}
+
