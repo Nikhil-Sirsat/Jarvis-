@@ -120,6 +120,10 @@ export default function ViewConv() {
 
         } catch (err) {
             console.log("Message send error:", err);
+
+            //remove new message if error occurs
+            setMessages((prev) => prev.filter((msg) => msg.sender !== "user" || msg.message !== input));
+
             showSnackbar(err.response.data.message);
         } finally {
             setMsgLoading(false);
