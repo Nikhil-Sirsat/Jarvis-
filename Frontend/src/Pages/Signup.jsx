@@ -73,6 +73,7 @@ export default function Signup() {
                 justifyContent: 'center',
                 alignItems: 'center',
                 p: 2,
+                backgroundColor: '#000000ff',
             }}
         >
             <Box sx={{ width: '100%', maxWidth: 450 }}>
@@ -102,7 +103,11 @@ export default function Signup() {
                                 fullWidth
                                 required
                                 margin="normal"
-                                sx={{ '& .MuiInputLabel-root': { color: '#0ca37f' } }}
+                                sx={{
+                                    '& .MuiInputLabel-root': { color: '#0ca37f' },
+                                    '& .MuiOutlinedInput-root': { '& fieldset': { borderColor: '#0ca37f' } },
+                                    '& .MuiInputBase-input': { color: '#fff' }
+                                }}
                             />
                             <TextField
                                 label="Email"
@@ -113,7 +118,11 @@ export default function Signup() {
                                 fullWidth
                                 required
                                 margin="normal"
-                                sx={{ '& .MuiInputLabel-root': { color: '#0ca37f' } }}
+                                sx={{
+                                    '& .MuiInputLabel-root': { color: '#0ca37f' },
+                                    '& .MuiOutlinedInput-root': { '& fieldset': { borderColor: '#0ca37f' } },
+                                    '& .MuiInputBase-input': { color: '#fff' }
+                                }}
                             />
                             <TextField
                                 label="Age"
@@ -124,7 +133,11 @@ export default function Signup() {
                                 fullWidth
                                 required
                                 margin="normal"
-                                sx={{ '& .MuiInputLabel-root': { color: '#0ca37f' } }}
+                                sx={{
+                                    '& .MuiInputLabel-root': { color: '#0ca37f' },
+                                    '& .MuiOutlinedInput-root': { '& fieldset': { borderColor: '#0ca37f' } },
+                                    '& .MuiInputBase-input': { color: '#fff' }
+                                }}
                             />
 
                             <FormControl fullWidth variant="outlined">
@@ -142,7 +155,11 @@ export default function Signup() {
                                     value={formData.password}
                                     onChange={handleChange}
                                     required
-                                    sx={{ color: '#fff' }}
+                                    sx={{
+                                        '& .MuiInputLabel-root': { color: '#0ca37f' },
+                                        '& .MuiOutlinedInput-root': { '& fieldset': { borderColor: '#0ca37f' } },
+                                        '& .MuiInputBase-input': { color: '#fff' }
+                                    }}
                                 />
                             </FormControl>
                             <Button

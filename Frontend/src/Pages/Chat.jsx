@@ -16,6 +16,9 @@ import LogoutButton from '../Components/Logout.jsx';
 import { useSnackbar } from '../Context/SnackBarContext.jsx';
 import logo from '../assets/jarvisLogo.png';
 import BubbleChartIcon from '@mui/icons-material/BubbleChart';
+import InfoIcon from "@mui/icons-material/Info";
+import SettingsIcon from "@mui/icons-material/Settings";
+import LogoutIcon from "@mui/icons-material/Logout";
 
 import {
     Box,
@@ -31,7 +34,8 @@ import {
     ListItemText,
     Avatar,
     Menu,
-    MenuItem
+    MenuItem,
+    Divider
 } from '@mui/material';
 
 const drawerWidth = 260;
@@ -198,21 +202,16 @@ export default function Chat() {
                         <AccountCircleRoundedIcon />
                     </IconButton>
 
-                    <IconButton component={Link} to={'/chat/Favourites'}>
-                        <StarIcon />
-                    </IconButton>
-
                     <IconButton component={Link} to={'/chat/reflection'}>
                         <BubbleChartIcon />
                     </IconButton>
 
-                    <IconButton sx={{ right: 20, position: 'absolute' }}>
-                        <Avatar
-                            src={logo}
-                            alt="Jarvis Logo"
-                            sx={{ width: 35, height: 35, p: 0.5, backgroundColor: 'black' }}
-                        />
-                    </IconButton>
+                    <Avatar
+                        src={logo}
+                        alt="Jarvis Logo"
+                        sx={{ width: 35, height: 35, p: 0.5, backgroundColor: 'black', right: 20, position: 'absolute' }}
+                    />
+
                 </Toolbar>
             </AppBar>
             <Drawer
@@ -281,21 +280,57 @@ export default function Chat() {
 
             {/* account menu */}
             <Menu
-                id="long-menu"
+                id="custom-menu"
                 anchorEl={anchorE2}
                 open={acOpen}
                 onClose={handleAcClose}
+                PaperProps={{
+                    sx: {
+                        minWidth: 180,
+                        borderRadius: 2,
+                        backgroundColor: '#121212',
+                        color: 'white',
+                        boxShadow: '0 4px 20px rgba(0,0,0,0.3)',
+                        '& .MuiMenuItem-root': {
+                            transition: 'all 0.2s',
+                            '&:hover': {
+                                backgroundColor: '#0ca37f22',
+                            }
+                        },
+                    },
+                }}
             >
-                <MenuItem component={Link} to={'/About'}>
-                    About
+                <MenuItem component={Link} to="/About" onClick={handleAcClose}>
+                    <ListItemIcon>
+                        <InfoIcon fontSize="small" sx={{ color: '#0ca37f' }} />
+                    </ListItemIcon>
+                    <ListItemText primary="About" />
                 </MenuItem>
+
+                <MenuItem component={Link} to="/chat/Favourites" onClick={handleAcClose}>
+                    <ListItemIcon>
+                        <StarIcon fontSize="small" sx={{ color: '#0ca37f' }} />
+                    </ListItemIcon>
+                    <ListItemText primary="Archives" />
+                </MenuItem>
+
+                <MenuItem onClick={() => { handleAcClose(); handleSettingClick(); }}>
+                    <ListItemIcon>
+                        <SettingsIcon fontSize="small" sx={{ color: '#0ca37f' }} />
+                    </ListItemIcon>
+                    <ListItemText primary="Settings" />
+                </MenuItem>
+
+                <Divider sx={{ my: 0.5, borderColor: '#333' }} />
+
                 <MenuItem>
+                    <ListItemIcon>
+                        <LogoutIcon fontSize="small" sx={{ color: '#0ca37f' }} />
+                    </ListItemIcon>
                     <LogoutButton />
                 </MenuItem>
-                <MenuItem onClick={handleSettingClick}>
-                    Settings
-                </MenuItem>
             </Menu>
+
             <Main open={open} sx={{ height: '85vh', width: 'auto' }}>
                 <Outlet context={{ reFreshFetchConvHist }} />
             </Main>

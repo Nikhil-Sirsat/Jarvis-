@@ -45,6 +45,14 @@ export default function Personalization() {
                 ...form,
                 traits: traitsArray
             });
+
+            // Update the user context or state if necessary
+            user.persona = {
+                ...user.persona,
+                ...form,
+                traits: traitsArray
+            };
+
             showSnackbar('Persona updated successfully!', 'success');
         } catch (err) {
             showSnackbar('Failed to update persona.', 'error');

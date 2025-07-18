@@ -23,8 +23,9 @@ export default function ReplyLoad() {
                 height: 15,
                 borderRadius: '50%',
                 backgroundColor: mode === 'light' ? '#000000ff' : '#ffffffff',
-                mt: 15,
-                mb: 10,
+                mt: 5,
+                mb: 5,
+                ml: 1,
                 animation: `${pulse} 1.2s ease-in-out infinite`,
             }}
         />

@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useContext } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import {
     Box,
@@ -13,6 +13,8 @@ import PendingIcon from '@mui/icons-material/Pending';
 import GraphicEqRoundedIcon from '@mui/icons-material/GraphicEqRounded';
 let SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 import { useSnackbar } from '../Context/SnackBarContext';
+import ReplyLoad from '../Components/ReplyLoad.jsx';
+import {ThemeContext} from '../Context/ThemeContext.jsx';
 
 
 export default function NewChat() {
@@ -24,6 +26,7 @@ export default function NewChat() {
     const navigate = useNavigate();
     let recognition = null;
     const showSnackbar = useSnackbar();
+    const { mode } = useContext(ThemeContext);  
 
     const handleSend = async () => {
         console.log('send message called');
@@ -113,6 +116,11 @@ export default function NewChat() {
                     borderRadius: 11,
                 }}
             >
+
+                {/* Show loading animation for listening */}
+                {mikeActive && <ReplyLoad />}
+
+
                 <TextField
                     fullWidth
                     variant="outlined"
@@ -120,6 +128,10 @@ export default function NewChat() {
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     sx={{
+                        // placeholder color
+                        '& .MuiInputBase-input': {
+                            color: recognition || mikeActive ? '#0ca37f' : mode === 'light' ? '#000000' : '#ffffff',
+                        },
                         '& .MuiOutlinedInput-root': {
                             '& fieldset': {
                                 border: 'none',
@@ -142,7 +154,7 @@ export default function NewChat() {
                             <ArrowUpwardIcon />
                         </IconButton>
                     ) : (
-                        <IconButton sx={{ ml: 1, border: '3px solid rgb(255, 255, 255)', color: recognition || mikeActive ? "#0ca37f" : "white" }} onClick={startListening}>
+                        <IconButton sx={{ ml: 1, border: '3px solid rgb(255, 255, 255)', color: recognition || mikeActive ? "#0ca37f" : mode === 'light' ? '#000000' : '#ffffff' }} onClick={startListening}>
                             <GraphicEqRoundedIcon />
                         </IconButton>
                     )

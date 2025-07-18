@@ -223,6 +223,10 @@ export default function ViewConv() {
                         width: '100%',
                     }}
                 >
+
+                    {/* Show loading animation for listening */}
+                    {mikeActive && <ReplyLoad />}
+
                     <TextField
                         fullWidth
                         variant="outlined"
@@ -230,6 +234,9 @@ export default function ViewConv() {
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         sx={{
+                            '& .MuiInputBase-input': {
+                                color: recognition || mikeActive ? '#0ca37f' : mode === 'light' ? '#000000' : '#ffffff',
+                            },
                             '& .MuiOutlinedInput-root': {
                                 '& fieldset': {
                                     border: 'none',

@@ -69,6 +69,8 @@ export default function Login() {
                 justifyContent: 'center',
                 alignItems: 'center',
                 p: 2,
+                backgroundColor: 'black',
+                minHeight: '100vh',
             }}
         >
             <Box sx={{ width: '100%', maxWidth: 400 }}>
@@ -124,7 +126,11 @@ export default function Login() {
                                 onChange={handleChange}
                                 margin="normal"
                                 required
-                                sx={{ '& .MuiInputLabel-root': { color: '#0ca37f' } }}
+                                sx={{
+                                    '& .MuiInputLabel-root': { color: '#0ca37f' },
+                                    '& .MuiOutlinedInput-root': { '& fieldset': { borderColor: '#0ca37f' } },
+                                    '& .MuiInputBase-input': { color: '#fff' }
+                                }}
                             />
                             <FormControl fullWidth variant="outlined">
                                 <InputLabel sx={{ color: '#0ca37f' }}>Password</InputLabel>
@@ -141,7 +147,11 @@ export default function Login() {
                                     value={formData.password}
                                     onChange={handleChange}
                                     required
-                                    sx={{ color: '#fff' }}
+                                    sx={{
+                                        '& .MuiInputLabel-root': { color: '#0ca37f' },
+                                        '& .MuiOutlinedInput-root': { '& fieldset': { borderColor: '#0ca37f' } },
+                                        '& .MuiInputBase-input': { color: '#fff' }
+                                    }}
                                 />
                             </FormControl>
                             <Button

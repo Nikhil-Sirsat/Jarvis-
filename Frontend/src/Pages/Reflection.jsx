@@ -49,8 +49,24 @@ export default function Reflection() {
 
     if (!reflection) return (
         <Box mt={5} textAlign="center">
-            <Button variant="contained" onClick={fetchReflection} sx={{ backgroundColor: '#0ca37f', color: '#fff', padding: '10px 20px', borderRadius: '8px' }}>
-                <strong>Refresh Reflection</strong>
+            <Button
+                variant="contained"
+                onClick={fetchReflection}
+                sx={{
+                    mt: 5,
+                    px: 5,
+                    py: 1.6,
+                    fontSize: '1rem',
+                    backgroundColor: '#0ca37f',
+                    borderRadius: '30px',
+                    textTransform: 'none',
+                    fontWeight: 600,
+                    '&:hover': {
+                        backgroundColor: '#089a72',
+                    },
+                }}
+            >
+                <strong>Generate Reflection</strong>
             </Button>
         </Box>
     );
@@ -124,8 +140,24 @@ export default function Reflection() {
                     </Box>
 
                     <Box mt={5} textAlign="center">
-                        <Button variant="contained" onClick={fetchReflection} sx={{ backgroundColor: '#0ca37f', color: '#fff', padding: '10px 20px', borderRadius: '8px' }}>
-                            <strong>Refresh Reflection</strong>
+                        <Button
+                            variant="contained"
+                            onClick={fetchReflection}
+                            sx={{
+                                mt: 5,
+                                px: 5,
+                                py: 1.6,
+                                fontSize: '1rem',
+                                backgroundColor: '#0ca37f',
+                                borderRadius: '30px',
+                                textTransform: 'none',
+                                fontWeight: 600,
+                                '&:hover': {
+                                    backgroundColor: '#089a72',
+                                },
+                            }}
+                        >
+                            <strong>Generate again</strong>
                         </Button>
                     </Box>
                 </CardContent>

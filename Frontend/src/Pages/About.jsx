@@ -67,11 +67,14 @@ const About = () => {
 
             <Section title="Key Features" icon={<AcUnit sx={{ color: '#0ca37f' }} />}>
                 <ul style={{ paddingLeft: 20, marginTop: 0 }}>
-                    <li>Conversational AI with real-time language understanding</li>
-                    <li>Voice control for hands-free interaction</li>
-                    <li>Schedule & reminder management</li>
-                    <li>Local system command execution</li>
-                    <li>Privacy-first architecture with encrypted/local data</li>
+                    <ul style={{ paddingLeft: 20, marginTop: 0 }}>
+                        <li>Conversational AI with real-time natural language understanding</li>
+                        <li>Voice Input and Output</li>
+                        <li>Memory-aware conversations with contextual history</li>
+                        <li>Custom user persona management</li>
+                        <li>Interactive Reflection page for weekly insights and feedback</li>
+                        <li>Memory store to view saved memories</li>
+                    </ul>
                 </ul>
             </Section>
 
@@ -85,30 +88,34 @@ const About = () => {
                             <strong>Frontend:</strong> React with Material UI for clean, responsive UI
                         </Typography>
                         <Typography variant="body2">
-                            <strong>Voice:</strong> Speech-to-Text (STT) using Web Speech API / Google STT
+                            <strong>Voice:</strong> Web Speech API for STT and TTS
+                        </Typography>
+                        <Typography variant="body2">
+                            <strong>Vector DB:</strong> Qdrant for semantic memory and document retrieval
                         </Typography>
                     </Grid>
                     <Grid item xs={12} sm={6}>
                         <Typography variant="body2">
-                            <strong>AI Engine:</strong> Gemini API for NLP and conversational intelligence
+                            <strong>AI Engine:</strong> Gemini API for NLP and conversational logic
                         </Typography>
                         <Typography variant="body2">
-                            <strong>Audio Output:</strong> Text-to-Speech (TTS) via Web Speech API / Google TTS
+                            <strong>Memory:</strong> Redis with Upstash for short-term and session memory
                         </Typography>
                         <Typography variant="body2">
-                            <strong>Architecture:</strong> Modular, API-driven, privacy-aware
+                            <strong>Architecture:</strong> Modular, API-driven, scalable and privacy-aware
                         </Typography>
                     </Grid>
                 </Grid>
             </Section>
 
 
-
             <Section title="Use Cases" icon={<AcUnit sx={{ color: '#0ca37f' }} />}>
-                - Personal task automation<br />
-                - Study assistant / AI companion<br />
-                - Command execution & system shortcuts
+                - Personal or Professional tasks and daily planning<br />
+                - Study and research assistant with persistent memory<br />
+                - Code generation, execution, and debugging assistant<br />
+                - Self-reflection and analytics via Reflection interface
             </Section>
+
 
             <Section title="Vision" icon={<AcUnit sx={{ color: '#0ca37f' }} />}>
                 Jarvis was built to bridge the gap between intuitive human thought and machine logic.
@@ -117,10 +124,11 @@ const About = () => {
 
             <Section title="What’s Next" icon={<AcUnit sx={{ color: '#0ca37f' }} />}>
                 <ul style={{ paddingLeft: 20, marginTop: 0 }}>
+                    <li>File and document analysis (PDFs, CSVs, JSON)</li>
                     <li>Emotion-aware response generation</li>
                     <li>Mobile app + cross-device sync</li>
-                    <li>Multi-language support</li>
-                    <li>Visual dashboard for monitoring & control</li>
+                    <li>Custom plugin builder and third-party integrations</li>
+                    <li>Fine-grained control over memory and tool permissions</li>
                 </ul>
             </Section>
 

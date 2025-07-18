@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import axiosInstance from "../axiosInstance";
-import { Card, CardContent, Typography, List, Box, Divider, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button } from '@mui/material';
+import { Card, CardContent, Typography, List, Box, Divider, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useSnackbar } from "../Context/SnackBarContext";
+import ReplayOutlinedIcon from '@mui/icons-material/ReplayOutlined';
 
 export default function Memory() {
     const [memory, setMemory] = useState([]);
@@ -12,15 +13,23 @@ export default function Memory() {
     const [selectedText, setSelectedText] = useState("");
     const showSnackbar = useSnackbar();
 
-    useEffect(() => {
-        // Fetch memory data from the backend
-        const fetchMemory = async () => {
+    // Fetch memory data from the backend
+    const fetchMemory = async () => {
+        try {
             setLoading(true);
             const response = await axiosInstance.get('/api/user/memory');
             setMemory(response.data.memory);
             setLoading(false);
-        };
 
+        } catch (error) {
+            showSnackbar('Error fetching memory', error.response?.data?.message || '');
+            console.log(error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
         fetchMemory();
     }, []);
 
@@ -61,6 +70,12 @@ export default function Memory() {
             <Typography variant="caption" color="text.secondary">
                 Jarvis tries to remember your recent chats, but it may forget things over time. saved memories are never forgotten.
             </Typography>
+
+            <IconButton onClick={fetchMemory} sx={{ ml: 1 }}>
+                <ReplayOutlinedIcon />
+            </IconButton>
+
+            <Divider sx={{ my: 2 }} />
 
             <List sx={{ width: '100%', maxWidth: 600 }}>
                 {memory.map((item, index) => (
