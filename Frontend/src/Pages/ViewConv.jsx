@@ -113,6 +113,7 @@ export default function ViewConv() {
                     sender: "ai",
                     message: res.data.reply,
                     memoryUsed: res.data.memoryUsed,
+                    _id: res.data.aiMsgId,
 
                 },
             ]);

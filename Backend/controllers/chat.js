@@ -104,8 +104,8 @@ Keep your tone helpful and professional and present the information clearly.
     if (!aiReply) { throw new ExpressError(500, 'AI did not return a valid response'); }
 
     // Save both messages
-    await new ChatMessage({ conversationId: convId, sender: "user", message: message }).save();
-    await new ChatMessage({ conversationId: convId, sender: "ai", message: aiReply }).save();
+    const userMessage = await new ChatMessage({ conversationId: convId, sender: "user", message: message }).save();
+    const aiMessage = await new ChatMessage({ conversationId: convId, sender: "ai", message: aiReply }).save();
 
     // Push both to Redis (memory)
     await cacheChatMessage(convId.toString(), "user", message);
@@ -116,7 +116,7 @@ Keep your tone helpful and professional and present the information clearly.
         await pushToMemoryQueue({ userId, message });
     }
 
-    return res.status(200).json({ reply: aiReply, conversationId: convId, memoryUsed: relevantMemories });
+    return res.status(200).json({ reply: aiReply, conversationId: convId, memoryUsed: relevantMemories, aiMsgId: aiMessage._id });
 };
 
 export const getMessages = async (req, res) => {
