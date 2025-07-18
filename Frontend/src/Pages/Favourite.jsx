@@ -6,140 +6,91 @@ import { ThemeContext } from "../Context/ThemeContext";
 import {
     Box,
     Typography,
-    Paper,
 } from "@mui/material";
-import ReactMarkdown from 'react-markdown';
-import VolumeUpIcon from '@mui/icons-material/VolumeUp';
-import VolumeOffIcon from '@mui/icons-material/VolumeOff';
+import Message from '../Components/Message.jsx';
 
 
 
 export default function Favourite() {
     const [favourites, setFavourites] = useState([]);
+    const [loading, setLoading] = useState(false);
     const showSnackbar = useSnackbar();
-    const [speakingMsgIndex, setSpeakingMsgIndex] = useState(null);
     const { mode } = useContext(ThemeContext);
 
     useEffect(() => {
         const fetchFavourites = async () => {
             try {
+                setLoading(true);
                 // Fetch favourites from the backend
                 const response = await axiosInstance.get('/api/favourite/get_Favourites');
-                const data = response.data;
-                setFavourites(data);
+
+                const isfavRes = await Promise.all(
+                    response.data.map(async (msg) => {
+                        let msgId = msg.msgId._id;
+                        const favRes = await axiosInstance.get(`/api/favourite/isFavourite/${msgId}`);
+                        return favRes.data.isFavourite;
+                    })
+                );
+
+                console.log(response.data);
+
+                setFavourites(
+                    response.data.map((msg, index) => ({
+                        ...msg,
+                        msgId: {
+                            ...msg.msgId,
+                            isFavourite: isfavRes[index],
+                        },
+                    }))
+                );
+
             } catch (error) {
                 showSnackbar("Failed to fetch favourites : ", error.response.data.message);
+            } finally {
+                setLoading(false);
             }
         };
 
         fetchFavourites();
     }, []);
 
-    // handle ai voice response
-    const aiVoiceRes = (message, index) => {
-        if ('speechSynthesis' in window) {
-            setSpeakingMsgIndex(index);
-            const utterance = new SpeechSynthesisUtterance(message);
-            utterance.lang = 'en-US';
-            window.speechSynthesis.speak(utterance);
 
-            // stop any ongoing speech before starting a new one
-            utterance.onend = () => {
-                setSpeakingMsgIndex(null);
-            };
-        } else {
-            console.error("Speech Synthesis not supported in this browser.");
-            showSnackbar("Speetch Synthesis not supported in this browser");
-            setSpeakingMsgIndex(null);
-        }
-    }
 
-    // handle and stop ai voice response
-    const stopAiVoiceRes = () => {
-        if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel();
-            setSpeakingMsgIndex(null);
-        } else {
-            console.error("Speech Synthesis not supported in this browser.");
-            setSpeakingMsgIndex(null);
-        }
+    // If loading, show a loading message
+    if (loading) {
+        return (
+            <Box sx={{ textAlign: 'center', mt: 5 }}>
+                <Typography variant="h6" color="textSecondary">
+                    Loading favourite responses...
+                </Typography>
+            </Box>
+        );
     }
 
     return (
-        <div style={{ padding: '20px' }}>
 
-            <Typography variant="h4" sx={{ mb: 3, color: mode == 'dark' ? 'white' : 'black' }}>
-                Favourites
-            </Typography>
+        <Box
+            sx={{
+                width: { xs: '87vw', md: '60vw' },
+                display: "flex",
+                flexDirection: "column",
+                minHeight: "100vh",
+            }}
+        >
+            <Box
+                sx={{
+                    flex: 1,
+                    padding: 2,
+                }}
+            >
+                <Typography variant="h4" sx={{ mb: 3, color: mode == 'dark' ? 'white' : 'black' }}>
+                    Favourites responses
+                </Typography>
+                {favourites.map((fav, index) => (
+                    <Message msg={fav.msgId} index={index} key={index} />
+                ))}
+            </Box>
+        </Box>
 
-            {favourites.map((fav, index) => (
-
-                <Box
-                    key={index}
-                    display="flex"
-                    justifyContent="flex-start"
-                    mb={3}
-                >
-                    <Paper
-                        elevation={3}
-                        sx={{
-                            display: "inline-block",
-                            maxWidth: '100%',
-                            px: 2,
-                            py: 1.5,
-                            borderRadius: 7,
-                            wordBreak: "break-word",
-                            backgroundColor: mode == 'dark' ? 'black' : 'white',
-                            boxShadow: 'none',
-                            border: mode == 'dark' ? '1px solid #333' : '1px solid #ccc',
-                        }}
-                    >
-                        <Typography sx={{
-                            lineHeight: 1.7,
-                            fontSize: '16px',
-                            p: 1
-                        }}>
-                            <ReactMarkdown
-                                components={{
-                                    h1: ({ node, ...props }) => (
-                                        <Typography variant="h4" sx={{ mt: 5, mb: 3, fontWeight: 700 }} {...props} />
-                                    ),
-                                    h2: ({ node, ...props }) => (
-                                        <Typography variant="h5" sx={{ mt: 4, mb: 3, fontWeight: 700 }} {...props} />
-                                    ),
-                                    h3: ({ node, ...props }) => (
-                                        <Typography variant="h6" sx={{ mt: 4, mb: 2.5, fontWeight: 600 }} {...props} />
-                                    ),
-                                    p: ({ node, ...props }) => (
-                                        <Typography sx={{ mb: 2.5, lineHeight: 1.8 }} {...props} />
-                                    ),
-                                    li: ({ node, ...props }) => (
-                                        <li style={{ marginBottom: 8 }}>
-                                            <Typography component="span" sx={{ lineHeight: 2 }} {...props} />
-                                        </li>
-                                    ),
-                                }}
-                            >
-                                {fav.msgId.message}
-                            </ReactMarkdown>
-
-                        </Typography>
-
-
-                        {/* response bottom ops */}
-                        <>
-                            <br />
-                            {speakingMsgIndex === index ? (
-                                <VolumeOffIcon onClick={stopAiVoiceRes} />
-                            ) : (
-                                <VolumeUpIcon onClick={() => aiVoiceRes(fav.msgId.message, index)} />
-                            )}
-
-                        </>
-
-                    </Paper>
-                </Box>
-            ))}
-        </div>
     )
 }
