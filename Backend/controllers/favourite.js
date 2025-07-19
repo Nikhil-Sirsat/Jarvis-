@@ -11,12 +11,12 @@ export const addFavourite = async (req, res) => {
     }
 
     // Check points
-    const message = await ChatMessage.findById(msgId);
+    const message = await ChatMessage.findById(msgId).populate('conversationId');
     if (!message) {
         throw new ExpressError(404, 'Message not found');
     }
 
-    if (message.userId.toString() !== req.user._id.toString()) {
+    if (!message.conversationId.userId.equals(req.user._id)) {
         throw new ExpressError(403, 'You can only favourite your own messages');
     }
 
