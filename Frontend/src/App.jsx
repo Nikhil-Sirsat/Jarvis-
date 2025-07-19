@@ -19,7 +19,6 @@ import Intro from './Components/Intro.jsx';
 import Layout from './Components/Layout.jsx';
 import Personalization from './Components/Personalization.jsx';
 import Memory from './Components/Memory.jsx';
-import DataControl from './Components/DataControl.jsx';
 import Account from './Components/Account.jsx';
 import ThemeButton from './Components/ThemeButton.jsx';
 
@@ -48,7 +47,6 @@ export default function App() {
                 <Route path="theme" element={<ThemeButton />} />
                 <Route path="personalization" element={<Personalization />} />
                 <Route path="memory" element={<Memory />} />
-                <Route path="data-control" element={<DataControl />} />
                 <Route path="account" element={<Account />} />
               </Route>
               <Route path=":convId" element={<ViewConv />} />

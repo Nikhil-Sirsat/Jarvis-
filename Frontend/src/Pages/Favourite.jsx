@@ -45,7 +45,7 @@ export default function Favourite() {
                 );
 
             } catch (error) {
-                showSnackbar("Failed to fetch favourites : ", error.response.data.message);
+                showSnackbar(`Failed to fetch favourites : ${error.status} : ${error.response?.data?.message || error.message}`);
             } finally {
                 setLoading(false);
             }

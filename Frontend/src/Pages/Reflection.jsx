@@ -1,12 +1,11 @@
 
 import { useEffect, useState, useContext } from 'react';
 import {
-    Box, Card, CardContent, CardHeader, Typography,
+    Box, CardContent, CardHeader, Typography,
     Chip, List, ListItem, ListItemIcon, ListItemText,
     Accordion, AccordionSummary, AccordionDetails,
     CircularProgress, Container, Button
 } from '@mui/material';
-import EmojiObjectsIcon from '@mui/icons-material/EmojiObjects';
 import MemoryIcon from '@mui/icons-material/Memory';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import PsychologyIcon from '@mui/icons-material/Psychology';
@@ -29,7 +28,7 @@ export default function Reflection() {
             setReflection(res.data);
         } catch (error) {
             console.error('Failed to fetch reflection:', error);
-            showSnackbar('Failed to fetch reflection. Please try again later.', error.response.data.message);
+            showSnackbar(`Failed to fetch reflection : ${error.status} : ${error.response?.data?.message || error.message}`);
             setReflection(null);
         }
         setLoading(false);

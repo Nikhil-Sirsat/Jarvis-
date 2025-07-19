@@ -65,9 +65,9 @@ export default function ViewConv() {
                 );
                 console.log(res.data);
                 setTimeout(scrollToBottom, 100);
-            } catch (err) {
-                console.log("Error fetching messages:", err);
-                showSnackbar("Error fetching messages : ", err);
+            } catch (error) {
+                console.log("Error fetching messages:", error);
+                showSnackbar(`Error fetching messages : ${error.status} : ${error.response?.data?.message || error.message}`);
             } finally {
                 setConvLoad(false);
             }
@@ -114,13 +114,13 @@ export default function ViewConv() {
             ]);
             setTimeout(scrollToBottom, 100);
 
-        } catch (err) {
-            console.log("Message send error:", err);
+        } catch (error) {
+            console.log("Message send error:", error);
 
             //remove new message if error occurs
             setMessages((prev) => prev.filter((msg) => msg.sender !== "user" || msg.message !== input));
 
-            showSnackbar(err.response.data.message);
+            showSnackbar(`Error sending message: ${error.status} : ${error.response?.data?.message || error.message}`);
         } finally {
             setMsgLoading(false);
         }

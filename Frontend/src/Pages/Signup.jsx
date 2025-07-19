@@ -58,9 +58,8 @@ export default function Signup() {
             } else {
                 showSnackbar("Error Logging in after registration");
             }
-        } catch (err) {
-            const errorMsg = err.response?.data?.error || 'Registration failed';
-            showSnackbar("Error in Registration : ", errorMsg);
+        } catch (error) {
+            showSnackbar(`Error in Registration : ${error.status} : ${error.response?.data?.message || error.message}`);
         } finally {
             setLoading(false);
         }

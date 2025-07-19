@@ -140,7 +140,7 @@ export default function Chat() {
             handleClose();
         } catch (error) {
             console.log('Error deleting conversation:', error);
-            showSnackbar("Error deleting conversation", error.message);
+            showSnackbar(`Error deleting conversation : ${error.status} : ${error.response?.data?.message || error.message}`);
         }
     }
 
@@ -159,7 +159,7 @@ export default function Chat() {
                 setConversations(data);
             } catch (error) {
                 console.log('Error fetching conversations:', error);
-                showSnackbar("Error fetching conversations", error.message);
+                showSnackbar(`Error fetching conversations : ${error.status} : ${error.response?.data?.message || error.message}`);
             } finally {
                 setConversationLoading(false);
             }

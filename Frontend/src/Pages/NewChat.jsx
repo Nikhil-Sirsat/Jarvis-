@@ -14,7 +14,7 @@ import GraphicEqRoundedIcon from '@mui/icons-material/GraphicEqRounded';
 let SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 import { useSnackbar } from '../Context/SnackBarContext';
 import ReplyLoad from '../Components/ReplyLoad.jsx';
-import {ThemeContext} from '../Context/ThemeContext.jsx';
+import { ThemeContext } from '../Context/ThemeContext.jsx';
 
 
 export default function NewChat() {
@@ -26,7 +26,7 @@ export default function NewChat() {
     const navigate = useNavigate();
     let recognition = null;
     const showSnackbar = useSnackbar();
-    const { mode } = useContext(ThemeContext);  
+    const { mode } = useContext(ThemeContext);
 
     const handleSend = async () => {
         console.log('send message called');
@@ -45,9 +45,9 @@ export default function NewChat() {
             reFreshFetchConvHist(); // Refresh conversation history
             navigate(`/chat/${res.data.conversationId}`);
             setInput("");
-        } catch (err) {
-            console.log("Message send error:", err);
-            showSnackbar(err.response.data.message);
+        } catch (error) {
+            console.log(`Message send error:`);
+            showSnackbar(`Message send error : ${error.status} : ${error.response?.data?.message || error.message}`);
         } finally {
             setMsgLoading(false);
         }

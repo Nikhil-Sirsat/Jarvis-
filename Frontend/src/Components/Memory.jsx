@@ -22,7 +22,7 @@ export default function Memory() {
             setLoading(false);
 
         } catch (error) {
-            showSnackbar('Error fetching memory', error.response?.data?.message || '');
+            showSnackbar(`Error fetching memory : ${error.status} : ${error.response?.data?.message || error.message}`);
             console.log(error);
         } finally {
             setLoading(false);
@@ -52,7 +52,7 @@ export default function Memory() {
             setMemory(memory.filter(item => item.id !== selectedId));
         } catch (error) {
             console.error('Error deleting memory:', error);
-            showSnackbar('Error deleting memory', error.response?.data?.message || '');
+            showSnackbar(`Error deleting memory : ${error.status} : ${error.response?.data?.message || error.message}`);
         } finally {
             setOpenDialog(false);
             setSelectedId(null);

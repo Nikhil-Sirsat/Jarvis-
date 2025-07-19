@@ -1,13 +1,11 @@
 
-import { useEffect, useState, useContext } from 'react';
+import { useState, useContext } from 'react';
 import {
     Box,
     Button,
-    Card,
     CardContent,
     CardHeader,
     TextField,
-    Typography,
     Chip,
     Stack,
     Divider,
@@ -54,8 +52,8 @@ export default function Personalization() {
             };
 
             showSnackbar('Persona updated successfully!', 'success');
-        } catch (err) {
-            showSnackbar('Failed to update persona.', 'error');
+        } catch (error) {
+            showSnackbar(`Failed to update persona : ${error.status} : ${error.response?.data?.message || error.message}`);
         }
         setLoading(false);
     };
