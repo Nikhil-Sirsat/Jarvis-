@@ -1,6 +1,6 @@
 # 🤖 JARVIS – Your Personal AI Assistant
 
-**JARVIS** is an AI-powered personal assistant designed to interact with users via natural language, capable of handling text and voice input/output. It leverages the power of large language models (like Google Gemini), integrates OCR, and supports speech-to-text (STT) and text-to-speech (TTS) capabilities. Inspired by Marvel’s J.A.R.V.I.S., this project aims to bring an intelligent assistant to life for everyday tasks and conversations.
+**JARVIS** is an AI-powered personal assistant designed to interact with users via natural language, capable of handling text and voice input/output. It supports speech-to-text (STT) and text-to-speech (TTS) capabilities. Inspired by Marvel’s J.A.R.V.I.S., this project aims to bring an intelligent assistant to life for everyday tasks and conversations.
 
 ---
 
@@ -9,7 +9,6 @@
 - 🧠 AI-Powered Conversations using Google Gemini API
 - 🎙️ Voice Input with Web Speech API
 - 🔊 Voice Output using Web Speech Synthesis API
-- 📝 Smart Text Input with OCR Integration
 - 🔐 Secure User Authentication with Passport.js
 - 💬 Multi-user Chat System with Saved Conversations
 - 🧾 Dynamic Conversation and Contextual Replies

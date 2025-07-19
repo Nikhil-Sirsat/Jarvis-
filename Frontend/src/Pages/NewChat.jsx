@@ -1,32 +1,19 @@
-import { useState, useRef, useContext } from "react";
+import { useState } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import {
     Box,
-    TextField,
-    IconButton,
-    Paper,
     Typography,
 } from "@mui/material";
-import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import axiosInstance from '../AxiosInstance.jsx';
-import PendingIcon from '@mui/icons-material/Pending';
-import GraphicEqRoundedIcon from '@mui/icons-material/GraphicEqRounded';
-let SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 import { useSnackbar } from '../Context/SnackBarContext';
-import ReplyLoad from '../Components/ReplyLoad.jsx';
-import { ThemeContext } from '../Context/ThemeContext.jsx';
-
+import UserInput from "../Components/UserInput.jsx";
 
 export default function NewChat() {
     const [input, setInput] = useState("");
     const [msgLoading, setMsgLoading] = useState(false);
-    const [mikeActive, setMikeActive] = useState(false);
     const { reFreshFetchConvHist } = useOutletContext(); // Get the function to refresh conversation history
-    const recognitionRef = useRef(null);
     const navigate = useNavigate();
-    let recognition = null;
     const showSnackbar = useSnackbar();
-    const { mode } = useContext(ThemeContext);
 
     const handleSend = async () => {
         console.log('send message called');
@@ -53,49 +40,6 @@ export default function NewChat() {
         }
     };
 
-    // Listen & Initialized speech recognition 
-    const startListening = () => {
-        if (!SpeechRecognition) {
-            console.log("Speech Recognition API not supported in this browser.");
-            return;
-        }
-
-        if (mikeActive && recognitionRef.current) {
-            console.log("Stopping previous recognition...");
-            recognitionRef.current.stop();
-            return; // Wait for `onend` to restart
-        }
-
-        console.log("Initializing speech recognition...");
-
-        recognition = new SpeechRecognition();
-        recognition.lang = "en-US";
-        recognition.interimResults = false;
-        recognition.maxAlternatives = 1;
-
-        recognitionRef.current = recognition;
-        setMikeActive(true);
-
-        recognition.onresult = (event) => {
-            const transcript = event.results[0][0].transcript;
-            console.log("Transcript:", transcript);
-            setInput(transcript);
-            setMikeActive(false);
-        };
-
-        recognition.onerror = (event) => {
-            console.log("Speech recognition error:", event.error);
-            setMikeActive(false);
-        };
-
-        recognition.onend = () => {
-            console.log("Speech recognition ended.");
-            setMikeActive(false);
-        };
-
-        recognition.start();
-    };
-
     return (
         <Box
             sx={{
@@ -108,58 +52,16 @@ export default function NewChat() {
             <Typography variant="h4" sx={{ m: 'auto' }}>
                 Welcome Boss what can I help with?
             </Typography>
-            <Paper
-                sx={{
-                    p: 1.5,
-                    display: "flex",
-                    alignItems: "center",
-                    borderRadius: 11,
-                }}
-            >
-
-                {/* Show loading animation for listening */}
-                {mikeActive && <ReplyLoad />}
 
 
-                <TextField
-                    fullWidth
-                    variant="outlined"
-                    placeholder={recognition || mikeActive ? "Listening..." : "Ask something to JARVIS..."}
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    sx={{
-                        // placeholder color
-                        '& .MuiInputBase-input': {
-                            color: recognition || mikeActive ? '#0ca37f' : mode === 'light' ? '#000000' : '#ffffff',
-                        },
-                        '& .MuiOutlinedInput-root': {
-                            '& fieldset': {
-                                border: 'none',
-                            },
-                            '&:hover fieldset': {
-                                border: 'none',
-                            },
-                            '&.Mui-focused fieldset': {
-                                border: 'none',
-                            },
-                        },
-                    }}
-                />
+            {/* user input */}
+            <UserInput
+                handleSend={handleSend}
+                input={input}
+                setInput={setInput}
+                msgLoading={msgLoading}
+            />
 
-                {msgLoading ? (
-                    <PendingIcon sx={{ fontSize: 40 }} />
-                ) : (
-                    input ? (
-                        <IconButton color="white" onClick={handleSend} sx={{ ml: 1, border: '3px solid rgb(255, 255, 255)' }}>
-                            <ArrowUpwardIcon />
-                        </IconButton>
-                    ) : (
-                        <IconButton sx={{ ml: 1, border: '3px solid rgb(255, 255, 255)', color: recognition || mikeActive ? "#0ca37f" : mode === 'light' ? '#000000' : '#ffffff' }} onClick={startListening}>
-                            <GraphicEqRoundedIcon />
-                        </IconButton>
-                    )
-                )}
-            </Paper>
             {/* warning */}
             <Typography sx={{ p: 0.5, fontSize: { xs: 11, md: 14 }, m: 'auto', color: "grey" }}>
                 <i>Jarvis can make mistakes. Check important info.</i>
