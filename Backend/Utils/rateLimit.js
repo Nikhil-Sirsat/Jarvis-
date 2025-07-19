@@ -17,7 +17,7 @@ export const rateLimiter = async (req, res, next) => {
         }
 
         if (dailyCount > DAILY_LIMIT) {
-            return res.status(429).json({ message: 'your daily limit exceeded. Please try again after 24 hours.' });
+            throw new ExpressError(429, 'Rate limit exceeded. Please try again later.');
         }
 
         // Attach remaining limits to headers

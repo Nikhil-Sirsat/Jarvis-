@@ -6,20 +6,22 @@ import ExpressError from '../Utils/ExpressError.js';
 export const addFavourite = async (req, res) => {
     const { msgId } = req.params;
 
-    console.log('add fav called');
-
     if (!msgId) {
-        throw new ExpressError(res.status(400).json({ message: 'Message ID is required' }));
+        throw new ExpressError(400, 'Message ID is required');
     }
 
     // Check points
     const message = await ChatMessage.findById(msgId);
     if (!message) {
-        throw new ExpressError(res.status(404).json({ message: 'Message not found' }));
+        throw new ExpressError(404, 'Message not found');
+    }
+
+    if (message.userId.toString() !== req.user._id.toString()) {
+        throw new ExpressError(403, 'You can only favourite your own messages');
     }
 
     if (message.sender !== 'ai') {
-        throw new ExpressError(res.status(400).json({ message: 'Only AI messages can be favourited' }));
+        throw new ExpressError(400, 'Only AI messages can be favourited');
     }
 
     // Check if the message is already favourited by the user
@@ -50,7 +52,7 @@ export const isFavourite = async (req, res) => {
     const { msgId } = req.params;
 
     if (!msgId) {
-        throw new ExpressError(res.status(400).json({ message: 'Message ID is required' }));
+        throw new ExpressError(400, 'Message ID is required');
     }
 
     // Check if the message is favourited by the user
@@ -67,13 +69,13 @@ export const removeFavourite = async (req, res) => {
     const { msgId } = req.params;
 
     if (!msgId) {
-        throw new ExpressError(res.status(400).json({ message: 'Message ID is required' }));
+        throw new ExpressError(400, 'Message ID is required');
     }
 
     // Check if the message is favourited by the user
     const existingFavourite = await Favourite.findOne({ msgId, userId: req.user._id });
     if (!existingFavourite) {
-        throw new ExpressError(res.status(404).json({ message: 'Favourite not found' }));
+        throw new ExpressError(404, 'Favourite not found');
     }
 
     await Favourite.deleteOne({ _id: existingFavourite._id });

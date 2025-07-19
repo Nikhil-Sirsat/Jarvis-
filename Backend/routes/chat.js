@@ -7,7 +7,7 @@ import { rateLimiter } from '../Utils/rateLimit.js';
 
 router.post('/', auth, rateLimiter, asyncHandler(askQuestion));
 
-router.get('/:conversationId/messages', auth, asyncHandler(getMessages));
+router.get('/:conversationId/messages', auth, isAuther, asyncHandler(getMessages));
 
 router.get('/conversations', auth, asyncHandler(getConversations));
 

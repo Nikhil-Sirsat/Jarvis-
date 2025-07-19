@@ -9,6 +9,11 @@ import { pushToMemoryQueue } from '../memory/memoryQueue.js';
 
 export const askQuestion = async (req, res) => {
     const { message, conversationId } = req.body;
+
+    if (!message) {
+        throw new ExpressError(400, 'Message required');
+    }
+
     const userId = req.user._id.toString();
     const { nickname, userRole, traits, extraNotes } = req.user.persona || {};
 
@@ -20,7 +25,7 @@ export const askQuestion = async (req, res) => {
         let conversation = new Conversation({ userId });
 
         const { title, status, err } = await generateTitle(message);
-        conversation.title = title;
+        conversation.title = title || 'new conv';
         await conversation.save();
         convId = conversation._id;
 
@@ -124,6 +129,10 @@ export const getMessages = async (req, res) => {
         conversationId: req.params.conversationId,
     }).sort({ createdAt: 1 });
 
+    if (!messages || messages.length === 0) {
+        throw new ExpressError(404, 'No messages found for this conversation');
+    }
+
     return res.json(messages);
 };
 
@@ -132,6 +141,10 @@ export const getConversations = async (req, res) => {
     const conversations = await Conversation.find({ userId: userId })
         .select('title')
         .sort({ updatedAt: -1 });
+
+    if (!conversations || conversations.length === 0) {
+        throw new ExpressError(404, 'No conversations found');
+    }
 
     return res.status(200).json(conversations);
 };

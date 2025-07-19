@@ -17,7 +17,7 @@ export const login = (req, res) => {
 export const logout = (req, res) => {
     req.logout((err) => {
         if (err) {
-            throw new ExpressError(500, 'Logout failed: ' + (err.message || err));
+            throw new ExpressError(500, 'Logout failed: ' + (err.message));
         }
         return res.status(200).json({ message: 'Logout successful' });
     });
@@ -52,7 +52,7 @@ export const deleteOneMemory = async (req, res) => {
     const memoryId = req.params.id.toString();
     const userId = req.user._id.toString();
 
-    const memory = await getMemoryById(memoryId);
+    const memory = await getMemoryById(memoryId, userId);
     if (!memory) {
         throw new ExpressError(404, 'Memory not found');
     }

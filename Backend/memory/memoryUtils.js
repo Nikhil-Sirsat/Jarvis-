@@ -36,7 +36,7 @@ export async function storeMemory(userId, text) {
         const vector = await getEmbedding(text);
 
         if (!vector || vector.length !== 384) {
-            throw new ExpressError("Invalid embedding vector received for query.");
+            throw new ExpressError(500, "Invalid embedding vector received for query.");
         }
 
         // 1. Check if User exceed the limit of storing memory which is (60)
@@ -84,9 +84,9 @@ export async function storeMemory(userId, text) {
 
         console.log("memory Stored");
     } catch (error) {
-        throw new ExpressError("Error in Storing Qdrant");
+        throw new ExpressError(500, "Error in Storing Qdrant");
     }
-}
+};
 
 // Search memory
 export async function searchMemory(userId, query, topK = 5) {
@@ -96,7 +96,7 @@ export async function searchMemory(userId, query, topK = 5) {
             const vector = await getEmbedding(query);
 
             if (!vector || vector.length !== 384) {
-                throw new ExpressError("Invalid embedding vector received for query.");
+                throw new ExpressError(400, "Invalid embedding vector received for query.");
             }
 
             const result = await client.search(COLLECTION_NAME, {
@@ -121,8 +121,8 @@ export async function searchMemory(userId, query, topK = 5) {
             await new Promise(res => setTimeout(res, 300 * attempt));
         }
     }
-    throw new ExpressError("Error in Searching Qdrant: " + (lastError?.message || lastError));
-}
+    throw new ExpressError(500, "Error in Searching Qdrant: " + (lastError?.message));
+};
 
 // check weather to store in memory or not
 export function shouldStoreMemory(text) {
@@ -199,23 +199,26 @@ export const getAllVectorMemory = async (userId) => {
         return result.points;
     } catch (error) {
         console.error("Error fetching all vector memory:", error);
-        throw new ExpressError("Error fetching all vector memory");
+        throw new ExpressError(500, "Error fetching all vector memory");
     }
 };
 
-export const getMemoryById = async (memoryId) => {
+export const getMemoryById = async (memoryId, userId) => {
     try {
         const result = await client.retrieve(COLLECTION_NAME, {
             ids: [memoryId],
         });
         if (result && result.length > 0) {
             // console.log('Fetched memory by ID:', result[0]);
+            if (result[0].payload && result[0].payload.userId !== userId) {
+                throw new ExpressError(404, "Memory not found or does not belong to this user");
+            }
             return result[0];
         }
         return null;
     } catch (error) {
         console.error("Error fetching memory by ID:", error);
-        throw new ExpressError("Error fetching memory by ID");
+        throw new ExpressError(500, "Error fetching memory by ID");
     }
 };
 
@@ -227,7 +230,7 @@ export const deleteMemoryById = async (memoryId) => {
         return true;
     } catch (error) {
         console.error("Error deleting memory by ID:", error);
-        throw new ExpressError("Error deleting memory by ID");
+        throw new ExpressError(500, "Error deleting memory by ID");
     }
 };
 
@@ -303,5 +306,5 @@ Output in JSON format like:
         throw new ExpressError("Error calling LLM for reflection");
     }
 
-}
+};
 
