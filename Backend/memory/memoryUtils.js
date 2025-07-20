@@ -1,4 +1,4 @@
-import { client } from './vectorClient.js';
+import { client } from '../config/qdrant.js';
 import { getEmbedding } from './embedding.js';
 import { v4 as uuidv4 } from 'uuid';
 const COLLECTION_NAME = 'jarvis_memory';

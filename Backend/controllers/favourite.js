@@ -27,7 +27,7 @@ export const addFavourite = async (req, res) => {
     // Check if the message is already favourited by the user
     const existingFavourite = await Favourite.findOne({ msgId, userId: req.user._id });
     if (existingFavourite) {
-        throw new ExpressError(res.status(400).json({ message: 'Message is already favourited' }));
+        throw new ExpressError(400, 'Message is already favourited');
     }
 
     const favourite = new Favourite({
@@ -37,7 +37,7 @@ export const addFavourite = async (req, res) => {
 
     await favourite.save();
 
-    res.status(201).json(favourite);
+    res.status(201).json({ message: 'message added to favourites' });
 }
 
 export const getFavourites = async (req, res) => {
@@ -80,5 +80,5 @@ export const removeFavourite = async (req, res) => {
 
     await Favourite.deleteOne({ _id: existingFavourite._id });
 
-    res.status(204).send();
+    res.status(204).json({ message: 'message successfully removed from favourites' });
 }

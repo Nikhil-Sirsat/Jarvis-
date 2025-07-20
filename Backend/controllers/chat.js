@@ -42,7 +42,7 @@ export const askQuestion = async (req, res) => {
             const dbMessages = await ChatMessage.find({ conversationId: convId })
                 .sort({ createdAt: -1 })
                 .limit(16)
-                .select("sender message");
+                .select("sender message createdAt");
             historyMessages = dbMessages.map(m => ({ sender: m.sender, message: m.message }));
             await cacheChatHistoryBulk(convId.toString(), historyMessages);
         }
@@ -139,7 +139,7 @@ export const getMessages = async (req, res) => {
 export const getConversations = async (req, res) => {
     const userId = req.user._id;
     const conversations = await Conversation.find({ userId: userId })
-        .select('title')
+        .select('title updatedAt')
         .sort({ updatedAt: -1 });
 
     if (!conversations || conversations.length === 0) {
