@@ -3,7 +3,7 @@ import redis from '../config/redis.js';
 
 const getChatHistoryKey = (conversationId) => `history:${conversationId}`;
 
-// read chat history from redis
+// 1. Get chat history (no major changes here, but add guard)
 export const getCachedChatHistory = async (conversationId) => {
     const key = getChatHistoryKey(conversationId);
 
@@ -25,35 +25,22 @@ export const getCachedChatHistory = async (conversationId) => {
     return messages;
 };
 
-//cach a single chat message
-export const cacheChatMessage = async (conversationId, sender, message) => {
+// 3. cach 
+export const writeToChatCache = async (conversationId, messages, options = { overwrite: false }) => {
     const key = getChatHistoryKey(conversationId);
-
-    const entry = JSON.stringify({ sender, message });
+    if (!Array.isArray(messages) || messages.length === 0) return;
 
     try {
-        await redis.rpush(key, entry);       // This is now a valid JSON string
-        await redis.expire(key, 900);       // 30 min TTL
-        console.log(" Cached message to Redis");
+        const pipeline = redis.pipeline();
+        if (options.overwrite) pipeline.del(key);
+
+        const serialized = messages.map(m => JSON.stringify(m));
+        pipeline.rpush(key, ...serialized);
+        pipeline.expire(key, options.ttl || 900);
+        await pipeline.exec();
     } catch (err) {
-        console.error(" cacheChatMessage Redis error:", err);
+        console.error("writeToChatCache Redis error:", err);
     }
 };
 
-//  Save entire history
-export const cacheChatHistoryBulk = async (conversationId, messages) => {
-    const key = getChatHistoryKey(conversationId);
 
-    try {
-        await redis.del(key);
-        if (Array.isArray(messages) && messages.length > 0) {
-            await redis.rpush(
-                key,
-                ...messages.map(m => JSON.stringify(m))
-            );
-            await redis.expire(key, 900); // Set TTL to 30 minutes
-        }
-    } catch (err) {
-        console.error(' cacheChatHistoryBulk error:', err);
-    }
-};

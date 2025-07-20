@@ -3,7 +3,7 @@ import ChatMessage from '../models/ChatMessage.js';
 import Conversation from '../models/Conversation.js';
 import ai from '../config/ai.js';
 import ExpressError from '../Utils/ExpressError.js';
-import { getCachedChatHistory, cacheChatMessage, cacheChatHistoryBulk } from '../Utils/redisHelper.js';
+import { getCachedChatHistory, writeToChatCache } from '../Utils/redisHelper.js';
 import { searchMemory, shouldStoreMemory } from '../memory/memoryUtils.js';
 import { pushToMemoryQueue } from '../memory/memoryQueue.js';
 
@@ -19,6 +19,11 @@ export const askQuestion = async (req, res) => {
 
     let convId = conversationId || null;
     let historyMessages = [];
+
+    console.time('Total AskQuestion');
+
+    // Conversation logic
+    console.time('Conversation Setup');
 
     if (!convId) {
         // Create new conversation if not provided
@@ -40,21 +45,25 @@ export const askQuestion = async (req, res) => {
         // If Redis empty → fetch from DB and cache
         if (historyMessages.length === 0) {
             const dbMessages = await ChatMessage.find({ conversationId: convId })
-                .sort({ createdAt: -1 })
-                .limit(16)
+                .sort({ createdAt: 1 })
+                .limit(10)
                 .select("sender message createdAt");
-            historyMessages = dbMessages.map(m => ({ sender: m.sender, message: m.message }));
-            await cacheChatHistoryBulk(convId.toString(), historyMessages);
+            historyMessages = dbMessages.map(m => ({ sender: m.sender, message: m.message, createdAt: m.createdAt }));
+
+            await writeToChatCache(convId.toString(), historyMessages, { overwrite: true });
         }
     }
 
     // If no messages in history, initialize as empty array
-    if (!Array.isArray(historyMessages)) {
-        historyMessages = [];
-    }
+    if (!Array.isArray(historyMessages)) { historyMessages = []; }
 
+    console.timeEnd('Conversation Setup');
+
+    // Memory search
+    console.time('Search Memory');
     //  Load Memory
     const relevantMemories = await searchMemory(userId, message, 5);
+    console.timeEnd('Search Memory');
 
     // personality prefix
     const personaPrefix = `
@@ -68,16 +77,20 @@ Notes: ${extraNotes || 'No extra instructions.'}
     const promptParts = [
         {
             text: `
-You are Jarvis, a highly intelligent, self-improving AI assistant built by Nikhil Sirsat.
-Your primary goal is to help the ${nickname || 'user'} as clearly, efficiently, and accurately as possible.
+            You are Jarvis, an intelligent, evolving AI created by Nikhil Sirsat.
+Your goal is to assist ${nickname || 'user'} with clarity, speed, and accuracy.
 
-Before generating your answer:
-1. Decide whether the user's question is SIMPLE (factual, direct, definitional) or COMPLEX (needs reasoning, breakdown, or multiple steps).
-2. If it's SIMPLE — answer directly and concisely in 1-5 lines. Avoid unnecessary steps or reflections.
-3. If it's COMPLEX — use a chain-of-thought approach: reflect on intent, break into logical steps, reason through each clearly, and synthesize a well-justified, accurate answer. Double-check before responding.
-4. Always double-check your logic before giving the final response.
+Before answering:
 
-Keep your tone helpful and professional and present the information clearly.
+Classify query as SIMPLE (direct/factual) or COMPLEX (requires reasoning).
+
+SIMPLE → reply in 1–5 lines, no extra reasoning.
+
+COMPLEX → use chain-of-thought: analyze intent → break down → reason → conclude accurately.
+
+Always validate logic before final answer.
+
+Respond with a clear, professional, and helpful tone.
 `,
         },
 
@@ -96,7 +109,8 @@ Keep your tone helpful and professional and present the information clearly.
         },
     ];
 
-    // Gemini response
+    // Gemini Call
+    console.time('Gemini API');
     const response = await ai.models.generateContent({
         model: "gemini-2.0-flash-lite",
         contents: promptParts,
@@ -104,22 +118,32 @@ Keep your tone helpful and professional and present the information clearly.
             temperature: 0.4,
         },
     });
+    console.timeEnd('Gemini API');
 
     const aiReply = response.text?.trim();
     if (!aiReply) { throw new ExpressError(500, 'AI did not return a valid response'); }
 
-    // Save both messages
-    const userMessage = await new ChatMessage({ conversationId: convId, sender: "user", message: message }).save();
-    const aiMessage = await new ChatMessage({ conversationId: convId, sender: "ai", message: aiReply }).save();
+    // Parallel save both messages
+    console.time('Save Messages');
+    let userMessage = await new ChatMessage({ conversationId: convId, sender: "user", message }).save();
+    let aiMessage = await new ChatMessage({ conversationId: convId, sender: "ai", message: aiReply }).save();
+    console.timeEnd('Save Messages');
 
-    // Push both to Redis (memory)
-    await cacheChatMessage(convId.toString(), "user", message);
-    await cacheChatMessage(convId.toString(), "ai", aiReply);
+    console.time('catch Messages');
+    // Cache messages
+    let userMsgCreatedAt = userMessage.createdAt;
+    let aiMsgCreatedAt = aiMessage.createdAt;
+    await writeToChatCache(convId, [{ sender: 'user', message, createdAt: userMsgCreatedAt }, { sender: 'ai', message: aiReply, createdAt: aiMsgCreatedAt }]);
+    console.timeEnd('catch Messages');
 
-    // Save to Memory if relevant
+    // Async memory push
     if (shouldStoreMemory(message)) {
-        await pushToMemoryQueue({ userId, message });
+        setImmediate(() => {
+            pushToMemoryQueue({ userId, message });
+        });
     }
+
+    console.timeEnd('Total AskQuestion');
 
     return res.status(200).json({ reply: aiReply, conversationId: convId, memoryUsed: relevantMemories, aiMsgId: aiMessage._id });
 };

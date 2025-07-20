@@ -90,14 +90,18 @@ export async function storeMemory(userId, text) {
 
 // Search memory
 export async function searchMemory(userId, query, topK = 5) {
+
+    const vector = await getEmbedding(query);
+    if (!vector || vector.length !== 384) {
+        throw new ExpressError(400, "Invalid embedding vector received for query.");
+    }
+
+    console.time('searchMemoryMain');
+
     let lastError;
+
     for (let attempt = 1; attempt <= 3; attempt++) {
         try {
-            const vector = await getEmbedding(query);
-
-            if (!vector || vector.length !== 384) {
-                throw new ExpressError(400, "Invalid embedding vector received for query.");
-            }
 
             const result = await client.search(COLLECTION_NAME, {
                 vector,
@@ -111,7 +115,7 @@ export async function searchMemory(userId, query, topK = 5) {
                     ],
                 },
             });
-
+            console.timeEnd('searchMemoryMain');
             // console.log("fetched memory : ", result.map(item => item.payload.text));
             return result.map(item => item.payload.text);
         } catch (error) {
