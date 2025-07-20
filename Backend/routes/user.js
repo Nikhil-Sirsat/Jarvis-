@@ -3,7 +3,7 @@ const router = express.Router();
 import passport from 'passport';
 import { auth } from '../Middleware/AuthMid.js';
 import { validateUser } from '../Middleware/ValidationMid.js';
-import { signUp, login, logout, protectedRoute, getMemory, deleteOneMemory, getReflection, setPersona } from '../controllers/user.js';
+import { signUp, login, logout, protectedRoute, getMemory, deleteOneMemory, getReflection, setPersona, getProactiveSuggestions } from '../controllers/user.js';
 import { asyncHandler } from '../Middleware/asyncHandler.js';
 
 // signup
@@ -29,6 +29,8 @@ router.get('/reflection/:userId', auth, asyncHandler(getReflection));
 
 // Delete Memory
 router.delete('/memory/:id', auth, asyncHandler(deleteOneMemory));
+
+router.get('/getProactiveSuggestions', auth, asyncHandler(getProactiveSuggestions));
 
 
 export default router;
