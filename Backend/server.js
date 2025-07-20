@@ -12,6 +12,8 @@ import session from 'express-session';
 import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
 
+import compression from 'compression';
+
 // import routes
 import userRoutes from './routes/user.js';
 import chatRoutes from './routes/chat.js';
@@ -34,11 +36,27 @@ app.use(cors({
     credentials: true,
 }));
 
-// middlewares
+// MIDDLEWARES
+
+//compression middleware
+app.use(
+    compression({
+        level: 6, // 1 (fastest) to 9 (best compression)
+        threshold: 1024, // Only compress responses > 1KB
+        filter: (req, res) => {
+            if (req.headers['x-no-compression']) {
+                // Don't compress if this header is present
+                return false;
+            }
+            return compression.filter(req, res);
+        },
+    })
+);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// session setup
+// session middleware
 const sessionMiddleware = session({
     secret: process.env.express_session_key,
     resave: false,
@@ -50,7 +68,7 @@ const sessionMiddleware = session({
 });
 app.use(sessionMiddleware);
 
-// Passport Setup
+// PASSPORT SETUP
 app.use(passport.initialize());
 app.use(passport.session());
 passport.use(new LocalStrategy({ usernameField: 'email' }, User.authenticate()));
@@ -60,7 +78,7 @@ passport.deserializeUser(User.deserializeUser());
 // database connection
 connectDB();
 
-// home 
+// ROUTES
 app.use('/api/user', userRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/favourite', favouriteRoutes);
