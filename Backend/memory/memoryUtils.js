@@ -6,6 +6,7 @@ import ExpressError from '../Utils/ExpressError.js';
 
 import ai from '../config/ai.js';
 
+// arr for checking weather the message is worth store in vector memories or not
 const memoryTriggers = [
     'remember',
     'note that',
@@ -28,6 +29,13 @@ const memoryTriggers = [
     'save this',
     'important',
     'live',
+];
+
+// arr for checking weather the question is worth fetching vector memories or not
+const irrelevantPatterns = [
+    /^(ok(?:ay)?|sure|fine|cool|great|thanks|thank you|I got it|got it|I’m good|noted|alright|understood)(\s+\w+)?[.!]?$/i,
+    /^(yes|no|maybe|hmm|uh-huh|huh|huh\?|hmm\?|hmm\.)$/i,
+    /^(\s*)$/, // empty or whitespace
 ];
 
 // Store memory
@@ -311,4 +319,22 @@ Output in JSON format like:
     }
 
 };
+
+
+export function isMsgNeedMemories(message) {
+    // Minimum length after trimming to consider message possibly relevant
+    const MIN_LENGTH = 15;
+
+    const trimmed = message.trim();
+
+    console.log(`message : ${trimmed} and length : ${trimmed.length}`);
+
+    if (trimmed.length < MIN_LENGTH) {
+        // If message is very short and matches irrelevant pattern => skip
+        return !irrelevantPatterns.some(pattern => pattern.test(trimmed));
+    }
+
+    // If long enough, assume it’s relevant (even if it starts like "ok...")
+    return true;
+}
 

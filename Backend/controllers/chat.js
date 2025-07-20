@@ -4,7 +4,7 @@ import Conversation from '../models/Conversation.js';
 import ai from '../config/ai.js';
 import ExpressError from '../Utils/ExpressError.js';
 import { getCachedChatHistory, writeToChatCache } from '../Utils/redisHelper.js';
-import { searchMemory, shouldStoreMemory } from '../memory/memoryUtils.js';
+import { searchMemory, shouldStoreMemory, isMsgNeedMemories } from '../memory/memoryUtils.js';
 import { pushToMemoryQueue } from '../memory/memoryQueue.js';
 
 export const askQuestion = async (req, res) => {
@@ -61,8 +61,10 @@ export const askQuestion = async (req, res) => {
 
     // Memory search
     console.time('Search Memory');
-    //  Load Memory
-    const relevantMemories = await searchMemory(userId, message, 5);
+    let relevantMemories = [];
+    if (isMsgNeedMemories(message)) {
+        relevantMemories = await searchMemory(userId, message, 5);
+    }
     console.timeEnd('Search Memory');
 
     // personality prefix
