@@ -229,7 +229,7 @@ export function isMsgNeedMemories(message) {
 
     const trimmed = message.trim();
 
-    console.log(`message : ${trimmed} and length : ${trimmed.length}`);
+    // console.log(`message : ${trimmed} and length : ${trimmed.length}`);
 
     if (trimmed.length < MIN_LENGTH) {
         // If message is very short and matches irrelevant pattern => skip

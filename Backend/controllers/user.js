@@ -5,7 +5,7 @@ import { callLLMForReflection, ProactiveSuggestion } from '../Utils/AI.js';
 import redis from '../config/redis.js';
 import dayjs from 'dayjs';
 
-const REDIS_TTL_SECONDS = 12 * 60 * 60; // 12 hours
+const REDIS_TTL_SECONDS = 6 * 60 * 60; // 6 hours
 
 export const signUp = async (req, res) => {
     let { name, email, age, password } = req.body;
