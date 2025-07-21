@@ -1,10 +1,9 @@
-import generateTitle from '../Utils/generateTitle.js';
 import ChatMessage from '../models/ChatMessage.js';
 import Conversation from '../models/Conversation.js';
-import ai from '../config/ai.js';
 import ExpressError from '../Utils/ExpressError.js';
 import { getCachedChatHistory, writeToChatCache } from '../Utils/redisHelper.js';
 import { searchMemory, shouldStoreMemory, isMsgNeedMemories } from '../memory/memoryUtils.js';
+import { aiResponse, generateTitle } from '../Utils/AI.js';
 import { pushToMemoryQueue } from '../memory/memoryQueue.js';
 
 export const askQuestion = async (req, res) => {
@@ -15,16 +14,12 @@ export const askQuestion = async (req, res) => {
     }
 
     const userId = req.user._id.toString();
-    const { nickname, userRole, traits, extraNotes } = req.user.persona || {};
+    const user = req.user;
 
     let convId = conversationId || null;
     let historyMessages = [];
 
-    console.time('Total AskQuestion');
-
     // Conversation logic
-    console.time('Conversation Setup');
-
     if (!convId) {
         // Create new conversation if not provided
         let conversation = new Conversation({ userId });
@@ -57,86 +52,24 @@ export const askQuestion = async (req, res) => {
     // If no messages in history, initialize as empty array
     if (!Array.isArray(historyMessages)) { historyMessages = []; }
 
-    console.timeEnd('Conversation Setup');
 
     // Memory search
-    console.time('Search Memory');
     let relevantMemories = [];
     if (isMsgNeedMemories(message)) {
         relevantMemories = await searchMemory(userId, message, 5);
     }
-    console.timeEnd('Search Memory');
 
-    // personality prefix
-    const personaPrefix = `
-You are speaking to ${nickname || 'the user'}.
-They are: ${userRole || 'a valued user'}.
-Be ${traits?.join(', ') || 'friendly'}.
-Notes: ${extraNotes || 'No extra instructions.'}
-`;
+    // get ai response
+    let aiReply = aiResponse(user, relevantMemories, historyMessages, message);
 
-    // Build Prompt
-    const promptParts = [
-        {
-            text: `
-            You are Jarvis, an intelligent, evolving AI created by Nikhil Sirsat.
-Your goal is to assist ${nickname || 'user'} with clarity, speed, and accuracy.
-
-Before answering:
-
-Classify query as SIMPLE (direct/factual) or COMPLEX (requires reasoning).
-
-SIMPLE → reply in 1–5 lines, no extra reasoning.
-
-COMPLEX → use chain-of-thought: analyze intent → break down → reason → conclude accurately.
-
-Always validate logic before final answer.
-
-Respond with a clear, professional, and helpful tone.
-`,
-        },
-
-        {
-            text: personaPrefix,
-        },
-
-        ...(relevantMemories.length > 0
-            ? [{ text: `some important memories about ${nickname || 'user'}: \n${relevantMemories.map(m => `- ${m}`).join('\n')}` }]
-            : []),
-        ...historyMessages.map((msg) => ({
-            text: `${msg.sender === "user" ? "user" : "ai"}: ${msg.message}`,
-        })),
-        {
-            text: `next question : ${nickname || 'User'}: ${message}`,
-        },
-    ];
-
-    // Gemini Call
-    console.time('Gemini API');
-    const response = await ai.models.generateContent({
-        model: "gemini-2.0-flash-lite",
-        contents: promptParts,
-        generationConfig: {
-            temperature: 0.4,
-        },
-    });
-    console.timeEnd('Gemini API');
-
-    const aiReply = response.text?.trim();
-    if (!aiReply) { throw new ExpressError(500, 'AI did not return a valid response'); }
-
-    // Parallel save both messages
-    console.time('Save Messages');
+    // save both messages
     let userMessage = await new ChatMessage({ conversationId: convId, sender: "user", message }).save();
     let aiMessage = await new ChatMessage({ conversationId: convId, sender: "ai", message: aiReply }).save();
-    console.timeEnd('Save Messages');
 
-    console.time('catch Messages');
     // Cache messages
     let userMsgCreatedAt = userMessage.createdAt;
     let aiMsgCreatedAt = aiMessage.createdAt;
     await writeToChatCache(convId, [{ sender: 'user', message, createdAt: userMsgCreatedAt }, { sender: 'ai', message: aiReply, createdAt: aiMsgCreatedAt }]);
-    console.timeEnd('catch Messages');
 
     // Async memory push
     if (shouldStoreMemory(message)) {
@@ -144,8 +77,6 @@ Respond with a clear, professional, and helpful tone.
             pushToMemoryQueue({ userId, message });
         });
     }
-
-    console.timeEnd('Total AskQuestion');
 
     return res.status(200).json({ reply: aiReply, conversationId: convId, memoryUsed: relevantMemories, aiMsgId: aiMessage._id });
 };

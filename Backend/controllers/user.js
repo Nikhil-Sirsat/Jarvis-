@@ -1,8 +1,8 @@
 import User from '../models/User.js';
 import ExpressError from '../Utils/ExpressError.js';
-import { getAllVectorMemory, getMemoryById, deleteMemoryById, getMemoryByUserIdWithinDays, callLLMForReflection } from '../memory/memoryUtils.js';
+import { getAllVectorMemory, getMemoryById, deleteMemoryById, getMemoryByUserIdWithinDays } from '../memory/memoryUtils.js';
+import { callLLMForReflection, ProactiveSuggestion } from '../Utils/AI.js';
 import redis from '../config/redis.js';
-import ai from '../config/ai.js';
 import dayjs from 'dayjs';
 
 const REDIS_TTL_SECONDS = 12 * 60 * 60; // 12 hours
@@ -120,41 +120,13 @@ export const getProactiveSuggestions = async (req, res) => {
 
     // Get vector memories from the past 7 days
     const memories = await getMemoryByUserIdWithinDays(userId, 7);
-    if (!memories.length) { return res.status(200).json({ message: "No memories found for this week." }); }
+    if (!memories.length) { return res.status(404).json({ message: "No memories found for this week for Generating Proactive Suggestions." }); };
 
     const memoryTexts = memories.map((m) => m.payload.text);
 
-    const prompt = `
-You are an intelligent AI assistant. Based on the user's recent messages:
+    const suggestions = await ProactiveSuggestion(memoryTexts);
 
-${memoryTexts}
-
-Suggest 3 smart, context-aware follow-up questions I can proactively ask the user. Return the output as a JSON array of questions. like: 
-{
-["question1", "question2", "question3"]
-} 
-Keep it short and relevant.
-    `.trim();
-
-    // Gemini Call
-    const response = await ai.models.generateContent({
-        model: "gemini-2.0-flash-lite",
-        contents: prompt,
-        generationConfig: {
-            temperature: 0.4,
-        },
-    });
-
-    let suggestions = response.text?.trim();
-
-    if (!suggestions) { return res.status(500).json({ message: "Gemini failed to generate proactivly suggested questions" }) };
-
-    // Remove Markdown code block if present
-    if (suggestions.startsWith("```")) {
-        suggestions = suggestions.replace(/^```[a-zA-Z]*\n?/, '').replace(/```$/, '').trim();
-    }
-
-    suggestions = JSON.parse(suggestions);
+    if (!suggestions) { return res.status(500).json({ message: "Error in Generating Proactive Suggestion" }) };
 
     const result = {
         userId,

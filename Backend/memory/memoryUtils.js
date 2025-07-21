@@ -4,8 +4,6 @@ import { v4 as uuidv4 } from 'uuid';
 const COLLECTION_NAME = 'jarvis_memory';
 import ExpressError from '../Utils/ExpressError.js';
 
-import ai from '../config/ai.js';
-
 // arr for checking weather the message is worth store in vector memories or not
 const memoryTriggers = [
     'remember',
@@ -145,54 +143,6 @@ export function shouldStoreMemory(text) {
     return hasMemoryTrigger || isLongEnough;
 }
 
-export const validateMemoryLLM = async (text) => {
-    console.log('is memory valid LLM called');
-    const prompt = `
-    You are Jarvis, a highly intelligent assistant managing long-term memory.
-
-The user just said: 
-"${text}"
-
-Your task is to decide if this message contains **useful long-term memory information** that will help you personalize future conversations with the user.
-
- You should store the message ONLY IF it contains:
-- personal facts (e.g., "my name is...", "I live in...", "I want to...")
-- preferences (e.g., "I like...", "I enjoy...", "I prefer...")
-- goals or plans (e.g., "I want to become a...", "I plan to...")
-- opinions (e.g., "I believe that...", "I hate...")
-- past actions or achievements (e.g., "I built...", "I studied...")
-
- Do NOT store if the message is:
-- a general question or help request (e.g., "what should I build next?", "suggest me a project")
-- vague or speculative (e.g., "maybe I should learn React")
-- small talk (e.g., "how are you?")
-- commands or task requests (e.g., "tell me a joke", "summarize this")
-
-Be strict. Do not guess.
-
-If YES:
-→ Convert it into a third-person factual format like:
-  - "User has a goal to become a software engineer."
-  - "User prefers working at night."
-  - "User has already built an app called LinkSpace."
-  and return exactly only the converted message and no extra text.
-
-If NO:
-→ Reply exactly with "NO".`;
-
-    const res = await ai.models.generateContent({
-        model: "gemini-2.0-flash-lite",
-        contents: prompt,
-        generationConfig: { temperature: 0.2 },
-    });
-
-    const data = res.text?.trim();
-
-    if (!data || data.toUpperCase() === "NO") return null;
-
-    return data;
-};
-
 export const getAllVectorMemory = async (userId) => {
     try {
         const result = await client.scroll(COLLECTION_NAME, {
@@ -272,54 +222,6 @@ export async function getMemoryByUserIdWithinDays(userId, days = 7) {
         throw new ExpressError("Error fetching memories");
     }
 };
-
-export async function callLLMForReflection(memoryTexts) {
-
-    try {
-
-        // console.log("Calling LLM for reflection with memories:", memoryTexts);
-
-        const prompt = `
-You are JARVIS, an intelligent assistant.
-The user has shared the following thoughts/memories over the past week:
-
-${memoryTexts.map((text, i) => `${i + 1}. "${text}"`).join('\n')}
-
-Based on this:
-1. Give a short 4-5 sentence summary of what the user has been focused on.
-2. Identify 2-3 key themes from their thoughts.
-3. Suggest 3-4 helpful AI-generated suggestions to help them next week.
-Output in JSON format like:
-{
-  "summary": "...",
-  "themes": ["Theme1", "Theme2"],
-  "suggestions": ["Suggestion1", "Suggestion2"]
-}
-`;
-
-        const res = await ai.models.generateContent({
-            model: "gemini-2.0-flash-lite",
-            contents: prompt,
-            generationConfig: { temperature: 0.3 },
-        });
-
-        let data = res.text?.trim();
-
-        // Remove Markdown code block if present
-        if (data.startsWith("```")) {
-            data = data.replace(/^```[a-zA-Z]*\n?/, '').replace(/```$/, '').trim();
-        }
-
-        // console.log("Reflection LLM response:", data);
-
-        return JSON.parse(data); // Gemini returns raw JSON text
-    } catch (error) {
-        console.error("Error calling LLM for reflection:", error);
-        throw new ExpressError("Error calling LLM for reflection");
-    }
-
-};
-
 
 export function isMsgNeedMemories(message) {
     // Minimum length after trimming to consider message possibly relevant
