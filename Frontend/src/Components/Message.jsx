@@ -65,6 +65,7 @@ export default function Message({ msg, index }) {
             display="flex"
             justifyContent={msg.sender === "user" ? "flex-end" : "flex-start"}
             mb={3}
+            width="100%"
         >
             <Paper
                 elevation={3}
@@ -77,6 +78,7 @@ export default function Message({ msg, index }) {
                     wordBreak: "break-word",
                     backgroundColor: msg.sender === "user" ? 'none' : mode == 'dark' ? 'black' : 'white',
                     boxShadow: 'none',
+                    width: '100%'
                 }}
             >
                 <Typography sx={{
@@ -97,26 +99,105 @@ export default function Message({ msg, index }) {
                     <ReactMarkdown
                         components={{
                             h1: ({ node, ...props }) => (
-                                <Typography variant="h4" sx={{ mt: 5, mb: 3, fontWeight: 700 }} {...props} />
+                                <Typography
+                                    variant="h4"
+                                    sx={{
+                                        mt: 6,
+                                        mb: 3,
+                                        fontWeight: 700,
+                                        pl: 1.5,
+                                        borderLeft: '4px solid #1976d2',
+                                        backgroundColor: '#f5f7fa',
+                                        padding: '12px',
+                                        borderRadius: '6px',
+                                    }}
+                                    {...props}
+                                />
                             ),
                             h2: ({ node, ...props }) => (
-                                <Typography variant="h5" sx={{ mt: 4, mb: 3, fontWeight: 700 }} {...props} />
+                                <Typography
+                                    variant="h5"
+                                    sx={{
+                                        mt: 5,
+                                        mb: 3,
+                                        fontWeight: 700,
+                                        pl: 1.2,
+                                        borderLeft: '4px solid #42a5f5',
+                                        backgroundColor: '#f8f9fb',
+                                        padding: '10px',
+                                        borderRadius: '6px',
+                                    }}
+                                    {...props}
+                                />
                             ),
                             h3: ({ node, ...props }) => (
-                                <Typography variant="h6" sx={{ mt: 4, mb: 2.5, fontWeight: 600 }} {...props} />
+                                <Typography
+                                    variant="h6"
+                                    sx={{
+                                        mt: 4,
+                                        mb: 2,
+                                        fontWeight: 600,
+                                        pl: 1,
+                                        borderLeft: '3px solid #90caf9',
+                                        backgroundColor: '#fafbfc',
+                                        padding: '8px',
+                                        borderRadius: '4px',
+                                    }}
+                                    {...props}
+                                />
                             ),
                             p: ({ node, ...props }) => (
-                                <Typography sx={{ mb: 2.5, lineHeight: 1.8 }} {...props} />
+                                <Typography
+                                    sx={{
+                                        mb: 2,
+                                        pl: 2,
+                                        lineHeight: 1.8,
+                                    }}
+                                    {...props}
+                                />
                             ),
                             li: ({ node, ...props }) => (
-                                <li style={{ marginBottom: 8 }}>
-                                    <Typography component="span" sx={{ lineHeight: 2 }} {...props} />
+                                <li
+                                    style={{
+                                        marginBottom: '12px',
+                                        paddingLeft: '1rem',
+                                        marginLeft: '1.5rem',
+                                    }}
+                                >
+                                    <Typography
+                                        component="span"
+                                        sx={{
+                                            lineHeight: 2,
+                                        }}
+                                        {...props}
+                                    />
                                 </li>
                             ),
+                            ul: ({ node, ...props }) => (
+                                <ul
+                                    style={{
+                                        paddingLeft: '2rem',
+                                        marginBottom: '1.5rem',
+                                    }}
+                                    {...props}
+                                />
+                            ),
+                            ol: ({ node, ...props }) => (
+                                <ol
+                                    style={{
+                                        paddingLeft: '2rem',
+                                        marginBottom: '1.5rem',
+                                    }}
+                                    {...props}
+                                />
+                            ),
+
+
                         }}
                     >
                         {msg.message}
                     </ReactMarkdown>
+
 
                 </Typography>
 

@@ -13,6 +13,7 @@ import axiosInstance from '../axiosInstance'; // Adjust the import based on your
 import { AuthContext } from '../context/AuthContext'; // Assuming you have an AuthContext for user authentication
 import { useSnackbar } from '../Context/SnackBarContext.jsx';
 import { AcUnit } from "@mui/icons-material";
+import ThreeDotLoading from '../Components/ThreeDotLoading.jsx';
 
 export default function Reflection() {
     const [reflection, setReflection] = useState(null);
@@ -38,13 +39,7 @@ export default function Reflection() {
         fetchReflection();
     }, [user]);
 
-    if (loading) {
-        return (
-            <Box display="flex" justifyContent="center" mt={10}>
-                <CircularProgress />
-            </Box>
-        );
-    }
+    if (loading) return <ThreeDotLoading />;
 
     if (!reflection) return (
         <Box mt={5} textAlign="center">

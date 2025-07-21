@@ -2,6 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import axiosInstance from "../AxiosInstance";
 import { useSnackbar } from "../Context/SnackBarContext";
 import { ThemeContext } from "../Context/ThemeContext";
+import ThreeDotLoading from "../Components/ThreeDotLoading.jsx";
 
 import {
     Box,
@@ -54,18 +55,8 @@ export default function Favourite() {
         fetchFavourites();
     }, []);
 
-
-
     // If loading, show a loading message
-    if (loading) {
-        return (
-            <Box sx={{ textAlign: 'center', mt: 5 }}>
-                <Typography variant="h6" color="textSecondary">
-                    Loading favourite responses...
-                </Typography>
-            </Box>
-        );
-    }
+    if (loading) return <ThreeDotLoading />;
 
     return (
 

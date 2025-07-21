@@ -5,12 +5,12 @@ import {
     TextField,
 } from "@mui/material";
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
-import PendingIcon from '@mui/icons-material/Pending';
 import GraphicEqRoundedIcon from '@mui/icons-material/GraphicEqRounded';
 import ReplyLoad from "./ReplyLoad.jsx";
 let SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 import { ThemeContext } from "../Context/ThemeContext.jsx";
 import { useSnackbar } from '../Context/SnackBarContext';
+import ThreeDotLoading from "./ThreeDotLoading.jsx";
 
 export default function UserInput({ handleSend, input, setInput, msgLoading }) {
     const { mode } = useContext(ThemeContext);
@@ -106,7 +106,7 @@ export default function UserInput({ handleSend, input, setInput, msgLoading }) {
             />
 
             {msgLoading ? (
-                <PendingIcon sx={{ fontSize: 40 }} />
+                <ThreeDotLoading />
             ) : (
                 input ? (
                     <IconButton color="white" onClick={handleSend} sx={{ ml: 1, border: '3px solid rgb(255, 255, 255)' }}>

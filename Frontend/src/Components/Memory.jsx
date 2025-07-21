@@ -4,6 +4,7 @@ import { Card, CardContent, Typography, List, Box, Divider, Dialog, DialogTitle,
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useSnackbar } from "../Context/SnackBarContext";
 import ReplayOutlinedIcon from '@mui/icons-material/ReplayOutlined';
+import ThreeDotLoading from "./ThreeDotLoading";
 
 export default function Memory() {
     const [memory, setMemory] = useState([]);
@@ -60,7 +61,7 @@ export default function Memory() {
         }
     };
 
-    if (loading) return <div>Memory Loading...</div>;
+    if (loading) return <ThreeDotLoading />;
 
     return (
         <Box sx={{ p: 2 }}>

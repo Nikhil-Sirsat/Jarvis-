@@ -60,7 +60,7 @@ export const askQuestion = async (req, res) => {
     }
 
     // get ai response
-    let aiReply = aiResponse(user, relevantMemories, historyMessages, message);
+    let aiReply = await aiResponse(user, relevantMemories, historyMessages, message);
 
     // save both messages
     let userMessage = await new ChatMessage({ conversationId: convId, sender: "user", message }).save();

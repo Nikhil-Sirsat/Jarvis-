@@ -11,6 +11,7 @@ import ReplyLoad from "../Components/ReplyLoad.jsx";
 import { useSnackbar } from '../Context/SnackBarContext';
 import Message from '../Components/Message.jsx';
 import UserInput from "../Components/UserInput.jsx";
+import ThreeDotLoading from "../Components/ThreeDotLoading.jsx";
 
 export default function ViewConv() {
     const [input, setInput] = useState("");
@@ -117,11 +118,7 @@ export default function ViewConv() {
         }
     };
 
-    if (convLoad) {
-        return (
-            <CircularProgress />
-        )
-    }
+    if (convLoad) return <ThreeDotLoading />;
 
     return (
         <Box

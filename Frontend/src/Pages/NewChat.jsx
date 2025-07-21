@@ -83,7 +83,7 @@ export default function NewChat() {
             {/* Suggestions Section */}
             <Box sx={{ mt: 3, mb: 3 }}>
                 <Typography variant="subtitle1" mb={1}>
-                    Suggested Questions
+                    you might wanna ask.....
                 </Typography>
 
                 {suggestionsLoading ? (
@@ -106,8 +106,8 @@ export default function NewChat() {
                                 onClick={() => handleSuggestionClick(text)}
                                 sx={{ display: 'flex', gap: 1, alignItems: 'flex-start', p: 2, backgroundColor: 'transparent', ':hover': { cursor: 'pointer' } }}
                             >
-                                <HelpOutlineRoundedIcon sx={{ mt: '3px', flexShrink: 0 }} />
-                                <Typography variant="body1" sx={{ whiteSpace: 'pre-line' }}>
+                                <HelpOutlineRoundedIcon sx={{ flexShrink: 0, color: '#606060' }} />
+                                <Typography variant="body1" color="text.secondary" sx={{ whiteSpace: 'pre-line' }}>
                                     {text}
                                 </Typography>
                             </Box>
