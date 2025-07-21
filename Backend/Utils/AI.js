@@ -75,7 +75,7 @@ export const ProactiveSuggestion = async (memoryTexts) => {
     
     ${memoryTexts}
     
-    Suggest 3 smart, context-aware follow-up questions I can proactively ask the user. Return the output as a JSON array of questions. like: 
+    Suggest 3 smart, context-aware follow-up questions that user would like to ask AI. Return the output as a JSON array of questions. like: 
     {
     ["question1", "question2", "question3"]
     } 

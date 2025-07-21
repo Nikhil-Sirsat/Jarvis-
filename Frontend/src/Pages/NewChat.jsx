@@ -1,16 +1,16 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import {
     Box,
     Typography,
     Skeleton,
-    Chip,
     Stack,
 } from "@mui/material";
 import axiosInstance from '../AxiosInstance.jsx';
 import { useSnackbar } from '../Context/SnackBarContext';
 import UserInput from "../Components/UserInput.jsx";
-import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
+import HelpOutlineRoundedIcon from '@mui/icons-material/HelpOutlineRounded';
+import { ThemeContext } from "../Context/ThemeContext.jsx";
 
 export default function NewChat() {
     const [input, setInput] = useState("");
@@ -20,6 +20,7 @@ export default function NewChat() {
     const { reFreshFetchConvHist } = useOutletContext(); // Get the function to refresh conversation history
     const navigate = useNavigate();
     const showSnackbar = useSnackbar();
+    const { mode } = useContext(ThemeContext);
 
     // fetch proactive suggestions
     useEffect(() => {
@@ -98,22 +99,18 @@ export default function NewChat() {
                         ))}
                     </Stack>
                 ) : (
-                    <Stack direction="row" spacing={1} flexWrap="wrap">
+                    <Stack direction="column" spacing={2}>
                         {suggestions.map((text, index) => (
-                            <Chip
+                            <Box
                                 key={index}
-                                icon={<QuestionAnswerIcon />}
-                                label={text}
                                 onClick={() => handleSuggestionClick(text)}
-                                sx={{
-                                    mb: 5,
-                                    fontSize: 14,
-                                    backgroundColor: "#000000ff",
-                                    "&:hover": {
-                                        backgroundColor: "#2e2e2eff"
-                                    }
-                                }}
-                            />
+                                sx={{ display: 'flex', gap: 1, alignItems: 'flex-start', p: 2, backgroundColor: 'transparent', ':hover': { cursor: 'pointer' } }}
+                            >
+                                <HelpOutlineRoundedIcon sx={{ mt: '3px', flexShrink: 0 }} />
+                                <Typography variant="body1" sx={{ whiteSpace: 'pre-line' }}>
+                                    {text}
+                                </Typography>
+                            </Box>
                         ))}
                     </Stack>
                 )}
