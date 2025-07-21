@@ -5,7 +5,6 @@ import {
     Typography,
 } from "@mui/material";
 import axiosInstance from "../AxiosInstance.jsx";
-import CircularProgress from '@mui/material/CircularProgress';
 import { ThemeContext } from "../Context/ThemeContext.jsx";
 import ReplyLoad from "../Components/ReplyLoad.jsx";
 import { useSnackbar } from '../Context/SnackBarContext';
@@ -139,7 +138,12 @@ export default function ViewConv() {
                     <Message msg={msg} index={index} key={index} />
                 ))}
 
-                {msgLoading ? (<ReplyLoad />) : null}
+                {msgLoading ? (
+                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
+                        <ReplyLoad />
+                        <Typography variant="body2" color="text.secondary" sx={{ ml: 2 }}>thinking...</Typography>
+                    </Box>
+                ) : null}
 
                 <div ref={messagesEndRef} /> {/* Auto-scroll target */}
 

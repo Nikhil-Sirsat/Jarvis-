@@ -76,13 +76,13 @@ export default function NewChat() {
                 flexDirection: 'column',
             }}
         >
-            <Typography variant="h4" sx={{ m: 'auto' }}>
+            <Typography variant="h4">
                 Welcome Boss what can I help with?
             </Typography>
 
             {/* Suggestions Section */}
             <Box sx={{ mt: 3, mb: 3 }}>
-                <Typography variant="subtitle1" mb={1}>
+                <Typography variant="body2" color="text.secondary" mb={1}>
                     you might wanna ask.....
                 </Typography>
 
@@ -99,12 +99,12 @@ export default function NewChat() {
                         ))}
                     </Stack>
                 ) : (
-                    <Stack direction="column" spacing={2}>
+                    <Stack direction="column" spacing={2} sx={{ mt: 4, mb: 4 }}>
                         {suggestions.map((text, index) => (
                             <Box
                                 key={index}
                                 onClick={() => handleSuggestionClick(text)}
-                                sx={{ display: 'flex', gap: 1, alignItems: 'flex-start', p: 2, backgroundColor: 'transparent', ':hover': { cursor: 'pointer' } }}
+                                sx={{ display: 'flex', gap: 1, alignItems: 'flex-start', backgroundColor: 'transparent', ':hover': { cursor: 'pointer' } }}
                             >
                                 <HelpOutlineRoundedIcon sx={{ flexShrink: 0, color: '#606060' }} />
                                 <Typography variant="body1" color="text.secondary" sx={{ whiteSpace: 'pre-line' }}>
