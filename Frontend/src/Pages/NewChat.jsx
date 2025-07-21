@@ -1,19 +1,41 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import {
     Box,
     Typography,
+    Skeleton,
+    Chip,
+    Stack,
 } from "@mui/material";
 import axiosInstance from '../AxiosInstance.jsx';
 import { useSnackbar } from '../Context/SnackBarContext';
 import UserInput from "../Components/UserInput.jsx";
+import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
 
 export default function NewChat() {
     const [input, setInput] = useState("");
     const [msgLoading, setMsgLoading] = useState(false);
+    const [suggestions, setSuggestions] = useState([]);
+    const [suggestionsLoading, setSuggestionsLoading] = useState(true);
     const { reFreshFetchConvHist } = useOutletContext(); // Get the function to refresh conversation history
     const navigate = useNavigate();
     const showSnackbar = useSnackbar();
+
+    // fetch proactive suggestions
+    useEffect(() => {
+        const fetchSuggestions = async () => {
+            try {
+                const res = await axiosInstance.get("/api/user/getProactiveSuggestions");
+                setSuggestions(res.data.suggestions || []);
+            } catch (error) {
+                showSnackbar(`Failed to load suggestions : ${error.status} : ${error.response?.data?.message || error.message}`);
+            } finally {
+                setSuggestionsLoading(false);
+            }
+        };
+
+        fetchSuggestions();
+    }, []);
 
     const handleSend = async () => {
         console.log('send message called');
@@ -40,6 +62,10 @@ export default function NewChat() {
         }
     };
 
+    const handleSuggestionClick = (text) => {
+        setInput(text);
+    }
+
     return (
         <Box
             sx={{
@@ -53,6 +79,45 @@ export default function NewChat() {
                 Welcome Boss what can I help with?
             </Typography>
 
+            {/* Suggestions Section */}
+            <Box sx={{ mt: 3, mb: 3 }}>
+                <Typography variant="subtitle1" mb={1}>
+                    Suggested Questions
+                </Typography>
+
+                {suggestionsLoading ? (
+                    <Stack direction="row" spacing={1} flexWrap="wrap">
+                        {[...Array(3)].map((_, idx) => (
+                            <Skeleton
+                                key={idx}
+                                variant="rectangular"
+                                width={220}
+                                height={40}
+                                sx={{ borderRadius: 2 }}
+                            />
+                        ))}
+                    </Stack>
+                ) : (
+                    <Stack direction="row" spacing={1} flexWrap="wrap">
+                        {suggestions.map((text, index) => (
+                            <Chip
+                                key={index}
+                                icon={<QuestionAnswerIcon />}
+                                label={text}
+                                onClick={() => handleSuggestionClick(text)}
+                                sx={{
+                                    mb: 5,
+                                    fontSize: 14,
+                                    backgroundColor: "#000000ff",
+                                    "&:hover": {
+                                        backgroundColor: "#2e2e2eff"
+                                    }
+                                }}
+                            />
+                        ))}
+                    </Stack>
+                )}
+            </Box>
 
             {/* user input */}
             <UserInput

@@ -111,10 +111,9 @@ export const getProactiveSuggestions = async (req, res) => {
     const cached = await redis.get(redisKey);
 
     if (cached) {
-        const parsed = JSON.parse(cached);
         return res.json({
             fromCache: true,
-            ...parsed
+            ...cached
         });
     }
 
