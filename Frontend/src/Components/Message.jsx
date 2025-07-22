@@ -23,20 +23,46 @@ export default function Message({ msg, index }) {
 
     // handle ai voice response
     const aiVoiceRes = (message, index) => {
-        if ('speechSynthesis' in window) {
+        if (!('speechSynthesis' in window)) {
+            console.error("Speech Synthesis not supported in this browser.");
+            showSnackbar("Speech Synthesis not supported in this browser");
+            setSpeakingMsgIndex(null);
+            return;
+        }
+
+        const speak = () => {
+            const voices = window.speechSynthesis.getVoices();
+            if (!voices.length) {
+                console.warn("Voices not loaded yet.");
+                return; // or retry after delay
+            }
+
             setSpeakingMsgIndex(index);
-            const utterance = new SpeechSynthesisUtterance(message);
+            const cleaned = cleanText(message);
+            const utterance = new SpeechSynthesisUtterance(cleaned);
             utterance.lang = 'en-US';
+
+            // Set preferred voice
+            const preferredVoice = voices.find(
+                (voice) => voice.name.includes("Google") && voice.lang === "en-US"
+            );
+            if (preferredVoice) {
+                utterance.voice = preferredVoice;
+            }
+
+            window.speechSynthesis.cancel();
             window.speechSynthesis.speak(utterance);
 
-            // stop any ongoing speech before starting a new one
             utterance.onend = () => {
                 setSpeakingMsgIndex(null);
             };
+        };
+
+        // Wait for voices if needed
+        if (window.speechSynthesis.getVoices().length === 0) {
+            window.speechSynthesis.onvoiceschanged = speak;
         } else {
-            console.error("Speech Synthesis not supported in this browser.");
-            showSnackbar("Speetch Synthesis not supported in this browser");
-            setSpeakingMsgIndex(null);
+            speak();
         }
     };
 
@@ -58,6 +84,12 @@ export default function Message({ msg, index }) {
             .then(() => console.log("Copied!"))
             .catch(() => showSnackbar("Failed to copy"));
     };
+
+    // clean text 
+    const cleanText = (text) => {
+        // Keep only letters, numbers, and spaces
+        return text.replace(/[^a-zA-Z0-9\s.,]/g, '');
+    }
 
     return (
         <Box
