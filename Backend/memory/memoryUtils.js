@@ -56,7 +56,7 @@ export async function storeMemory(userId, text) {
         const similar = await client.search(COLLECTION_NAME, {
             vector,
             limit: 3, // check top 3 similar
-            score_threshold: 0.7, // only consider very similar (adjust as needed)
+            score_threshold: 0.7, // only consider very similar
             filter: {
                 must: [
                     {
@@ -154,7 +154,7 @@ export const getAllVectorMemory = async (userId) => {
                     },
                 ],
             },
-            limit: 100, // or any reasonable number
+            limit: 100, 
         });
 
         // console.log("all vec memo : ", result.points.map(item => item.payload.text));
@@ -236,7 +236,6 @@ export function isMsgNeedMemories(message) {
         return !irrelevantPatterns.some(pattern => pattern.test(trimmed));
     }
 
-    // If long enough, assume it’s relevant (even if it starts like "ok...")
     return true;
 }
 

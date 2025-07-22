@@ -42,7 +42,7 @@ export const addFavourite = async (req, res) => {
 
 export const getFavourites = async (req, res) => {
     const favourites = await Favourite.find({ userId: req.user._id })
-        .populate('msgId'); // This will populate the ChatMessage details
+        .populate('msgId'); 
 
     res.status(200).json(favourites);
 }

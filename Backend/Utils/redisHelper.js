@@ -1,9 +1,8 @@
-// utils/redisMemory.js
 import redis from '../config/redis.js';
 
 const getChatHistoryKey = (conversationId) => `history:${conversationId}`;
 
-// 1. Get chat history (no major changes here, but add guard)
+// 1. Get chat history
 export const getCachedChatHistory = async (conversationId) => {
     const key = getChatHistoryKey(conversationId);
 
@@ -25,7 +24,7 @@ export const getCachedChatHistory = async (conversationId) => {
     return messages;
 };
 
-// 3. cach 
+// 2. cach 
 export const writeToChatCache = async (conversationId, messages, options = { overwrite: false }) => {
     const key = getChatHistoryKey(conversationId);
     if (!Array.isArray(messages) || messages.length === 0) return;

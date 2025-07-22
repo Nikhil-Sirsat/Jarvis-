@@ -71,7 +71,7 @@ export const askQuestion = async (req, res) => {
     let aiMsgCreatedAt = aiMessage.createdAt;
     await writeToChatCache(convId, [{ sender: 'user', message, createdAt: userMsgCreatedAt }, { sender: 'ai', message: aiReply, createdAt: aiMsgCreatedAt }]);
 
-    // Async memory push
+    // memory push
     if (shouldStoreMemory(message)) {
         setImmediate(() => {
             pushToMemoryQueue({ userId, message });

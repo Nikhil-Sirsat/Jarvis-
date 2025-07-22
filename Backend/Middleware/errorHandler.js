@@ -2,7 +2,7 @@
 export default function errorHandler(err, req, res, next) {
 
     if (res.headersSent) {
-        return next(err); // don't attempt to respond again
+        return next(err); 
     }
 
     let statusCode = err.statusCode || 500;

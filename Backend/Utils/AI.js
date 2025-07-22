@@ -222,7 +222,7 @@ Output in JSON format like:
 
         // console.log("Reflection LLM response:", data);
 
-        return JSON.parse(data); // Gemini returns raw JSON text
+        return JSON.parse(data); 
     } catch (error) {
         console.error("Error calling LLM for reflection:", error);
         throw new ExpressError("Error calling LLM for reflection");

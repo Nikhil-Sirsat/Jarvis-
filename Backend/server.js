@@ -42,7 +42,6 @@ app.use(cors({
 app.use(
     compression({
         level: 6, // 1 (fastest) to 9 (best compression)
-        threshold: 1024, // Only compress responses > 1KB
         filter: (req, res) => {
             if (req.headers['x-no-compression']) {
                 // Don't compress if this header is present

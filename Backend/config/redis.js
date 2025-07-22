@@ -1,8 +1,7 @@
 import dotenv from 'dotenv';
 
-dotenv.config(); // Load environment variables from .env file
+dotenv.config();
 
-// utils/redisClient.js
 import { Redis } from "@upstash/redis";
 
 const redis = new Redis({
