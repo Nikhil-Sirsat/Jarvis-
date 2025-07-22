@@ -10,8 +10,8 @@ import {
     Stack,
     Divider,
 } from '@mui/material';
-import axiosInstance from '../axiosInstance'; // Adjust the import based on your axios instance setup
-import { AuthContext } from '../context/AuthContext'; // Adjust the import based on your context setup
+import axiosInstance from '../axiosInstance'; 
+import { AuthContext } from '../context/AuthContext'; 
 import { useSnackbar } from "../Context/SnackBarContext";
 
 export default function Personalization() {
@@ -44,7 +44,6 @@ export default function Personalization() {
                 traits: traitsArray
             });
 
-            // Update the user context or state if necessary
             user.persona = {
                 ...user.persona,
                 ...form,

@@ -137,7 +137,6 @@ const About = () => {
             <Section title="Nikhil Sirsat Production" icon={<Person sx={{ color: '#0ca37f' }} />}>
                 <Stack direction="row" alignItems="center" spacing={2}>
                     <Box>
-                        {/* <Typography variant="body1"><strong>Name:</strong> Nikhil Sirsat </Typography> */}
                         <Stack direction="row" spacing={2} justifyContent="center">
                             <IconButton component="a" href="https://www.linkedin.com/in/nikhil-sirsat-b49bb128a/" target="_blank" sx={{ color: '#0073e6' }}>
                                 <LinkedIn fontSize="large" />

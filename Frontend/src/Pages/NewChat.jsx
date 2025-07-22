@@ -17,7 +17,7 @@ export default function NewChat() {
     const [msgLoading, setMsgLoading] = useState(false);
     const [suggestions, setSuggestions] = useState([]);
     const [suggestionsLoading, setSuggestionsLoading] = useState(true);
-    const { reFreshFetchConvHist } = useOutletContext(); // Get the function to refresh conversation history
+    const { reFreshFetchConvHist } = useOutletContext();
     const navigate = useNavigate();
     const showSnackbar = useSnackbar();
     const { mode } = useContext(ThemeContext);

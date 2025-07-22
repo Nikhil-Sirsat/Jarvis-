@@ -39,7 +39,6 @@ export default function InitialLoading() {
                     Your intelligent personal AI assistant is getting ready...
                 </Typography>
 
-                {/* Unique Loading Indicator */}
                 <ThreeDotLoading />
             </Paper>
         </Box>

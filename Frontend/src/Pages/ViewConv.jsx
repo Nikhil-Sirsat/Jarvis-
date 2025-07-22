@@ -74,7 +74,7 @@ export default function ViewConv() {
 
         setMsgLoading(true);
 
-        setInput(""); // Clear input field
+        setInput("");
 
         const userMessage = {
             sender: "user",

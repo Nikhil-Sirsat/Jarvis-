@@ -22,7 +22,7 @@ export default function Favourite() {
         const fetchFavourites = async () => {
             try {
                 setLoading(true);
-                // Fetch favourites from the backend
+                // Fetch favourites
                 const response = await axiosInstance.get('/api/favourite/get_Favourites');
 
                 const isfavRes = await Promise.all(
@@ -55,7 +55,6 @@ export default function Favourite() {
         fetchFavourites();
     }, []);
 
-    // If loading, show a loading message
     if (loading) return <ThreeDotLoading />;
 
     return (

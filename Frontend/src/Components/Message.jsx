@@ -34,7 +34,7 @@ export default function Message({ msg, index }) {
             const voices = window.speechSynthesis.getVoices();
             if (!voices.length) {
                 console.warn("Voices not loaded yet.");
-                return; // or retry after delay
+                return; 
             }
 
             setSpeakingMsgIndex(index);
@@ -58,7 +58,7 @@ export default function Message({ msg, index }) {
             };
         };
 
-        // Wait for voices if needed
+        // Wait for voices
         if (window.speechSynthesis.getVoices().length === 0) {
             window.speechSynthesis.onvoiceschanged = speak;
         } else {

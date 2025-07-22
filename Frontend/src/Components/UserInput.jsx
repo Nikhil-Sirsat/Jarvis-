@@ -29,7 +29,7 @@ export default function UserInput({ handleSend, input, setInput, msgLoading }) {
         if (mikeActive && recognitionRef.current) {
             console.log("Stopping previous recognition...");
             recognitionRef.current.stop();
-            return; // Wait for `onend` to restart
+            return; 
         }
 
         console.log("Initializing speech recognition...");
@@ -87,7 +87,6 @@ export default function UserInput({ handleSend, input, setInput, msgLoading }) {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 sx={{
-                    // placeholder color
                     '& .MuiInputBase-input': {
                         color: recognition || mikeActive ? '#0ca37f' : mode === 'light' ? '#000000' : '#ffffff',
                     },

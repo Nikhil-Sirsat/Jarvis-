@@ -17,7 +17,7 @@ export const ThemeProviderComponent = ({ children }) => {
         });
     };
 
-    // Create Material UI theme based on mode
+    // Material UI theme based on mode
     const theme = useMemo(
         () =>
             createTheme({

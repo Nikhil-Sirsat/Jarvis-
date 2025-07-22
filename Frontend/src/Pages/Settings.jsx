@@ -148,7 +148,7 @@ export default function Settings() {
                             ModalProps={{ keepMounted: true }}
                             sx={{
                                 display: { xs: 'block', sm: 'none' },
-                                zIndex: (theme) => theme.zIndex.modal + 1, // <-- Ensure it's above modal content
+                                zIndex: (theme) => theme.zIndex.modal + 1,
                                 '& .MuiDrawer-paper': {
                                     width: drawerWidth,
                                     boxSizing: 'border-box',
@@ -181,7 +181,6 @@ export default function Settings() {
                             flexGrow: 1,
                             p: 3,
                             overflowY: 'auto',
-                            // width: { sm: `calc(100% - ${drawerWidth}px)` },
                             width: { xs: '100vw', md: '70vw' },
                         }}
                     >

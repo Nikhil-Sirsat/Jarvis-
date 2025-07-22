@@ -23,7 +23,6 @@ export default function MarkFavBtn({ msgId, isFav }) {
                 setIsFavourite(true);
                 // showSnackbar("Added to favourites");
             }
-            // onToggle(); // Call the parent callback to update the state
         } catch (error) {
             console.error("Error toggling favourite:", error);
             showSnackbar(`Error updating favourite status: ${error.status} : ${error.response?.data?.message || error.message}`);

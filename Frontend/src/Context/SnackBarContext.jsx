@@ -4,15 +4,12 @@ import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import MuiAlert from '@mui/material/Alert';
 
-// Create a context
 const SnackbarContext = createContext();
 
-// Custom hook to use the SnackbarContext
 export const useSnackbar = () => {
     return useContext(SnackbarContext);
 };
 
-// Provider component
 export const SnackbarProvider = ({ children }) => {
     const [snackbar, setSnackbar] = useState({
         open: false,

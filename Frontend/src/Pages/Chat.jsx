@@ -117,6 +117,7 @@ export default function Chat() {
         setAnchorEl(e.currentTarget);
         setIdToDel(convId);
     };
+    
     const handleClose = () => {
         setAnchorEl(null);
         setIdToDel(null);
