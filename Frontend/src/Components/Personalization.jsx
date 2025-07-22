@@ -10,8 +10,8 @@ import {
     Stack,
     Divider,
 } from '@mui/material';
-import axiosInstance from '../axiosInstance'; 
-import { AuthContext } from '../context/AuthContext'; 
+import axiosInstance from '../axiosInstance';
+import { AuthContext } from '../context/AuthContext';
 import { useSnackbar } from "../Context/SnackBarContext";
 
 export default function Personalization() {
@@ -63,6 +63,7 @@ export default function Personalization() {
             justifyContent="center"
             alignItems="center"
             p={2}
+            pb={5}
             sx={{ width: { xs: '100%', md: '60%' } }}
         >
             <Box sx={{ width: '100%' }}>

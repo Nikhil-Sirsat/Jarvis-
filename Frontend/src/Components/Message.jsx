@@ -105,12 +105,11 @@ export default function Message({ msg, index }) {
                     display: "inline-block",
                     maxWidth: msg.sender === "user" ? { xs: '90%', md: '70%' } : '100%',
                     px: msg.sender === "user" ? { xs: 1, md: 2 } : { xs: 0, md: 2 },
-                    py: 2.5,
+                    py: 2,
                     borderRadius: 7,
                     wordBreak: "break-word",
                     backgroundColor: msg.sender === "user" ? 'none' : mode == 'dark' ? 'black' : 'white',
                     boxShadow: 'none',
-                    width: '100%'
                 }}
             >
                 <Typography sx={{

@@ -1,6 +1,6 @@
 
 import { useState, useEffect, useContext } from 'react';
-import { Outlet, Link, useNavigate } from 'react-router-dom';
+import { Outlet, Link, NavLink, useNavigate } from 'react-router-dom';
 import { styled, useTheme } from '@mui/material/styles';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
@@ -117,7 +117,7 @@ export default function Chat() {
         setAnchorEl(e.currentTarget);
         setIdToDel(convId);
     };
-    
+
     const handleClose = () => {
         setAnchorEl(null);
         setIdToDel(null);
@@ -247,17 +247,24 @@ export default function Chat() {
                             {conversations.map((conv, index) => (
 
                                 <ListItem key={index} disablePadding>
-                                    <ListItemButton sx={{ borderRadius: 3 }} >
+                                    <ListItemButton component={NavLink} to={`/chat/${conv._id}`} sx={{ borderRadius: 3, '&.active': { backgroundColor: mode === 'dark' ? '#2e2e2e' : '#e0e0e0' }, }} >
                                         <ListItemIcon
                                             aria-label="more"
                                             aria-controls={isOpen ? 'long-menu' : undefined}
                                             aria-expanded={isOpen ? 'true' : undefined}
                                             aria-haspopup="true"
-                                            onClick={(e) => { handleClick(e, conv._id) }}
+                                            onClick={(e) => {
+                                                e.preventDefault();     // Prevent <NavLink> navigation
+                                                e.stopPropagation();
+                                                handleClick(e, conv._id)
+                                            }}
+                                            sx={{ zIndex: 15 }}
                                         >
                                             <MoreHorizIcon />
                                         </ListItemIcon>
-                                        <Typography type='body2' component={Link} to={`/chat/${conv._id}`} sx={{ textDecoration: 'none', color: mode === 'dark' ? 'white' : 'black', fontSize: '0.875rem' }}>
+                                        <Typography type='body2' sx={{
+                                            textDecoration: 'none', color: mode === 'dark' ? 'white' : 'black', fontSize: '0.875rem'
+                                        }}>
                                             {conv.title}
                                         </Typography>
                                     </ListItemButton>

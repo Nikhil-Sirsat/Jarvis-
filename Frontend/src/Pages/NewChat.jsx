@@ -109,7 +109,7 @@ export default function NewChat() {
                                     onClick={() => handleSuggestionClick(text)}
                                     sx={{ display: 'flex', gap: 1, alignItems: 'flex-start', backgroundColor: 'transparent', ':hover': { cursor: 'pointer' } }}
                                 >
-                                    <HelpOutlineRoundedIcon sx={{ flexShrink: 0, color: '#606060' }} />
+                                    <HelpOutlineRoundedIcon sx={{ flexShrink: 0, color: '#606060', fontSize: '15px', mt: '3.5px' }} />
                                     <Typography variant="body1" color="text.secondary" sx={{ whiteSpace: 'pre-line' }}>
                                         {text}
                                     </Typography>

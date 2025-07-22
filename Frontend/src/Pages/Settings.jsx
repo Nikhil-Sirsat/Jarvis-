@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import AppBar from '@mui/material/AppBar';
@@ -6,7 +6,7 @@ import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import Typography from '@mui/material/Typography';
-import { useNavigate, Outlet, Link } from 'react-router-dom';
+import { useNavigate, Outlet, NavLink } from 'react-router-dom';
 import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -15,6 +15,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
+import { ThemeContext } from '../context/ThemeContext';
 
 import ContrastIcon from '@mui/icons-material/Contrast';
 import EditNoteRoundedIcon from '@mui/icons-material/EditNoteRounded';
@@ -30,7 +31,7 @@ const modalStyle = {
     transform: 'translate(-50%, -50%)',
     height: '85vh',
     minWidth: '70vw',
-    bgcolor: 'background.paper',
+    backgroundColor: 'background.paper',
     border: '2px solid #000',
     boxShadow: 24,
     overflow: 'hidden',
@@ -45,6 +46,7 @@ const listItemStyl = {
 export default function Settings() {
     const [open, setOpen] = useState(true);
     const [mobileOpen, setMobileOpen] = useState(false);
+    const { mode } = useContext(ThemeContext);
     const navigate = useNavigate();
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -63,7 +65,7 @@ export default function Settings() {
         <Box sx={{ mt: 7 }}>
             <List>
                 <ListItem>
-                    <ListItemButton sx={listItemStyl} component={Link} to="/chat/settings/theme">
+                    <ListItemButton component={NavLink} to="/chat/settings/theme" style={listItemStyl} sx={{ '&.active': { backgroundColor: mode === 'dark' ? '#2e2e2e' : '#e0e0e0' }, }}>
                         <ListItemIcon>
                             <ContrastIcon sx={{ color: '#0ca37f' }} />
                         </ListItemIcon>
@@ -72,7 +74,7 @@ export default function Settings() {
                 </ListItem>
 
                 <ListItem>
-                    <ListItemButton sx={listItemStyl} component={Link} to="/chat/settings/personalization">
+                    <ListItemButton component={NavLink} to="/chat/settings/personalization" style={listItemStyl} sx={{ '&.active': { backgroundColor: mode === 'dark' ? '#2e2e2e' : '#e0e0e0' }, }}>
                         <ListItemIcon>
                             <EditNoteRoundedIcon sx={{ color: '#0ca37f' }} />
                         </ListItemIcon>
@@ -81,7 +83,7 @@ export default function Settings() {
                 </ListItem>
 
                 <ListItem>
-                    <ListItemButton sx={listItemStyl} component={Link} to="/chat/settings/memory">
+                    <ListItemButton component={NavLink} to="/chat/settings/memory" style={listItemStyl} sx={{ '&.active': { backgroundColor: mode === 'dark' ? '#2e2e2e' : '#e0e0e0' }, }}>
                         <ListItemIcon>
                             <MemoryRoundedIcon sx={{ color: '#0ca37f' }} />
                         </ListItemIcon>
@@ -90,7 +92,7 @@ export default function Settings() {
                 </ListItem>
 
                 <ListItem>
-                    <ListItemButton sx={listItemStyl} component={Link} to="/chat/settings/account">
+                    <ListItemButton component={NavLink} to="/chat/settings/account" style={listItemStyl} sx={{ '&.active': { backgroundColor: mode === 'dark' ? '#2e2e2e' : '#e0e0e0' }, }}>
                         <ListItemIcon>
                             <AccountCircleRoundedIcon sx={{ color: '#0ca37f' }} />
                         </ListItemIcon>

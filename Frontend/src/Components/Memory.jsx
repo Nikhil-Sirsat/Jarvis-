@@ -64,7 +64,7 @@ export default function Memory() {
     if (loading) return <ThreeDotLoading />;
 
     return (
-        <Box sx={{ p: 2 }}>
+        <Box sx={{ p: 2, pb: 5 }}>
             <Typography variant="h5" gutterBottom sx={{ fontWeight: 'bold' }}>
                 Saved memories
             </Typography>
