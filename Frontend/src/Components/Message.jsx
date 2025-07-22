@@ -71,8 +71,8 @@ export default function Message({ msg, index }) {
                 elevation={3}
                 sx={{
                     display: "inline-block",
-                    maxWidth: msg.sender === "user" ? '70%' : '100%',
-                    px: 2.5,
+                    maxWidth: msg.sender === "user" ? { xs: '90%', md: '70%' } : '100%',
+                    px: msg.sender === "user" ? { xs: 1, md: 2 } : { xs: 0, md: 2 },
                     py: 2.5,
                     borderRadius: 7,
                     wordBreak: "break-word",
@@ -160,7 +160,7 @@ export default function Message({ msg, index }) {
                                 <li
                                     style={{
                                         marginBottom: '12px',
-                                        paddingLeft: '1rem',
+                                        paddingLeft: '0.5rem', // 1 rem is ideal of large screen
                                         marginLeft: '1.5rem',
                                     }}
                                 >
@@ -197,7 +197,6 @@ export default function Message({ msg, index }) {
                     >
                         {msg.message}
                     </ReactMarkdown>
-
 
                 </Typography>
 

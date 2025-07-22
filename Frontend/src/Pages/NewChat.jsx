@@ -74,6 +74,8 @@ export default function NewChat() {
                 width: { xs: '87vw', md: '60vw' },
                 display: "flex",
                 flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'space-evenly'
             }}
         >
             <Typography variant="h4">
@@ -81,40 +83,42 @@ export default function NewChat() {
             </Typography>
 
             {/* Suggestions Section */}
-            <Box sx={{ mt: 3, mb: 3 }}>
-                <Typography variant="body2" color="text.secondary" mb={1}>
-                    you might wanna ask.....
-                </Typography>
+            {suggestions && suggestionsLoading ? (
+                <Box sx={{ mt: 3, mb: 3 }}>
+                    <Typography variant="body2" color="text.secondary" mb={1}>
+                        you might wanna ask.....
+                    </Typography>
 
-                {suggestionsLoading ? (
-                    <Stack direction="row" spacing={1} flexWrap="wrap">
-                        {[...Array(3)].map((_, idx) => (
-                            <Skeleton
-                                key={idx}
-                                variant="rectangular"
-                                width={220}
-                                height={40}
-                                sx={{ borderRadius: 2 }}
-                            />
-                        ))}
-                    </Stack>
-                ) : (
-                    <Stack direction="column" spacing={2} sx={{ mt: 4, mb: 4 }}>
-                        {suggestions.map((text, index) => (
-                            <Box
-                                key={index}
-                                onClick={() => handleSuggestionClick(text)}
-                                sx={{ display: 'flex', gap: 1, alignItems: 'flex-start', backgroundColor: 'transparent', ':hover': { cursor: 'pointer' } }}
-                            >
-                                <HelpOutlineRoundedIcon sx={{ flexShrink: 0, color: '#606060' }} />
-                                <Typography variant="body1" color="text.secondary" sx={{ whiteSpace: 'pre-line' }}>
-                                    {text}
-                                </Typography>
-                            </Box>
-                        ))}
-                    </Stack>
-                )}
-            </Box>
+                    {suggestionsLoading ? (
+                        <Stack direction="column" spacing={1} flexWrap="wrap">
+                            {[...Array(3)].map((_, idx) => (
+                                <Skeleton
+                                    key={idx}
+                                    variant="rectangular"
+                                    width={220}
+                                    height={40}
+                                    sx={{ borderRadius: 2, mb: 1 }}
+                                />
+                            ))}
+                        </Stack>
+                    ) : (
+                        <Stack direction="column" spacing={2} sx={{ mt: 4, mb: 4 }}>
+                            {suggestions.map((text, index) => (
+                                <Box
+                                    key={index}
+                                    onClick={() => handleSuggestionClick(text)}
+                                    sx={{ display: 'flex', gap: 1, alignItems: 'flex-start', backgroundColor: 'transparent', ':hover': { cursor: 'pointer' } }}
+                                >
+                                    <HelpOutlineRoundedIcon sx={{ flexShrink: 0, color: '#606060' }} />
+                                    <Typography variant="body1" color="text.secondary" sx={{ whiteSpace: 'pre-line' }}>
+                                        {text}
+                                    </Typography>
+                                </Box>
+                            ))}
+                        </Stack>
+                    )}
+                </Box>
+            ) : null}
 
             {/* user input */}
             <UserInput
@@ -125,7 +129,7 @@ export default function NewChat() {
             />
 
             {/* warning */}
-            <Typography sx={{ p: 0.5, fontSize: { xs: 11, md: 14 }, m: 'auto', color: "grey" }}>
+            <Typography sx={{ p: 0.5, fontSize: { xs: 11, md: 14 }, color: "grey" }}>
                 <i>Jarvis can make mistakes. Check important info.</i>
             </Typography>
         </Box>

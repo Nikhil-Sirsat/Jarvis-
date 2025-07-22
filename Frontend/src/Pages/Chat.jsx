@@ -97,7 +97,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 
 export default function Chat() {
     const theme = useTheme();
-    const [open, setOpen] = useState(true);
+    const [open, setOpen] = useState(false);
     const [conversations, setConversations] = useState([]);
     const [conversationLoading, setConversationLoading] = useState(true);
     const [anchorEl, setAnchorEl] = useState(null);
