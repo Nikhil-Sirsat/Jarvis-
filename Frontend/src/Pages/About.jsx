@@ -71,9 +71,10 @@ const About = () => {
                         <li>Conversational AI with real-time natural language understanding</li>
                         <li>Voice Input and Output</li>
                         <li>Memory-aware conversations with contextual history</li>
-                        <li>Custom user persona management</li>
+                        <li>Custom user persona management for more personalization</li>
                         <li>Interactive Reflection page for weekly insights and feedback</li>
-                        <li>Memory store to view saved memories</li>
+                        <li>Memory store to view and manage memory</li>
+                        <li>smart proactive follow-up question suggestion based on your past conversations</li>
                     </ul>
                 </ul>
             </Section>
