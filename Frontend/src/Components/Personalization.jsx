@@ -64,7 +64,7 @@ export default function Personalization() {
             justifyContent="center"
             alignItems="center"
             p={2}
-            sx={{ width: '50vw' }}
+            sx={{ width: { xs: '100%', md: '60%' } }}
         >
             <Box sx={{ width: '100%' }}>
                 <CardHeader
@@ -117,7 +117,7 @@ export default function Personalization() {
                             <Button
                                 variant="contained"
                                 type="submit"
-                                sx={{ mt: 2, borderRadius: 4, backgroundColor: '#0ca37f', color: '#fff' }}
+                                sx={{ mt: 2, mb: 2, borderRadius: 4, backgroundColor: '#0ca37f', color: '#fff' }}
                                 disabled={loading}
                             >
                                 {loading ? 'Saving...' : 'Save Persona'}

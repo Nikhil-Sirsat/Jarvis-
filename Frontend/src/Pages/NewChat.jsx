@@ -83,7 +83,7 @@ export default function NewChat() {
             </Typography>
 
             {/* Suggestions Section */}
-            {suggestions && suggestionsLoading ? (
+            {suggestions || suggestionsLoading ? (
                 <Box sx={{ mt: 3, mb: 3 }}>
                     <Typography variant="body2" color="text.secondary" mb={1}>
                         you might wanna ask.....
