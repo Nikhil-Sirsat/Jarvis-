@@ -10,8 +10,6 @@ import {
 } from "@mui/material";
 import Message from '../Components/Message.jsx';
 
-
-
 export default function Favourite() {
     const [favourites, setFavourites] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -59,28 +57,32 @@ export default function Favourite() {
 
     return (
 
-        <Box
-            sx={{
-                width: { xs: '87vw', md: '60vw' },
-                display: "flex",
-                flexDirection: "column",
-                minHeight: "100vh",
-            }}
-        >
-            <Box
-                sx={{
-                    flex: 1,
-                    padding: 2,
-                }}
-            >
-                <Typography variant="h4" sx={{ mb: 3, color: mode == 'dark' ? 'white' : 'black' }}>
-                    Favourites responses
-                </Typography>
-                {favourites.map((fav, index) => (
-                    <Message msg={fav.msgId} index={index} key={index} />
-                ))}
-            </Box>
-        </Box>
-
+        favourites.length > 0 ?
+            (
+                <Box
+                    sx={{
+                        width: { xs: '87vw', md: '60vw' },
+                        display: "flex",
+                        flexDirection: "column",
+                        minHeight: "100vh",
+                    }}
+                >
+                    <Box
+                        sx={{
+                            flex: 1,
+                            padding: 2,
+                        }}
+                    >
+                        <Typography variant="h4" sx={{ mb: 3, color: mode == 'dark' ? 'white' : 'black' }}>
+                            Favourites responses
+                        </Typography>
+                        {favourites.map((fav, index) => (
+                            <Message msg={fav.msgId} index={index} key={index} />
+                        ))}
+                    </Box>
+                </Box>
+            ) : (
+                <Typography> no Archived messages </Typography>
+            )
     )
-}
+};

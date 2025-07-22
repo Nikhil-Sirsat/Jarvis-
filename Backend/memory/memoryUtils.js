@@ -219,7 +219,7 @@ export async function getMemoryByUserIdWithinDays(userId, days = 7) {
         return searchResult.points || [];
     } catch (error) {
         console.error("Error fetching memories:", error);
-        throw new ExpressError("Error fetching memories");
+        return null;
     }
 };
 

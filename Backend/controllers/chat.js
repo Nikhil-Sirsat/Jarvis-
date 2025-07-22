@@ -99,10 +99,6 @@ export const getConversations = async (req, res) => {
         .select('title updatedAt')
         .sort({ updatedAt: -1 });
 
-    if (!conversations || conversations.length === 0) {
-        throw new ExpressError(404, 'No conversations found');
-    }
-
     return res.status(200).json(conversations);
 };
 

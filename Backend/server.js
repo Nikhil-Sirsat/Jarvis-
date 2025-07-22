@@ -7,6 +7,7 @@ if (process.env.NODE_ENV != "production") {
 import express from 'express';
 
 import connectDB from './ConnectDB/connectDB.js';
+import MongoStore from 'connect-mongo';
 
 import session from 'express-session';
 import passport from 'passport';
@@ -29,6 +30,8 @@ import cors from 'cors';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// app.set("trust proxy", 1);
 
 app.use(cors({
     origin: process.env.FRONTEND_URL,
@@ -55,14 +58,29 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// SESSION SETUP
+// Session Setup
+const store = MongoStore.create({
+    mongoUrl: process.env.DB_URL,
+    crypto: { secret: process.env.express_session_key },
+    ttl: 24 * 3600,
+});
+
+store.on("error", (err) => {
+    console.log("ERROR IN MONGO SESSION STORE : ", err);
+});
+
 // session middleware
 const sessionMiddleware = session({
     secret: process.env.express_session_key,
     resave: false,
     saveUninitialized: false,
+    store: store,
     cookie: {
         maxAge: 7 * 24 * 60 * 60 * 1000,
         httpOnly: true,
+        // secure: true,
+        // sameSite: "none",
     }
 });
 app.use(sessionMiddleware);

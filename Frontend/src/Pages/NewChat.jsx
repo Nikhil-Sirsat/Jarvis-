@@ -29,7 +29,8 @@ export default function NewChat() {
                 const res = await axiosInstance.get("/api/user/getProactiveSuggestions");
                 setSuggestions(res.data.suggestions || []);
             } catch (error) {
-                showSnackbar(`Failed to load suggestions : ${error.status} : ${error.response?.data?.message || error.message}`);
+                // showSnackbar(`Failed to load suggestions : ${error.status} : ${error.response?.data?.message || error.message}`);
+                console.log(`Failed to load proactive suggestions suggestions : ${error.status} : ${error.response?.data?.message || error.message}`);
             } finally {
                 setSuggestionsLoading(false);
             }
@@ -85,9 +86,10 @@ export default function NewChat() {
             {/* Suggestions Section */}
             {suggestions || suggestionsLoading ? (
                 <Box sx={{ mt: 3, mb: 3 }}>
-                    <Typography variant="body2" color="text.secondary" mb={1}>
+                    {suggestions.length > 0 ? (<Typography variant="body2" color="text.secondary" mb={1}>
                         you might wanna ask.....
-                    </Typography>
+                    </Typography>) : null
+                    }
 
                     {suggestionsLoading ? (
                         <Stack direction="column" spacing={1} flexWrap="wrap">

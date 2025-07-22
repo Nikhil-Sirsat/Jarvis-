@@ -95,7 +95,7 @@ export const ProactiveSuggestion = async (memoryTexts) => {
 
         let suggestions = response.text?.trim();
 
-        if (!suggestions) { return res.status(500).json({ message: "Gemini failed to generate proactivly suggested questions" }) };
+        if (!suggestions) { return null };
 
         // Remove Markdown code block if present
         if (suggestions.startsWith("```")) {
@@ -222,7 +222,7 @@ Output in JSON format like:
 
         // console.log("Reflection LLM response:", data);
 
-        return JSON.parse(data); 
+        return JSON.parse(data);
     } catch (error) {
         console.error("Error calling LLM for reflection:", error);
         throw new ExpressError("Error calling LLM for reflection");
