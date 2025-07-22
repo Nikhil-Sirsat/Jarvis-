@@ -105,6 +105,9 @@ const About = () => {
                         <Typography variant="body2">
                             <strong>Architecture:</strong> Modular, API-driven, scalable and privacy-aware
                         </Typography>
+                        <Typography variant="body2">
+                            <strong>BullMQ:</strong> background job scheduling and queue management
+                        </Typography>
                     </Grid>
                 </Grid>
             </Section>
