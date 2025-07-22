@@ -18,4 +18,4 @@ export async function getEmbedding(text) {
 
     console.timeEnd('getEmbedding');
     return Array.from(output.data);
-}
+};

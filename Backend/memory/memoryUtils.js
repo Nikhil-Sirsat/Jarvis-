@@ -141,7 +141,7 @@ export function shouldStoreMemory(text) {
     const isLongEnough = lower.length > 30;
 
     return hasMemoryTrigger || isLongEnough;
-}
+};
 
 export const getAllVectorMemory = async (userId) => {
     try {
@@ -154,7 +154,7 @@ export const getAllVectorMemory = async (userId) => {
                     },
                 ],
             },
-            limit: 100, 
+            limit: 100,
         });
 
         // console.log("all vec memo : ", result.points.map(item => item.payload.text));
@@ -237,5 +237,5 @@ export function isMsgNeedMemories(message) {
     }
 
     return true;
-}
+};
 

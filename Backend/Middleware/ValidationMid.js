@@ -12,4 +12,4 @@ export const validateUser = async (req, res, next) => {
     } else {
         next();
     }
-}
+};

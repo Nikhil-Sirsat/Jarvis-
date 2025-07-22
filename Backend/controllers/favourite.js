@@ -38,14 +38,14 @@ export const addFavourite = async (req, res) => {
     await favourite.save();
 
     res.status(201).json({ message: 'message added to favourites' });
-}
+};
 
 export const getFavourites = async (req, res) => {
     const favourites = await Favourite.find({ userId: req.user._id })
-        .populate('msgId'); 
+        .populate('msgId');
 
     res.status(200).json(favourites);
-}
+};
 
 export const isFavourite = async (req, res) => {
 
@@ -63,7 +63,7 @@ export const isFavourite = async (req, res) => {
     } else {
         res.status(200).json({ isFavourite: false });
     }
-}
+};
 
 export const removeFavourite = async (req, res) => {
     const { msgId } = req.params;
@@ -81,4 +81,4 @@ export const removeFavourite = async (req, res) => {
     await Favourite.deleteOne({ _id: existingFavourite._id });
 
     res.status(204).json({ message: 'message successfully removed from favourites' });
-}
+};

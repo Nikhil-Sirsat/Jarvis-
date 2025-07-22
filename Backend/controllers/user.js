@@ -12,12 +12,12 @@ export const signUp = async (req, res) => {
     const newUser = new User({ name, email, age });
     await User.register(newUser, password);
     return res.status(201).json({ message: 'User registered successfully' });
-}
+};
 
 export const login = (req, res) => {
     console.log('login req hit');
     return res.status(200).json({ user: req.user, message: 'Login successful' });
-}
+};
 
 export const logout = (req, res) => {
     req.logout((err) => {
@@ -26,11 +26,11 @@ export const logout = (req, res) => {
         }
         return res.status(200).json({ message: 'Logout successful' });
     });
-}
+};
 
 export const protectedRoute = (req, res) => {
     return res.status(200).json({ user: req.user, message: 'This is a protected route' });
-}
+};
 
 export const setPersona = async (req, res) => {
     const userId = req.user._id;
@@ -41,7 +41,7 @@ export const setPersona = async (req, res) => {
     });
 
     res.status(200).json({ message: "Persona updated successfully" });
-}
+};
 
 
 //memory controllers
@@ -51,7 +51,7 @@ export const getMemory = async (req, res) => {
     const memory = await getAllVectorMemory(userId);
 
     return res.status(200).json({ memory: memory });
-}
+};
 
 export const deleteOneMemory = async (req, res) => {
     const memoryId = req.params.id.toString();
@@ -68,7 +68,7 @@ export const deleteOneMemory = async (req, res) => {
 
     await deleteMemoryById(memoryId);
     return res.status(200).json({ message: 'Memory deleted successfully' });
-}
+};
 
 export const getReflection = async (req, res) => {
     const { userId } = req.params;
