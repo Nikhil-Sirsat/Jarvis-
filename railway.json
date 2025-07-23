@@ -1,0 +1,6 @@
+{
+    "build": {
+        "installCommand": "cd Backend && npm install",
+        "startCommand": "cd Backend && node memory/memoryWorker.js"
+    }
+}
