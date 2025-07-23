@@ -62,7 +62,7 @@ app.use(express.urlencoded({ extended: true }));
 // Session Setup
 const store = MongoStore.create({
     mongoUrl: process.env.DB_URL,
-    crypto: { secret: process.env.express_session_key },
+    crypto: { secret: process.env.EXPRESS_SESSION_KEY },
     ttl: 24 * 3600,
 });
 
@@ -72,7 +72,7 @@ store.on("error", (err) => {
 
 // session middleware
 const sessionMiddleware = session({
-    secret: process.env.express_session_key,
+    secret: process.env.EXPRESS_SESSION_KEY,
     resave: false,
     saveUninitialized: false,
     store: store,
