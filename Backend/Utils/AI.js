@@ -8,7 +8,7 @@ export const aiResponse = async (user, relevantMemories, historyMessages, messag
     try {
         // personality prefix
         const personaPrefix = `
-    You are speaking to ${nickname || 'the user'}.
+    You are speaking to ${nickname || user.name}.
     They are: ${userRole || 'a valued user'}.
     Be ${traits?.join(', ') || 'friendly'}.
     Notes: ${extraNotes || 'No extra instructions.'}
@@ -19,7 +19,7 @@ export const aiResponse = async (user, relevantMemories, historyMessages, messag
             {
                 text: `
                 You are Jarvis, an intelligent, evolving AI created by Nikhil Sirsat.
-    Your goal is to assist ${nickname || 'user'} with clarity, speed, and accuracy.
+    Your goal is to assist ${nickname || user.name} with clarity, speed, and accuracy.
     
     Before answering:
     
@@ -40,13 +40,13 @@ export const aiResponse = async (user, relevantMemories, historyMessages, messag
             },
 
             ...(relevantMemories.length > 0
-                ? [{ text: `some important memories about ${nickname || 'user'}: \n${relevantMemories.map(m => `- ${m}`).join('\n')}` }]
+                ? [{ text: `some important memories about ${nickname || user.name}: \n${relevantMemories.map(m => `- ${m}`).join('\n')}` }]
                 : []),
             ...historyMessages.map((msg) => ({
                 text: `${msg.sender === "user" ? "user" : "ai"}: ${msg.message}`,
             })),
             {
-                text: `next question : ${nickname || 'User'}: ${message}`,
+                text: `next question : ${nickname || user.name}: ${message}`,
             },
         ];
 
@@ -60,7 +60,7 @@ export const aiResponse = async (user, relevantMemories, historyMessages, messag
         });
 
         const aiReply = response.text?.trim();
-        if (!aiReply) { throw new ExpressError(500, 'AI did not return a valid response'); }
+        if (!aiReply) { throw new ExpressError(500, 'LLM did not return a valid response'); }
 
         return aiReply;
     } catch (error) {
