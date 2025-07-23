@@ -1,4 +1,4 @@
-import Conversation from '../models/Conversation.js';
+import Conversation from '../models/conversation.js';
 import ExpressError from '../Utils/ExpressError.js';
 
 //authentication

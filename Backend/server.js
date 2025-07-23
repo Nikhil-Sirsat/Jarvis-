@@ -21,7 +21,7 @@ import chatRoutes from './routes/chat.js';
 import favouriteRoutes from './routes/favourite.js';
 
 // import models
-import User from './models/User.js';
+import User from './models/user.js';
 
 // import error handler
 import errorHandler from './Middleware/errorHandler.js';

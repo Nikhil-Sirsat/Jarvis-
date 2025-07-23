@@ -1,5 +1,5 @@
-import ChatMessage from '../models/ChatMessage.js';
-import Conversation from '../models/Conversation.js';
+import ChatMessage from '../models/chatMessage.js';
+import Conversation from '../models/conversation.js';
 import ExpressError from '../Utils/ExpressError.js';
 import { getCachedChatHistory, writeToChatCache } from '../Utils/redisHelper.js';
 import { searchMemory, shouldStoreMemory, isMsgNeedMemories } from '../memory/memoryUtils.js';

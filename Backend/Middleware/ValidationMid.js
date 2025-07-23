@@ -1,4 +1,4 @@
-import { userSchema } from "../SchemaValidation/Schema.js";
+import { userSchema } from '../SchemaValidation/Schema.js';
 import ExpressError from "../Utils/ExpressError.js";
 
 export const validateUser = async (req, res, next) => {

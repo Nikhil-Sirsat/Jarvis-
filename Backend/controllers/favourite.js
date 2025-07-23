@@ -1,6 +1,6 @@
 
 import Favourite from '../models/favourite.js';
-import ChatMessage from '../models/ChatMessage.js';
+import ChatMessage from '../models/chatMessage.js';
 import ExpressError from '../Utils/ExpressError.js';
 
 export const addFavourite = async (req, res) => {
