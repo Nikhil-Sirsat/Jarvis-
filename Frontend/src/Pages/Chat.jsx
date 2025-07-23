@@ -11,7 +11,7 @@ import axiosInstance from '../AxiosInstance.jsx';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import EditDocumentIcon from '@mui/icons-material/EditDocument';
 import AccountCircleRoundedIcon from '@mui/icons-material/AccountCircleRounded';
-import { ThemeContext } from "../context/ThemeContext";
+import { ThemeContext } from "../Context/ThemeContext.jsx";
 import LogoutButton from '../Components/Logout.jsx';
 import { useSnackbar } from '../Context/SnackBarContext.jsx';
 import logo from '../assets/jarvisLogo.png';

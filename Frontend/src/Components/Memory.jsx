@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axiosInstance from "../axiosInstance";
+import axiosInstance from "../AxiosInstance.jsx";
 import { Card, CardContent, Typography, List, Box, Divider, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useSnackbar } from "../Context/SnackBarContext";

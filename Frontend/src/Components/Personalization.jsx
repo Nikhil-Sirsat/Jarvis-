@@ -10,8 +10,8 @@ import {
     Stack,
     Divider,
 } from '@mui/material';
-import axiosInstance from '../axiosInstance';
-import { AuthContext } from '../context/AuthContext';
+import axiosInstance from '../AxiosInstance';
+import { AuthContext } from '../Context/AuthContext.jsx';
 import { useSnackbar } from "../Context/SnackBarContext";
 
 export default function Personalization() {

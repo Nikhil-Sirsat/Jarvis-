@@ -8,8 +8,8 @@ import {
 import MemoryIcon from '@mui/icons-material/Memory';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import PsychologyIcon from '@mui/icons-material/Psychology';
-import axiosInstance from '../axiosInstance';
-import { AuthContext } from '../context/AuthContext';
+import axiosInstance from '../AxiosInstance.jsx';
+import { AuthContext } from '../Context/AuthContext.jsx';
 import { useSnackbar } from '../Context/SnackBarContext.jsx';
 import { AcUnit } from "@mui/icons-material";
 import ThreeDotLoading from '../Components/ThreeDotLoading.jsx';
