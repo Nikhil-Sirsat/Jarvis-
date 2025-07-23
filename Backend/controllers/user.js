@@ -1,4 +1,4 @@
-import User from '../models/User.js';
+import User from '../models/user.js';
 import ExpressError from '../Utils/ExpressError.js';
 import { getAllVectorMemory, getMemoryById, deleteMemoryById, getMemoryByUserIdWithinDays } from '../memory/memoryUtils.js';
 import { callLLMForReflection, ProactiveSuggestion } from '../Utils/AI.js';
