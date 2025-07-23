@@ -3,7 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProviderComponent } from './Context/ThemeContext';
 
 // import pages
-import About from './pages/About.jsx';
+import About from './Pages/About.jsx';
 import Login from './Pages/Login.jsx';
 import Chat from './Pages/Chat.jsx';
 import Signup from './Pages/Signup.jsx';
