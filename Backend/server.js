@@ -6,7 +6,7 @@ if (process.env.NODE_ENV != "production") {
 
 import express from 'express';
 
-import connectDB from './ConnectDB/connectDB.js';
+import connectDB from './connectDB/connectDB.js';
 import MongoStore from 'connect-mongo';
 
 import session from 'express-session';
