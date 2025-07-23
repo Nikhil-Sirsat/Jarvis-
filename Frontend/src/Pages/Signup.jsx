@@ -17,7 +17,7 @@ import {
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../Context/AuthContext.jsx';
-import axiosInstance from '../axiosInstance.jsx';
+import axiosInstance from '../AxiosInstance.jsx';
 import logo from '../assets/jarvisLogo.png';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';

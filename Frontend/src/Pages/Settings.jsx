@@ -15,7 +15,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
-import { ThemeContext } from '../context/ThemeContext';
+import { ThemeContext } from '../Context/ThemeContext.jsx';
 
 import ContrastIcon from '@mui/icons-material/Contrast';
 import EditNoteRoundedIcon from '@mui/icons-material/EditNoteRounded';
