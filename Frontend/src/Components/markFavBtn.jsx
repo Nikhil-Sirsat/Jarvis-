@@ -10,7 +10,7 @@ export default function MarkFavBtn({ msgId, isFav }) {
 
     const toggleFavourite = async () => {
         try {
-            console.log("is fav : ", isFavourite);
+            // console.log("is fav : ", isFavourite);
             if (isFavourite) {
                 // Remove from favourites
                 await axiosInstance.delete(`/api/favourite/${msgId}`);
@@ -18,7 +18,7 @@ export default function MarkFavBtn({ msgId, isFav }) {
                 showSnackbar("Removed from favourites");
             } else {
                 // Add to favourites
-                console.log("msgId: ", msgId);
+                // console.log("msgId: ", msgId);
                 await axiosInstance.post(`/api/favourite/${msgId}`);
                 setIsFavourite(true);
                 // showSnackbar("Added to favourites");

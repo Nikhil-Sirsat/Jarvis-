@@ -23,7 +23,7 @@ const memoryWorker = new Worker(
 
         const canonicalMemory = await validateMemoryLLM(message);
 
-        console.log('isStored : ', canonicalMemory);
+        // console.log('isStored : ', canonicalMemory);
 
         if (!canonicalMemory) return;
 

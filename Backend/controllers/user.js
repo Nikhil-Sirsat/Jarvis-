@@ -72,7 +72,7 @@ export const deleteOneMemory = async (req, res) => {
 
 export const getReflection = async (req, res) => {
     const { userId } = req.params;
-    console.log('req hit for reflection');
+    // console.log('req hit for reflection');
 
     // Validate userId
     if (!userId || userId !== req.user._id.toString()) {

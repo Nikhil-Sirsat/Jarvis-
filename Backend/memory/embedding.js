@@ -3,7 +3,7 @@ import { pipeline } from '@xenova/transformers';
 let embedderPromise = null;
 
 export async function getEmbedding(text) {
-    console.time('getEmbedding');
+    // console.time('getEmbedding');
 
     if (!embedderPromise) {
         // Memoize promise to avoid re-instantiating pipeline multiple times
@@ -16,6 +16,6 @@ export async function getEmbedding(text) {
         normalize: true,
     });
 
-    console.timeEnd('getEmbedding');
+    // console.timeEnd('getEmbedding');
     return Array.from(output.data);
 };

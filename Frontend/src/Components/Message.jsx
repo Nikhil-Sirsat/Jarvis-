@@ -34,7 +34,7 @@ export default function Message({ msg, index }) {
             const voices = window.speechSynthesis.getVoices();
             if (!voices.length) {
                 console.warn("Voices not loaded yet.");
-                return; 
+                return;
             }
 
             setSpeakingMsgIndex(index);
@@ -79,7 +79,7 @@ export default function Message({ msg, index }) {
 
     // copy response
     const handleCopy = (msg) => {
-        console.log('msg : ', msg);
+        // console.log('msg : ', msg);
         navigator.clipboard.writeText(msg)
             .then(() => console.log("Copied!"))
             .catch(() => showSnackbar("Failed to copy"));
@@ -112,7 +112,7 @@ export default function Message({ msg, index }) {
                     boxShadow: 'none',
                 }}
             >
-                <Typography sx={{
+                <Box sx={{
                     lineHeight: 1.7,
                     fontSize: '16px',
                     p: 1
@@ -229,7 +229,7 @@ export default function Message({ msg, index }) {
                         {msg.message}
                     </ReactMarkdown>
 
-                </Typography>
+                </Box>
 
                 {/* response bottom ops */}
                 {msg.sender === "ai" ? (

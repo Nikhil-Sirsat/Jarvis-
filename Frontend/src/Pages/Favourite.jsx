@@ -31,7 +31,7 @@ export default function Favourite() {
                     })
                 );
 
-                console.log(response.data);
+                // console.log(response.data);
 
                 setFavourites(
                     response.data.map((msg, index) => ({

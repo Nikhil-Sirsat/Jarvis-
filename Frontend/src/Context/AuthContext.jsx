@@ -14,7 +14,7 @@ function AuthProvider({ children }) {
             try {
                 const response = await axiosInstance.get('/api/user/protected');
                 setUser(response.data.user);
-                console.log("User set in useEffect:", response.data.user.username);
+                // console.log("User set in useEffect:", response.data.user.username);
             } catch (err) {
                 setUser(null);
                 console.log("Error in useEffect:", err.response ? err.response.data : err.message);
@@ -28,7 +28,7 @@ function AuthProvider({ children }) {
         try {
             const response = await axiosInstance.post('/api/user/Login', { email, password });
             setUser(response.data.user);
-            console.log("User set in login : ", response.data.user);
+            // console.log("User set in login : ", response.data.user);
             return true;
         } catch (err) {
             console.log("Error in login:", err);
@@ -39,7 +39,7 @@ function AuthProvider({ children }) {
         try {
             await axiosInstance.get('/api/user/Logout');
             setUser(null);
-            console.log("User logged out");
+            // console.log("User logged out");
         } catch (err) {
             console.log("Error in logout:", err.response ? err.response.data : err.message);
         }

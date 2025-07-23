@@ -136,7 +136,7 @@ export const generateTitle = async (message) => {
 };
 
 export const validateMemoryLLM = async (text) => {
-    console.log('is memory valid LLM called');
+    // console.log('is memory valid LLM called');
     const prompt = `
     You are Jarvis, a highly intelligent assistant managing long-term memory.
 

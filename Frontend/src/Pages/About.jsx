@@ -20,9 +20,15 @@ const Section = ({ title, icon, children }) => (
                 {title}
             </Typography>
         </Stack>
-        <Typography variant="body1" color="text.secondary" lineHeight={1.8}>
-            {children}
-        </Typography>
+        {/* Check if children is a string, if so wrap in Typography */}
+        {typeof children === 'string' ? (
+            <Typography variant="body1" color="text.secondary" lineHeight={1.8}>
+                {children}
+            </Typography>
+        ) : (
+            // If children is JSX like <ul> or <Grid>, render directly
+            children
+        )}
     </Box>
 );
 
@@ -35,7 +41,7 @@ const About = () => {
 
 
     return (
-        <Container maxWidth="md" sx={{ py: 8 }}>
+        <Container maxWidth="md">
 
             <IconButton onClick={handleBack} sx={{ position: 'absolute', top: 16, left: 16 }}>
                 <KeyboardBackspace
@@ -67,15 +73,13 @@ const About = () => {
 
             <Section title="Key Features" icon={<AcUnit sx={{ color: '#0ca37f' }} />}>
                 <ul style={{ paddingLeft: 20, marginTop: 0 }}>
-                    <ul style={{ paddingLeft: 20, marginTop: 0 }}>
-                        <li>Conversational AI with real-time natural language understanding</li>
-                        <li>Voice Input and Output</li>
-                        <li>Memory-aware conversations with contextual history</li>
-                        <li>Custom user persona management for more personalization</li>
-                        <li>Interactive Reflection page for weekly insights and feedback</li>
-                        <li>Memory store to view and manage memory</li>
-                        <li>smart proactive follow-up question suggestion based on your past conversations</li>
-                    </ul>
+                    <li>Conversational AI with real-time natural language understanding</li>
+                    <li>Voice Input and Output</li>
+                    <li>Memory-aware conversations with contextual history</li>
+                    <li>Custom user persona management for more personalization</li>
+                    <li>Interactive Reflection page for weekly insights and feedback</li>
+                    <li>Memory store to view and manage memory</li>
+                    <li>smart proactive follow-up question suggestion based on your past conversations</li>
                 </ul>
             </Section>
 

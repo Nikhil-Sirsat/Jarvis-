@@ -135,8 +135,8 @@ export default function Chat() {
         if (!idToDel) return;
         try {
             const response = await axiosInstance.delete(`/api/chat/${idToDel}`);
-            const data = await response.data;
-            console.log(data);
+            // const data = await response.data;
+            // console.log(data);
             setConversations(conversations.filter((conv) => conv._id !== idToDel));
             handleClose();
         } catch (error) {

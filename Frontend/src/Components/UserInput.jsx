@@ -27,12 +27,12 @@ export default function UserInput({ handleSend, input, setInput, msgLoading }) {
         }
 
         if (mikeActive && recognitionRef.current) {
-            console.log("Stopping previous recognition...");
+            // console.log("Stopping previous recognition...");
             recognitionRef.current.stop();
-            return; 
+            return;
         }
 
-        console.log("Initializing speech recognition...");
+        // console.log("Initializing speech recognition...");
 
         recognition = new SpeechRecognition();
         recognition.lang = "en-US";
@@ -44,7 +44,7 @@ export default function UserInput({ handleSend, input, setInput, msgLoading }) {
 
         recognition.onresult = (event) => {
             const transcript = event.results[0][0].transcript;
-            console.log("Transcript:", transcript);
+            // console.log("Transcript:", transcript);
             setInput(transcript);
             setMikeActive(false);
         };
@@ -57,7 +57,7 @@ export default function UserInput({ handleSend, input, setInput, msgLoading }) {
         };
 
         recognition.onend = () => {
-            console.log("Speech recognition ended.");
+            // console.log("Speech recognition ended.");
             recognitionRef.current = null;
             setMikeActive(false);
         };

@@ -88,7 +88,7 @@ export async function storeMemory(userId, text) {
             ],
         });
 
-        console.log("memory Stored");
+        // console.log("memory Stored");
     } catch (error) {
         throw new ExpressError(500, "Error in Storing Qdrant");
     }
@@ -101,8 +101,6 @@ export async function searchMemory(userId, query, topK = 5) {
     if (!vector || vector.length !== 384) {
         throw new ExpressError(400, "Invalid embedding vector received for query.");
     }
-
-    console.time('searchMemoryMain');
 
     let lastError;
 
@@ -121,7 +119,6 @@ export async function searchMemory(userId, query, topK = 5) {
                     ],
                 },
             });
-            console.timeEnd('searchMemoryMain');
             // console.log("fetched memory : ", result.map(item => item.payload.text));
             return result.map(item => item.payload.text);
         } catch (error) {

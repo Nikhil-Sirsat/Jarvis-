@@ -31,7 +31,7 @@ export default function ViewConv() {
 
     // fetch old conversation 
     useEffect(() => {
-        console.log('fetch conv messages called');
+        // console.log('fetch conv messages called');
         const fetchMessages = async () => {
 
             if (!convId) return;
@@ -54,7 +54,7 @@ export default function ViewConv() {
                         isFavourite: isfavRes[index],
                     }))
                 );
-                console.log(res.data);
+                // console.log(res.data);
                 setTimeout(scrollToBottom, 100);
             } catch (error) {
                 console.log("Error fetching messages:", error);

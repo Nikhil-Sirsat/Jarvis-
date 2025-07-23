@@ -50,7 +50,7 @@ export default function Personalization() {
                 traits: traitsArray
             };
 
-            showSnackbar('Persona updated successfully!', 'success');
+            // showSnackbar('Persona updated successfully!', 'success');
         } catch (error) {
             showSnackbar(`Failed to update persona : ${error.status} : ${error.response?.data?.message || error.message}`);
         }
