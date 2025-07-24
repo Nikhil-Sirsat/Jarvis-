@@ -4,7 +4,7 @@ dotenv.config();
 import { Worker } from 'bullmq';
 import IORedis from 'ioredis';
 import { storeMemory } from './memoryUtils.js';
-import { validateMemoryLLM } from '../Utils/AI.js';
+import { validateMemoryLLM } from '../Utils/LLM.js';
 
 const connection = new IORedis({
     host: process.env.REDIS_HOST,

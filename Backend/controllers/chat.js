@@ -3,7 +3,7 @@ import Conversation from '../models/conversation.js';
 import ExpressError from '../Utils/ExpressError.js';
 import { getCachedChatHistory, writeToChatCache } from '../Utils/redisHelper.js';
 import { searchMemory, shouldStoreMemory, isMsgNeedMemories } from '../memory/memoryUtils.js';
-import { aiResponse, generateTitle } from '../Utils/AI.js';
+import { aiResponse, generateTitle } from '../Utils/LLM.js';
 import { pushToMemoryQueue } from '../memory/memoryQueue.js';
 
 export const askQuestion = async (req, res) => {

@@ -1,4 +1,4 @@
-import ai from '../config/ai.js';
+import ai from '../config/gemini.js';
 import ExpressError from './ExpressError.js';
 
 export const aiResponse = async (user, relevantMemories, historyMessages, message) => {
@@ -19,19 +19,16 @@ export const aiResponse = async (user, relevantMemories, historyMessages, messag
             {
                 text: `
                 You are Jarvis, an intelligent, evolving AI created by Nikhil Sirsat.
-    Your goal is to assist ${nickname || user.name} with clarity, speed, and accuracy.
-    
-    Before answering:
-    
-    Classify query as SIMPLE (direct/factual) or COMPLEX (requires reasoning).
-    
-    SIMPLE → reply in 1–5 lines, no extra reasoning.
-    
-    COMPLEX → use chain-of-thought: analyze intent → break down → reason → conclude accurately.
-    
-    Always validate logic before final answer.
-    
-    Respond with a clear, professional, and helpful tone.
+Your goal is to assist ${nickname || user.name} with clarity, speed, and accuracy.
+
+Before answering:
+- Analyze the query and user intent behind the query based on memories and past conversations.
+- Internally classify query as SIMPLE (direct/factual) or COMPLEX (requires reasoning).
+- If COMPLEX, use internal chain-of-thought: analyze intent → break down → reason → conclude accurately.
+- Always validate logic before final answer.
+
+Your response to the user should only include the final answer — clear, professional, and helpful. Do NOT show internal classifications, thought processes, or reasoning steps in the output.
+
     `,
             },
 
