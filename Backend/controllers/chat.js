@@ -2,9 +2,10 @@ import ChatMessage from '../models/chatMessage.js';
 import Conversation from '../models/conversation.js';
 import ExpressError from '../Utils/ExpressError.js';
 import { getCachedChatHistory, writeToChatCache } from '../Utils/redisHelper.js';
-import { searchMemory, shouldStoreMemory, isMsgNeedMemories } from '../memory/memoryUtils.js';
+import { searchMemory, shouldStoreMemory, isMsgCasual } from '../memory/memoryUtils.js';
 import { aiResponse, generateTitle } from '../Utils/LLM.js';
 import { pushToMemoryQueue } from '../memory/memoryQueue.js';
+import { searchSerpAPI } from '../web/search.js';
 
 export const askQuestion = async (req, res) => {
     const { message, conversationId } = req.body;
@@ -52,15 +53,35 @@ export const askQuestion = async (req, res) => {
     // If no messages in history, initialize as empty array
     if (!Array.isArray(historyMessages)) { historyMessages = []; }
 
+    // web search
+    let results = [];
+    let webContext = [];
+    let sourcesForUI = [];
+    if (isMsgCasual(message)) {
+        results = await searchSerpAPI(message);
+
+        // web searches to feed to LLM
+        webContext = results.map(
+            (r, i) => `${i + 1}. ${r.title}:\n${r.snippet}`
+        ).join('\n\n');
+
+        // sources for UI
+        sourcesForUI = results.map(result => ({
+            title: result.title,
+            source: result.source || new URL(result.link).hostname.replace("www.", ""),
+            redirect_link: result.redirect_link,
+            favicon: result.favicon
+        }));
+    };
 
     // Memory search
     let relevantMemories = [];
-    if (isMsgNeedMemories(message)) {
+    if (isMsgCasual(message)) {
         relevantMemories = await searchMemory(userId, message, 5);
-    }
+    };
 
     // get ai response
-    let aiReply = await aiResponse(user, relevantMemories, historyMessages, message);
+    let aiReply = await aiResponse(user, relevantMemories, historyMessages, message, webContext);
 
     // save both messages
     let userMessage = await new ChatMessage({ conversationId: convId, sender: "user", message }).save();
@@ -78,7 +99,7 @@ export const askQuestion = async (req, res) => {
         });
     }
 
-    return res.status(200).json({ reply: aiReply, conversationId: convId, memoryUsed: relevantMemories, aiMsgId: aiMessage._id });
+    return res.status(200).json({ reply: aiReply, conversationId: convId, memoryUsed: relevantMemories, aiMsgId: aiMessage._id, sources: sourcesForUI });
 };
 
 export const getMessages = async (req, res) => {

@@ -5,12 +5,12 @@ import VolumeOffOutlinedIcon from '@mui/icons-material/VolumeOffOutlined';
 import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined';
 import MarkFavBtn from './markFavBtn.jsx';
 
-
 import {
     Box,
     Typography,
     Paper,
     IconButton,
+    Stack,
 } from "@mui/material";
 
 import { useSnackbar } from '../Context/SnackBarContext';
@@ -117,6 +117,75 @@ export default function Message({ msg, index }) {
                     fontSize: '16px',
                     p: 1
                 }}>
+
+                    {/* Sources Section */}
+                    {msg.sender === "ai" && msg.sources && msg.sources.length > 0 && (
+                        <Box sx={{ px: 2, pt: 1 }}>
+                            <Typography
+                                variant="caption"
+                                sx={{ color: 'text.secondary', fontWeight: 600, mb: 1 }}
+                            >
+                                Sources:
+                            </Typography>
+                            <Stack
+                                direction="row"
+                                spacing={1}
+                                flexWrap="wrap"
+                                useFlexGap
+                                sx={{
+                                    mt: 1,
+                                    mb: 2,
+                                }}
+                            >
+                                {msg.sources.map((source, idx) => (
+                                    <Box
+                                        key={idx}
+                                        component="a"
+                                        href={source.redirect_link}
+                                        target="_blank"
+                                        // rel="noopener noreferrer"
+                                        sx={{
+                                            display: "flex",
+                                            alignItems: "center",
+                                            backgroundColor: (theme) => theme.palette.mode === 'dark' ? '#1e1e1e' : '#f0f0f0',
+                                            borderRadius: "8px",
+                                            px: 1.5,
+                                            py: 0.8,
+                                            textDecoration: "none",
+                                            color: "inherit",
+                                            maxWidth: '100%',
+                                            transition: "all 0.2s ease-in-out",
+                                            "&:hover": {
+                                                backgroundColor: (theme) => theme.palette.mode === 'dark' ? '#333' : '#e2e2e2',
+                                            },
+                                        }}
+                                    >
+                                        <Box
+                                            component="img"
+                                            src={source.favicon}
+                                            alt={source.source}
+                                            sx={{
+                                                width: 16,
+                                                height: 16,
+                                                mr: 1,
+                                            }}
+                                        />
+                                        <Typography
+                                            variant="caption"
+                                            sx={{
+                                                overflow: "hidden",
+                                                textOverflow: "ellipsis",
+                                                whiteSpace: "nowrap",
+                                                maxWidth: { xs: '130px', sm: '180px' },
+                                            }}
+                                        >
+                                            {source.source}
+                                        </Typography>
+                                    </Box>
+                                ))}
+                            </Stack>
+                        </Box>
+                    )}
 
                     {/* memory Used */}
                     {msg.memoryUsed && msg.memoryUsed.length > 0 && (

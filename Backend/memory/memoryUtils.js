@@ -220,7 +220,7 @@ export async function getMemoryByUserIdWithinDays(userId, days = 7) {
     }
 };
 
-export function isMsgNeedMemories(message) {
+export function isMsgCasual(message) {
     // Minimum length after trimming to consider message possibly relevant
     const MIN_LENGTH = 15;
 

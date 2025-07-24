@@ -93,6 +93,8 @@ export default function ViewConv() {
                 },
             );
 
+            // console.log("SOURCES : ", res.data.sources);
+
             setMessages((prev) => [
                 ...prev,
                 {
@@ -100,6 +102,7 @@ export default function ViewConv() {
                     message: res.data.reply,
                     memoryUsed: res.data.memoryUsed,
                     _id: res.data.aiMsgId,
+                    sources: res.data.sources,
 
                 },
             ]);

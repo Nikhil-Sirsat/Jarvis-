@@ -1,7 +1,7 @@
 import ai from '../config/gemini.js';
 import ExpressError from './ExpressError.js';
 
-export const aiResponse = async (user, relevantMemories, historyMessages, message) => {
+export const aiResponse = async (user, relevantMemories, historyMessages, message, webContext) => {
 
     const { nickname, userRole, traits, extraNotes } = user || {};
 
@@ -34,10 +34,10 @@ Instructions:
    - DO NOT show the classification or thought process in the final output.
 
 4. Structure your final response to the user in this format:
-   - **Warm Acknowledgment**: Appreciate or acknowledge the user's query.
+   - Appreciate or acknowledge the user's query.
    - **Answer**: Provide a clear, direct response (succinct for SIMPLE; thorough for COMPLEX).
    - **Conclusion**: Recap or summarize the key point(s) briefly.
-   - **Engaging Follow-up**: Ask a helpful follow-up question like:
+   - Ask a helpful follow-up question like:
      - "Would you like me to elaborate further?"
      - "Shall I break it down more?"
      - "Would you like suggestions or examples?"
@@ -62,8 +62,11 @@ Respond only with the final answer following the above structure.
                 text: `${msg.sender === "user" ? "user" : "ai"}: ${msg.message}`,
             })),
             {
-                text: `next question : ${nickname || user.name}: ${message}`,
+                text: `next query : ${nickname || user.name}: ${message}`,
             },
+            {
+                text: `Use the following web search results to answer the query: ${message} : ${webContext}`,
+            }
         ];
 
         // Gemini Call
