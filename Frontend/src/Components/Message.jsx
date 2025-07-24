@@ -125,7 +125,7 @@ export default function Message({ msg, index }) {
                                 variant="caption"
                                 sx={{ color: 'text.secondary', fontWeight: 600, mb: 1 }}
                             >
-                                Sources:
+                                Sources <b>:</b>
                             </Typography>
                             <Stack
                                 direction="row"
@@ -189,8 +189,8 @@ export default function Message({ msg, index }) {
 
                     {/* memory Used */}
                     {msg.memoryUsed && msg.memoryUsed.length > 0 && (
-                        <Typography variant="body2" sx={{ color: 'text.secondary', mb: 1 }}>
-                            Memory Used:
+                        <Typography variant="body2" sx={{ color: 'text.secondary', mb: 5, ml: 2, mt: 3 }}>
+                            memory used <b>:</b>
                             <br />
                             {msg.memoryUsed.map(m => ` ${m}`).join('\n')}
                         </Typography>
@@ -302,7 +302,7 @@ export default function Message({ msg, index }) {
 
                 {/* response bottom ops */}
                 {msg.sender === "ai" ? (
-                    <>
+                    <Box sx={{ pl: 2 }}>
                         <br />
                         {speakingMsgIndex === index ? (
                             <IconButton onClick={stopAiVoiceRes}>
@@ -324,7 +324,7 @@ export default function Message({ msg, index }) {
                             <ContentCopyOutlinedIcon sx={{ fontSize: 20 }} />
                         </IconButton>
 
-                    </>
+                    </Box>
                 ) : null}
 
             </Paper>
