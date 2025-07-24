@@ -29,13 +29,6 @@ const memoryTriggers = [
     'live',
 ];
 
-// arr for checking weather the question is worth fetching vector memories or not
-const irrelevantPatterns = [
-    /^(ok(?:ay)?|sure|fine|cool|great|thanks|thank you|I got it|got it|I’m good|noted|alright|understood)(\s+\w+)?[.!]?$/i,
-    /^(yes|no|maybe|hmm|uh-huh|huh|huh\?|hmm\?|hmm\.)$/i,
-    /^(\s*)$/, // empty or whitespace
-];
-
 // Store memory
 export async function storeMemory(userId, text) {
     try {
@@ -218,21 +211,5 @@ export async function getMemoryByUserIdWithinDays(userId, days = 7) {
         console.error("Error fetching memories:", error);
         return null;
     }
-};
-
-export function isMsgCasual(message) {
-    // Minimum length after trimming to consider message possibly relevant
-    const MIN_LENGTH = 15;
-
-    const trimmed = message.trim();
-
-    // console.log(`message : ${trimmed} and length : ${trimmed.length}`);
-
-    if (trimmed.length < MIN_LENGTH) {
-        // If message is very short and matches irrelevant pattern => skip
-        return !irrelevantPatterns.some(pattern => pattern.test(trimmed));
-    }
-
-    return true;
 };
 

@@ -2,8 +2,8 @@ import ChatMessage from '../models/chatMessage.js';
 import Conversation from '../models/conversation.js';
 import ExpressError from '../Utils/ExpressError.js';
 import { getCachedChatHistory, writeToChatCache } from '../Utils/redisHelper.js';
-import { searchMemory, shouldStoreMemory, isMsgCasual } from '../memory/memoryUtils.js';
-import { aiResponse, generateTitle } from '../Utils/LLM.js';
+import { searchMemory, shouldStoreMemory } from '../memory/memoryUtils.js';
+import { aiResponse, generateTitle, classifyMessageForMemoryAndSearch } from '../Utils/LLM.js';
 import { pushToMemoryQueue } from '../memory/memoryQueue.js';
 import { searchSerpAPI } from '../web/search.js';
 
@@ -12,7 +12,7 @@ export const askQuestion = async (req, res) => {
 
     if (!message) {
         throw new ExpressError(400, 'Message required');
-    }
+    };
 
     const userId = req.user._id.toString();
     const user = req.user;
@@ -48,35 +48,29 @@ export const askQuestion = async (req, res) => {
 
             await writeToChatCache(convId.toString(), historyMessages, { overwrite: true });
         }
-    }
+    };
 
-    // If no messages in history, initialize as empty array
-    if (!Array.isArray(historyMessages)) { historyMessages = []; }
+    // check weather Uesr message need memory and web search
+    let webContext;
+    let sourcesForUI = [];
+    let relevantMemories = [];
+    let lastLLMresponse;
+
+    if (historyMessages.length > 0) {
+        lastLLMresponse = historyMessages[historyMessages.length - 1].message;
+    };
+
+    let permissions = await classifyMessageForMemoryAndSearch(message, lastLLMresponse);
 
     // web search
-    let results = [];
-    let webContext = [];
-    let sourcesForUI = [];
-    if (isMsgCasual(message)) {
-        results = await searchSerpAPI(message);
-
-        // web searches to feed to LLM
-        webContext = results.map(
-            (r, i) => `${i + 1}. ${r.title}:\n${r.snippet}`
-        ).join('\n\n');
-
-        // sources for UI
-        sourcesForUI = results.map(result => ({
-            title: result.title,
-            source: result.source || new URL(result.link).hostname.replace("www.", ""),
-            redirect_link: result.redirect_link,
-            favicon: result.favicon
-        }));
+    if (permissions.isWebSearchRequired === true) {
+        let results = await searchSerpAPI(message);
+        webContext = results.webContext;
+        sourcesForUI = results.sourcesForUI;
     };
 
     // Memory search
-    let relevantMemories = [];
-    if (isMsgCasual(message)) {
+    if (permissions.isMemoryRequired === true) {
         relevantMemories = await searchMemory(userId, message, 5);
     };
 
@@ -97,7 +91,7 @@ export const askQuestion = async (req, res) => {
         setImmediate(() => {
             pushToMemoryQueue({ userId, message });
         });
-    }
+    };
 
     return res.status(200).json({ reply: aiReply, conversationId: convId, memoryUsed: relevantMemories, aiMsgId: aiMessage._id, sources: sourcesForUI });
 };

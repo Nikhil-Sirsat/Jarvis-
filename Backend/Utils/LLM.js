@@ -62,12 +62,17 @@ Respond only with the final answer following the above structure.
                 text: `${msg.sender === "user" ? "user" : "ai"}: ${msg.message}`,
             })),
             {
-                text: `next query : ${nickname || user.name}: ${message}`,
+                text: `new query : ${nickname || user.name}: ${message}`,
             },
-            {
-                text: `Use the following web search results to answer the query: ${message} : ${webContext}`,
-            }
+
+            ...(webContext
+                ? [{
+                    text: `Use the following web search results to answer the user's new query: ${webContext}`
+                }]
+                : [])
         ];
+
+        // console.log('prompt : ', promptParts);
 
         // Gemini Call
         const response = await ai.models.generateContent({
@@ -247,4 +252,50 @@ Output in JSON format like:
         throw new ExpressError("Error calling LLM for reflection");
     }
 
+};
+
+export async function classifyMessageForMemoryAndSearch(userMessage, lastLLMresponse) {
+    try {
+        const prompt = `
+        You are a helpful AI system assisting in routing user queries efficiently.
+
+Your task is to analyze the AI's last response and user's latest message and return a JSON object indicating:
+
+- isMemoryRequired: true if LLM requires past vector memory to generate correct intented response to the user's latest message (e.g. follow-ups, references to past conversations, vague questions like "explain that more", "continue", "what do you mean", etc.)
+- isWebSearchRequired: true if the user's latest message needs a real-time web search (e.g. questions about recent news, trending topics, current prices, events, or anything dynamic that might change over time)
+
+LLM's last response = ${lastLLMresponse},
+user's latest message = ${userMessage}
+
+Take into account the users latest message and the last LLM assistant response.
+
+Return only a JSON object in this format:
+{
+    isMemoryRequired: true / false,
+    isWebSearchRequired: true / false
+}`.trim();
+
+        const res = await ai.models.generateContent({
+            model: "gemini-2.0-flash-lite",
+            contents: prompt,
+            generationConfig: { temperature: 0.3 },
+        });
+
+        let permissions = res.text?.trim();
+
+        // Remove Markdown code block if present
+        if (permissions.startsWith("```")) {
+            permissions = permissions.replace(/^```[a-zA-Z]*\n?/, '').replace(/```$/, '').trim();
+        }
+
+        console.log("PERMISSIONS : ", permissions);
+
+        permissions = JSON.parse(permissions);
+
+        return permissions;
+
+    } catch (error) {
+        console.log("Error in 'classifyMessageForMemoryAndSearch' : ", error);
+        return null;
+    }
 };
