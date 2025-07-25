@@ -23,25 +23,26 @@ export default function Favourite() {
                 // Fetch favourites
                 const response = await axiosInstance.get('/api/favourite/get_Favourites');
 
-                const isfavRes = await Promise.all(
-                    response.data.map(async (msg) => {
-                        let msgId = msg.msgId._id;
-                        const favRes = await axiosInstance.get(`/api/favourite/isFavourite/${msgId}`);
-                        return favRes.data.isFavourite;
-                    })
-                );
+                if (response.data.length > 0) {
+                    const isfavRes = await Promise.all(
+                        response.data.map(async (msg) => {
+                            if (msg.msgId && msg.msgId._id) {
+                                const favRes = await axiosInstance.get(`/api/favourite/isFavourite/${msg.msgId._id}`);
+                                return favRes.data.isFavourite;
+                            }
+                            return false; // Not favourite if message is missing
+                        })
+                    );
 
-                // console.log(response.data);
-
-                setFavourites(
-                    response.data.map((msg, index) => ({
-                        ...msg,
-                        msgId: {
-                            ...msg.msgId,
-                            isFavourite: isfavRes[index],
-                        },
-                    }))
-                );
+                    setFavourites(
+                        response.data.map((msg, index) => ({
+                            ...msg,
+                            msgId: msg.msgId
+                                ? { ...msg.msgId, isFavourite: isfavRes[index] }
+                                : null, // Keep null if message is deleted
+                        }))
+                    );
+                }
 
             } catch (error) {
                 showSnackbar(`Failed to fetch favourites : ${error.status} : ${error.response?.data?.message || error.message}`);
@@ -77,7 +78,9 @@ export default function Favourite() {
                             Favourites responses
                         </Typography>
                         {favourites.map((fav, index) => (
-                            <Message msg={fav.msgId} index={index} key={index} />
+                            fav.msgId
+                                ? <Message msg={fav.msgId} index={index} key={index} />
+                                : <Typography variant="body2" color="text.secondary">message is deleted</Typography>
                         ))}
                     </Box>
                 </Box>

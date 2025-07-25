@@ -44,7 +44,16 @@ export const getFavourites = async (req, res) => {
     const favourites = await Favourite.find({ userId: req.user._id })
         .populate('msgId');
 
-    res.status(200).json(favourites);
+    // Filter favourites with missing msgId (deleted message)
+    const filtered = favourites.map(fav => {
+        if (!fav.msgId) {
+            // Message was deleted, return null for msgId
+            return { ...fav.toObject(), msgId: null };
+        }
+        return fav;
+    });
+
+    res.status(200).json(filtered);
 };
 
 export const isFavourite = async (req, res) => {
