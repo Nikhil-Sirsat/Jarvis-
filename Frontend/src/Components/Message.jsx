@@ -99,7 +99,7 @@ export default function Message({ msg, index }) {
             mb={3}
             width="100%"
         >
-            <Paper
+            <Box
                 elevation={3}
                 sx={{
                     display: "inline-block",
@@ -108,7 +108,7 @@ export default function Message({ msg, index }) {
                     py: 2,
                     borderRadius: 7,
                     wordBreak: "break-word",
-                    backgroundColor: msg.sender === "user" ? 'none' : mode == 'dark' ? 'black' : 'white',
+                    backgroundColor: msg.sender === "user" ? mode == 'dark' ? '#1a1a1aff' : '#ecececff' : 'transparent',
                     boxShadow: 'none',
                 }}
             >
@@ -249,8 +249,8 @@ export default function Message({ msg, index }) {
                             p: ({ node, ...props }) => (
                                 <Typography
                                     sx={{
-                                        mb: 2,
-                                        pl: 2,
+                                        mb: msg.sender === 'user' ? 0 : 2,
+                                        pl: msg.sender === 'user' ? 0 : 2,
                                         lineHeight: 1.8,
                                     }}
                                     {...props}
@@ -327,7 +327,7 @@ export default function Message({ msg, index }) {
                     </Box>
                 ) : null}
 
-            </Paper>
+            </Box>
         </Box>
     );
 }

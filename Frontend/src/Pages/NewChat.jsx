@@ -75,7 +75,7 @@ export default function NewChat() {
                 width: { xs: '87vw', md: '60vw' },
                 display: "flex",
                 flexDirection: 'column',
-                alignItems: 'center',
+                // alignItems: 'center',
                 justifyContent: 'space-evenly'
             }}
         >
@@ -131,7 +131,7 @@ export default function NewChat() {
             />
 
             {/* warning */}
-            <Typography sx={{ p: 0.5, fontSize: { xs: 11, md: 14 }, color: "grey" }}>
+            <Typography sx={{ p: 0.5, fontSize: { xs: 11, md: 14 }, color: "grey", m: 'auto' }}>
                 <i>Jarvis can make mistakes. Check important info.</i>
             </Typography>
         </Box>

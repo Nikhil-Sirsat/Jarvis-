@@ -160,8 +160,7 @@ export default function ViewConv() {
                 alignItems: 'center',
                 justifyContent: 'space-evenly',
                 position: 'sticky',
-                bottom: -1,
-                backgroundColor: mode == 'light' ? 'white' : '#121212',
+                backgroundColor: mode == 'light' ? 'white' : '#212121',
             }}>
 
                 {/* user input */}
