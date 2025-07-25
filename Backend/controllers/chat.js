@@ -61,17 +61,18 @@ export const askQuestion = async (req, res) => {
     };
 
     let permissions = await classifyMessageForMemoryAndSearch(message, lastLLMresponse);
+    let clarifiedFollowupQuery = permissions.clarifiedFollowupQuery;
 
     // web search
     if (permissions.isWebSearchRequired === true) {
-        let results = await searchSerpAPI(message);
+        let results = await searchSerpAPI(clarifiedFollowupQuery || message);
         webContext = results.webContext;
         sourcesForUI = results.sourcesForUI;
     };
 
     // Memory search
     if (permissions.isMemoryRequired === true) {
-        relevantMemories = await searchMemory(userId, message, 5);
+        relevantMemories = await searchMemory(userId, clarifiedFollowupQuery || message, 5);
     };
 
     // get ai response

@@ -44,7 +44,7 @@ Instructions:
 
 5. Use a clear, friendly, and professional tone — like a helpful assistant or expert advisor.
 
-6. Validate logic before answering. Avoid unnecessary information.
+6. Validate logic before answering. and ensure to provide full detailed information in the final answer to users question.
 
 Respond only with the final answer following the above structure.
 
@@ -89,7 +89,7 @@ Respond only with the final answer following the above structure.
         return aiReply;
     } catch (error) {
         console.log('error in generating ai response');
-        throw new ExpressError(500, "Error in Generating AI response");
+        throw new ExpressError(error.code, error.message);
     }
 };
 
@@ -257,23 +257,33 @@ Output in JSON format like:
 export async function classifyMessageForMemoryAndSearch(userMessage, lastLLMresponse) {
     try {
         const prompt = `
-        You are a helpful AI system assisting in routing user queries efficiently.
+You are a smart AI system that decides if a user message requires access to past memory or a real-time web search.
 
-Your task is to analyze the AI's last response and user's latest message and return a JSON object indicating:
+Your default behavior should assume that:
+- isMemoryRequired = true
+- isWebSearchRequired = true
 
-- isMemoryRequired: true if LLM requires past vector memory to generate correct intented response to the user's latest message (e.g. follow-ups, references to past conversations, vague questions like "explain that more", "continue", "what do you mean", etc.)
-- isWebSearchRequired: true if the user's latest message needs a real-time web search (e.g. questions about recent news, trending topics, current prices, events, or anything dynamic that might change over time)
+However, override this default and return both flags as false **only** when:
+- The user's message is clearly casual, polite, or complimentary (e.g., "thanks", "okay", "got it", "you're helpful", "good bot", "I understand", "you are smart", etc.)
+- The message contains no actual question or instruction, and is not a continuation or agreement to a previous suggestion
 
-LLM's last response = ${lastLLMresponse},
-user's latest message = ${userMessage}
+Also, be smart enough to detect when short or vague messages like "yes", "okay", or "sure" are in response to a follow-up question from the last AI response like : (e.g. "Would you like me to explain more?"), In those cases, keep the default (both flags true).
+then:
+    - Generate a more explicit, properly formatted user query that represents the user’s intent based on both messages.
+    - Return this in the "clarifiedFollowupQuery" field.
+4. If the user's message is not a vague follow-up but a clear, new, independent question, then "clarifiedFollowupQuery" should be null.
 
-Take into account the users latest message and the last LLM assistant response.
+Your job is to analyze:
+- LLM's last response: ${lastLLMresponse}
+- User's latest message: ${userMessage}
 
-Return only a JSON object in this format:
+Return ONLY a JSON object in this format (without any explanation):
 {
-    isMemoryRequired: true / false,
-    isWebSearchRequired: true / false
-}`.trim();
+    "isMemoryRequired": true / false,
+    "isWebSearchRequired": true / false,
+    "clarifiedFollowupQuery": _formatted user query / null
+}
+`.trim();
 
         const res = await ai.models.generateContent({
             model: "gemini-2.0-flash-lite",
@@ -295,7 +305,12 @@ Return only a JSON object in this format:
         return permissions;
 
     } catch (error) {
-        console.log("Error in 'classifyMessageForMemoryAndSearch' : ", error);
-        return null;
+        console.log("Error in 'classifyMessageForMemoryAndSearch' : ", error.response?.data?.message || error.message);
+        // default when LLM fails
+        return {
+            "isMemoryRequired": true,
+            "isWebSearchRequired": true,
+            "clarifiedFollowupQuery": null
+        };
     }
 };
