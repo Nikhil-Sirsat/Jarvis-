@@ -4,6 +4,7 @@ import VolumeUpOutlinedIcon from '@mui/icons-material/VolumeUpOutlined';
 import VolumeOffOutlinedIcon from '@mui/icons-material/VolumeOffOutlined';
 import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined';
 import MarkFavBtn from './markFavBtn.jsx';
+import remarkGfm from "remark-gfm";
 
 import {
     Box,
@@ -11,6 +12,12 @@ import {
     Paper,
     IconButton,
     Stack,
+    Table,
+    TableHead,
+    TableBody,
+    TableRow,
+    TableCell,
+    TableContainer,
 } from "@mui/material";
 
 import { useSnackbar } from '../Context/SnackBarContext';
@@ -197,6 +204,7 @@ export default function Message({ msg, index }) {
                     )}
 
                     <ReactMarkdown
+                        remarkPlugins={[remarkGfm]}
                         components={{
                             h1: ({ node, ...props }) => (
                                 <Typography
@@ -292,7 +300,45 @@ export default function Message({ msg, index }) {
                                 />
                             ),
 
-
+                            /* tables */
+                            table: ({ node, ...props }) => (
+                                <TableContainer
+                                    component={Paper}
+                                    sx={{
+                                        mt: 2,
+                                        mb: 2,
+                                        borderRadius: "8px",
+                                        overflowX: "auto",
+                                        boxShadow: "none",
+                                        border: "1px solid #e0e0e0",
+                                    }}
+                                >
+                                    <Table
+                                        size="small"
+                                        sx={{
+                                            borderCollapse: "collapse",
+                                            "& th": {
+                                                backgroundColor: "#f1f3f5",
+                                                color: "#000",
+                                                fontWeight: "bold",
+                                                textAlign: "left",
+                                                border: "1px solid #ddd",
+                                                padding: "8px",
+                                            },
+                                            "& td": {
+                                                border: "1px solid #ddd",
+                                                padding: "8px",
+                                            },
+                                        }}
+                                        {...props}
+                                    />
+                                </TableContainer>
+                            ),
+                            thead: ({ node, ...props }) => <TableHead {...props} />,
+                            tbody: ({ node, ...props }) => <TableBody {...props} />,
+                            tr: ({ node, ...props }) => <TableRow {...props} />,
+                            th: ({ node, ...props }) => <TableCell component="th" {...props} />,
+                            td: ({ node, ...props }) => <TableCell {...props} />,
                         }}
                     >
                         {msg.message}
