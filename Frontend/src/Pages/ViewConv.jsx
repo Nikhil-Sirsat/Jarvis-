@@ -11,6 +11,13 @@ import { useSnackbar } from '../Context/SnackBarContext';
 import Message from '../Components/Message.jsx';
 import UserInput from "../Components/UserInput.jsx";
 import ThreeDotLoading from "../Components/ThreeDotLoading.jsx";
+import AutorenewTwoToneIcon from '@mui/icons-material/AutorenewTwoTone';
+import { keyframes } from '@mui/system';
+
+const rotate = keyframes`
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); } /* negative = right-to-left */
+`;
 
 export default function ViewConv() {
     const [input, setInput] = useState("");
@@ -142,9 +149,33 @@ export default function ViewConv() {
                 ))}
 
                 {msgLoading ? (
-                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
-                        <ReplyLoad />
-                        <Typography variant="body2" color="text.secondary" sx={{ ml: 2 }}>thinking...</Typography>
+                    <Box>
+                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
+                            <ReplyLoad />
+                            <Typography variant="body2" color="text.secondary" sx={{ ml: 2 }}>Thinking...</Typography>
+                        </Box>
+
+                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', mt: -2, mb: 1.5 }}>
+                            <AutorenewTwoToneIcon
+                                sx={{
+                                    animation: `${rotate} 0.5s linear infinite`, // 1.5s per rotation
+                                    fontSize: 22, // optional, adjust size
+                                    ml: 0.7
+                                }}
+                            />
+                            <Typography variant="body2" color="text.secondary" sx={{ ml: 2 }}>searching web...</Typography>
+                        </Box>
+
+                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
+                            <AutorenewTwoToneIcon
+                                sx={{
+                                    animation: `${rotate} 0.5s linear infinite`, // 1.5s per rotation
+                                    fontSize: 22, // optional, adjust size
+                                    ml: 0.7
+                                }}
+                            />
+                            <Typography variant="body2" color="text.secondary" sx={{ ml: 2 }}>Looking at memories...</Typography>
+                        </Box>
                     </Box>
                 ) : null}
 
