@@ -9,7 +9,11 @@ import { searchSerpAPI } from '../web/search.js';
 import { getConvHistory, newConv } from '../Utils/conv.js';
 
 export const askQuestion = async (req, res) => {
-    const { message, conversationId } = req.body;
+    const { message, conversationId, socketId } = req.body;
+
+    console.log('socketId : ', socketId);
+
+    const io = req.app.get('io'); // Get the io instance from the app
 
     let convId = conversationId || null;
     const user = req.user;
@@ -42,6 +46,10 @@ export const askQuestion = async (req, res) => {
 
     // get clarified follow updated query for better web & memory search
     let clarifiedFollowupQuery = permissions.clarifiedFollowupQuery;
+
+    // real time indicators for web and memory search
+    if (permissions.isWebSearchRequired) { io.to(socketId).emit("web-search", { status: true }); };
+    if (permissions.isMemoryRequired) { io.to(socketId).emit("memory-search", { status: true }); };
 
     await Promise.all([
         // Web Search

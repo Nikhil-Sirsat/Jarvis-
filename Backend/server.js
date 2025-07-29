@@ -5,6 +5,7 @@ if (process.env.NODE_ENV != "production") {
 }
 
 import express from 'express';
+import { createServer } from 'http';
 
 import connectDB from './connectDB/connectDB.js';
 import MongoStore from 'connect-mongo';
@@ -14,6 +15,9 @@ import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
 
 import compression from 'compression';
+
+// socket.io 
+import { Server } from 'socket.io';
 
 // import routes
 import userRoutes from './routes/user.js';
@@ -30,8 +34,9 @@ import cors from 'cors';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const server = createServer(app);
 
-app.set("trust proxy", 1);
+// app.set("trust proxy", 1);
 
 app.use(cors({
     origin: process.env.FRONTEND_URL,
@@ -79,8 +84,8 @@ const sessionMiddleware = session({
     cookie: {
         maxAge: 7 * 24 * 60 * 60 * 1000,
         httpOnly: true,
-        secure: true,
-        sameSite: "none",
+        // secure: true,
+        // sameSite: "none",
     }
 });
 app.use(sessionMiddleware);
@@ -95,6 +100,26 @@ passport.deserializeUser(User.deserializeUser());
 // database connection
 connectDB();
 
+console.log(process.env.FRONTEND_URL);
+// socket.io setup
+const io = new Server(server, {
+    cors: {
+        origin: process.env.FRONTEND_URL,
+        methods: ["GET", "POST"],
+        credentials: true,
+    }
+});
+
+io.on("connection", (socket) => {
+    console.log("Client connected:", socket.id);
+
+    socket.on("disconnect", () => {
+        console.log("Client disconnected:", socket.id);
+    });
+});
+// Attach io to the app instance
+app.set('io', io);
+
 // ROUTES
 app.use('/api/user', userRoutes);
 app.use('/api/chat', chatRoutes);
@@ -103,6 +128,6 @@ app.use('/api/favourite', favouriteRoutes);
 // error handler
 app.use(errorHandler);
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
     console.log(`server live on port : ${PORT}`);
 });
