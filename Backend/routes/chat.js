@@ -5,7 +5,7 @@ import { askQuestion, getMessages, getConversations, deleteConversation } from '
 import { asyncHandler } from '../Middleware/asyncHandler.js';
 import { rateLimiter } from '../Utils/rateLimit.js';
 
-router.post('/', auth, rateLimiter, asyncHandler(askQuestion));
+router.post('/', auth, asyncHandler(askQuestion));
 
 router.get('/:conversationId/messages', auth, isAuther, asyncHandler(getMessages));
 
