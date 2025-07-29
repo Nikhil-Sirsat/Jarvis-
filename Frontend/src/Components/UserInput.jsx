@@ -68,11 +68,13 @@ export default function UserInput({ handleSend, input, setInput, msgLoading }) {
     return (
         <Paper
             sx={{
-                p: 1.5,
+                p: 2.5,
                 display: "flex",
                 alignItems: "center",
-                borderRadius: 11,
+                borderRadius: 7,
                 width: '100%',
+                boxShadow: 'none',
+                backgroundColor: mode === 'dark' ? '#272727ff' : '#d6d6d6ff'
             }}
         >
 
@@ -83,9 +85,12 @@ export default function UserInput({ handleSend, input, setInput, msgLoading }) {
             <TextField
                 fullWidth
                 variant="outlined"
-                placeholder={recognition || mikeActive ? "Listening..." : "Ask something to JARVIS..."}
+                placeholder={recognition || mikeActive ? "Listening..." : "Ask anything"}
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
+                multiline
+                minRows={1}
+                maxRows={4}
                 sx={{
                     '& .MuiInputBase-input': {
                         color: recognition || mikeActive ? '#0ca37f' : mode === 'light' ? '#000000' : '#ffffff',
@@ -108,11 +113,11 @@ export default function UserInput({ handleSend, input, setInput, msgLoading }) {
                 <ThreeDotLoading />
             ) : (
                 input ? (
-                    <IconButton color="white" onClick={handleSend} sx={{ ml: 1, border: '3px solid rgb(255, 255, 255)' }}>
+                    <IconButton color="white" onClick={handleSend} sx={{ ml: 1, backgroundColor: mode === 'dark' ? '#292929ff' : '#918f8fff' }}>
                         <ArrowUpwardIcon />
                     </IconButton>
                 ) : (
-                    <IconButton sx={{ ml: 1, border: '3px solid rgb(255, 255, 255)', color: recognition || mikeActive ? "#0ca37f" : mode === 'light' ? '#000000' : '#ffffff' }} onClick={startListening}>
+                    <IconButton sx={{ ml: 1, color: recognition || mikeActive ? "#0ca37f" : mode === 'light' ? '#000000' : '#ffffff', backgroundColor: mode === 'dark' ? '#292929ff' : '#918f8fff' }} onClick={startListening}>
                         <GraphicEqRoundedIcon />
                     </IconButton>
                 )

@@ -178,6 +178,7 @@ export default function ViewConv() {
                 sx={{
                     flex: 1,
                     padding: 2,
+                    mb: 12
                 }}
             >
                 {messages.map((msg, index) => (
@@ -186,7 +187,7 @@ export default function ViewConv() {
                 ))}
 
                 {msgLoading ? (
-                    <Box>
+                    <Box sx={{ mb: 20 }}>
                         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
                             <ReplyLoad />
                             <Typography variant="body2" color="text.secondary" sx={{ ml: 2 }}>Thinking...</Typography>
@@ -232,7 +233,9 @@ export default function ViewConv() {
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'space-evenly',
-                position: 'sticky',
+                position: 'absolute',
+                bottom: 0,
+                width: { xs: '87vw', md: '60vw' },
                 backgroundColor: mode == 'light' ? 'white' : '#212121',
             }}>
 

@@ -11,6 +11,7 @@ import { useSnackbar } from '../Context/SnackBarContext';
 import UserInput from "../Components/UserInput.jsx";
 import HelpOutlineRoundedIcon from '@mui/icons-material/HelpOutlineRounded';
 import { ThemeContext } from "../Context/ThemeContext.jsx";
+import { AuthContext } from '../Context/AuthContext.jsx';
 
 export default function NewChat() {
     const [input, setInput] = useState("");
@@ -21,6 +22,7 @@ export default function NewChat() {
     const navigate = useNavigate();
     const showSnackbar = useSnackbar();
     const { mode } = useContext(ThemeContext);
+    const { user } = useContext(AuthContext);
 
     // fetch proactive suggestions
     useEffect(() => {
@@ -79,8 +81,24 @@ export default function NewChat() {
                 justifyContent: 'space-evenly'
             }}
         >
-            <Typography variant="h4">
-                Welcome Boss what can I help with?
+            <Typography variant="h3" sx={{ m: 'auto' }}>
+                Hey {user.persona.nickname || user.name}!
+            </Typography>
+            <Typography variant="h4" sx={{ m: 'auto' }}>
+                what can I help with?
+            </Typography>
+
+            {/* user input */}
+            <UserInput
+                handleSend={handleSend}
+                input={input}
+                setInput={setInput}
+                msgLoading={msgLoading}
+            />
+
+            {/* warning */}
+            <Typography sx={{ p: 0.5, fontSize: { xs: 11, md: 14 }, color: "grey", m: 'auto' }}>
+                <i>Jarvis can make mistakes. Check important info.</i>
             </Typography>
 
             {/* Suggestions Section */}
@@ -121,19 +139,6 @@ export default function NewChat() {
                     )}
                 </Box>
             ) : null}
-
-            {/* user input */}
-            <UserInput
-                handleSend={handleSend}
-                input={input}
-                setInput={setInput}
-                msgLoading={msgLoading}
-            />
-
-            {/* warning */}
-            <Typography sx={{ p: 0.5, fontSize: { xs: 11, md: 14 }, color: "grey", m: 'auto' }}>
-                <i>Jarvis can make mistakes. Check important info.</i>
-            </Typography>
         </Box>
     );
 };

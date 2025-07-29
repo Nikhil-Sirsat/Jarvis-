@@ -115,7 +115,7 @@ export default function Message({ msg, index }) {
                     py: 2,
                     borderRadius: 7,
                     wordBreak: "break-word",
-                    backgroundColor: msg.sender === "user" ? mode == 'dark' ? '#1a1a1aff' : '#ecececff' : 'transparent',
+                    backgroundColor: msg.sender === "user" ? mode == 'dark' ? '#272727ff' : '#ecececff' : 'transparent',
                     boxShadow: 'none',
                 }}
             >
@@ -150,7 +150,7 @@ export default function Message({ msg, index }) {
                                         component="a"
                                         href={source.redirect_link}
                                         target="_blank"
-                                        // rel="noopener noreferrer"
+                                        rel="noopener noreferrer"
                                         sx={{
                                             display: "flex",
                                             alignItems: "center",

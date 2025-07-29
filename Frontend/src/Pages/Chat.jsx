@@ -184,7 +184,7 @@ export default function Chat() {
     return (
         <Box sx={{ display: 'flex' }}>
             <CssBaseline />
-            <AppBar position="fixed" open={open} sx={{ backgroundColor: mode == 'dark' ? '#131313ff' : 'white', boxShadow: 'none' }}>
+            <AppBar position="fixed" open={open} sx={{ backgroundColor: mode == 'dark' ? '#0a0a0aff' : 'white', boxShadow: 'none' }}>
                 <Toolbar>
                     <IconButton
                         aria-label="open drawer"
