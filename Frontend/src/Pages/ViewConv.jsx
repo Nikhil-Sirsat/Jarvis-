@@ -11,18 +11,11 @@ import { useSnackbar } from '../Context/SnackBarContext';
 import Message from '../Components/Message.jsx';
 import UserInput from "../Components/UserInput.jsx";
 import ThreeDotLoading from "../Components/ThreeDotLoading.jsx";
-import AutorenewTwoToneIcon from '@mui/icons-material/AutorenewTwoTone';
-import { keyframes } from '@mui/system';
 import { io } from "socket.io-client";
 
 const socket = io(import.meta.env.VITE_API_BASE_URL, {
     withCredentials: true,
 });
-
-const rotate = keyframes`
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); } /* negative = right-to-left */
-`;
 
 export default function ViewConv() {
     const [input, setInput] = useState("");
@@ -167,18 +160,14 @@ export default function ViewConv() {
     if (convLoad) return <ThreeDotLoading />;
 
     return (
-        <Box
-            sx={{
-                width: { xs: '87vw', md: '60vw' },
-                display: "flex",
-                flexDirection: "column",
-            }}
-        >
+        <>
             <Box
                 sx={{
+                    width: { xs: '87vw', md: '60vw' },
+                    display: "flex",
+                    flexDirection: "column",
                     flex: 1,
-                    padding: 2,
-                    mb: 12
+                    pr: 1,
                 }}
             >
                 {messages.map((msg, index) => (
@@ -186,41 +175,9 @@ export default function ViewConv() {
                     <Message msg={msg} index={index} key={index} />
                 ))}
 
-                {msgLoading ? (
-                    <Box sx={{ mb: 20 }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
-                            <ReplyLoad />
-                            <Typography variant="body2" color="text.secondary" sx={{ ml: 2 }}>Thinking...</Typography>
-                        </Box>
+                {msgLoading ? (<ReplyLoad isWebSearch={isWebSearch} isMemorySearch={isMemorySearch} />) : null}
 
-                        {isWebSearch ? (
-                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', mt: -2, mb: 1.5 }}>
-                                <AutorenewTwoToneIcon
-                                    sx={{
-                                        animation: `${rotate} 0.5s linear infinite`, // 1.5s per rotation
-                                        fontSize: 22, // optional, adjust size
-                                        ml: 0.7
-                                    }}
-                                />
-                                <Typography variant="body2" color="text.secondary" sx={{ ml: 2 }}>searching web...</Typography>
-                            </Box>
-                        ) : null}
-
-                        {isMemorySearch ? (
-                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
-                                <AutorenewTwoToneIcon
-                                    sx={{
-                                        animation: `${rotate} 0.5s linear infinite`, // 1.5s per rotation
-                                        fontSize: 22, // optional, adjust size
-                                        ml: 0.7
-                                    }}
-                                />
-                                <Typography variant="body2" color="text.secondary" sx={{ ml: 2 }}>Looking at memories...</Typography>
-                            </Box>
-                        ) : null}
-
-                    </Box>
-                ) : null}
+                <Box sx={{ mb: 10 }}></Box>
 
                 <div ref={messagesEndRef} /> {/* Auto-scroll target */}
 
@@ -252,7 +209,7 @@ export default function ViewConv() {
                     <i>Jarvis can make mistakes. Check important info.</i>
                 </Typography>
 
-            </Box>
-        </Box >
+            </Box >
+        </>
     )
 }

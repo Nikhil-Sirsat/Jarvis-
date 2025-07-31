@@ -6,11 +6,11 @@ import {
 } from "@mui/material";
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import GraphicEqRoundedIcon from '@mui/icons-material/GraphicEqRounded';
-import ReplyLoad from "./ReplyLoad.jsx";
 let SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 import { ThemeContext } from "../Context/ThemeContext.jsx";
 import { useSnackbar } from '../Context/SnackBarContext';
 import ThreeDotLoading from "./ThreeDotLoading.jsx";
+import PulseDotAnim from "./pulseDotAnim.jsx";
 
 export default function UserInput({ handleSend, input, setInput, msgLoading }) {
     const { mode } = useContext(ThemeContext);
@@ -71,7 +71,7 @@ export default function UserInput({ handleSend, input, setInput, msgLoading }) {
                 p: 2.5,
                 display: "flex",
                 alignItems: "center",
-                borderRadius: 7,
+                borderRadius: 5,
                 width: '100%',
                 boxShadow: 'none',
                 backgroundColor: mode === 'dark' ? '#272727ff' : '#d6d6d6ff'
@@ -79,7 +79,7 @@ export default function UserInput({ handleSend, input, setInput, msgLoading }) {
         >
 
             {/* Show loading animation for listening */}
-            {mikeActive && <ReplyLoad />}
+            {mikeActive && <PulseDotAnim mode={mode} />}
 
 
             <TextField
@@ -113,7 +113,7 @@ export default function UserInput({ handleSend, input, setInput, msgLoading }) {
                 <ThreeDotLoading />
             ) : (
                 input ? (
-                    <IconButton color="white" onClick={handleSend} sx={{ ml: 1, backgroundColor: mode === 'dark' ? '#292929ff' : '#918f8fff' }}>
+                    <IconButton onClick={handleSend} sx={{ ml: 1, backgroundColor: mode === 'dark' ? '#ffffffff' : '#000000ff', color: mode === 'dark' ? 'black' : 'white' }}>
                         <ArrowUpwardIcon />
                     </IconButton>
                 ) : (

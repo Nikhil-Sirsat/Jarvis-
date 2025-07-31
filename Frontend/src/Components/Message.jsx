@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, memo } from 'react';
 import ReactMarkdown from 'react-markdown';
 import VolumeUpOutlinedIcon from '@mui/icons-material/VolumeUpOutlined';
 import VolumeOffOutlinedIcon from '@mui/icons-material/VolumeOffOutlined';
@@ -23,7 +23,7 @@ import {
 import { useSnackbar } from '../Context/SnackBarContext';
 import { ThemeContext } from "../Context/ThemeContext.jsx";
 
-export default function Message({ msg, index }) {
+const Message = ({ msg, index }) => {
     const [speakingMsgIndex, setSpeakingMsgIndex] = useState(null);
     const showSnackbar = useSnackbar();
     const { mode } = useContext(ThemeContext);
@@ -111,18 +111,18 @@ export default function Message({ msg, index }) {
                 sx={{
                     display: "inline-block",
                     maxWidth: msg.sender === "user" ? { xs: '90%', md: '70%' } : '100%',
-                    px: msg.sender === "user" ? { xs: 1, md: 2 } : { xs: 0, md: 2 },
+                    px: msg.sender === "user" ? { xs: 1, md: 2 } : { xs: 0, md: 0 },
                     py: 2,
                     borderRadius: 7,
                     wordBreak: "break-word",
-                    backgroundColor: msg.sender === "user" ? mode == 'dark' ? '#272727ff' : '#ecececff' : 'transparent',
+                    backgroundColor: msg.sender === "user" ? mode == 'dark' ? '#3b3b3bff' : '#ecececff' : 'transparent',
                     boxShadow: 'none',
                 }}
             >
                 <Box sx={{
                     lineHeight: 1.7,
                     fontSize: '16px',
-                    p: 1
+                    // p: 1
                 }}>
 
                     {/* Sources Section */}
@@ -132,7 +132,7 @@ export default function Message({ msg, index }) {
                                 variant="caption"
                                 sx={{ color: 'text.secondary', fontWeight: 600, mb: 1 }}
                             >
-                                Sources <b>:</b>
+                                Sources
                             </Typography>
                             <Stack
                                 direction="row"
@@ -197,7 +197,7 @@ export default function Message({ msg, index }) {
                     {/* memory Used */}
                     {msg.memoryUsed && msg.memoryUsed.length > 0 && (
                         <Typography variant="body2" sx={{ color: 'text.secondary', mb: 5, ml: 2, mt: 3 }}>
-                            memory used <b>:</b>
+                            memory used
                             <br />
                             {msg.memoryUsed.map(m => ` ${m}`).join('\n')}
                         </Typography>
@@ -348,7 +348,7 @@ export default function Message({ msg, index }) {
 
                 {/* response bottom ops */}
                 {msg.sender === "ai" ? (
-                    <Box sx={{ pl: 2 }}>
+                    <Box sx={{ pl: 2, mt: -2, mb: 5 }}>
                         <br />
                         {speakingMsgIndex === index ? (
                             <IconButton onClick={stopAiVoiceRes}>
@@ -357,7 +357,7 @@ export default function Message({ msg, index }) {
 
                         ) : (
                             <IconButton onClick={() => aiVoiceRes(msg.message, index)}>
-                                <VolumeUpOutlinedIcon />
+                                <VolumeUpOutlinedIcon sx={{ color: '#cfcfcfff' }} />
                             </IconButton>
                         )}
 
@@ -366,8 +366,8 @@ export default function Message({ msg, index }) {
                             isFav={msg.isFavourite}
                         />
 
-                        <IconButton sx={{ ml: 1 }} onClick={() => handleCopy(msg.message)}>
-                            <ContentCopyOutlinedIcon sx={{ fontSize: 20 }} />
+                        <IconButton onClick={() => handleCopy(msg.message)}>
+                            <ContentCopyOutlinedIcon sx={{ fontSize: 18, color: '#cfcfcfff' }} />
                         </IconButton>
 
                     </Box>
@@ -376,4 +376,6 @@ export default function Message({ msg, index }) {
             </Box>
         </Box>
     );
-}
+};
+
+export default memo(Message);

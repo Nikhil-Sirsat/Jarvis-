@@ -1,34 +1,82 @@
-import {ThemeContext} from "../Context/ThemeContext.jsx";
+import { ThemeContext } from "../Context/ThemeContext.jsx";
 import { useContext } from 'react';
-import { Box, keyframes } from '@mui/system';
+import { keyframes } from '@mui/system';
+import {
+  Box,
+  Typography,
+} from "@mui/material";
+import AutorenewTwoToneIcon from '@mui/icons-material/AutorenewTwoTone';
+import PulseDotAnim from "./pulseDotAnim.jsx";
 
-const pulse = keyframes`
-  0%, 100% {
-    transform: scale(0.8);
-    opacity: 0.6;
-  }
-  50% {
-    transform: scale(1.4);
-    opacity: 1;
-  }
+const rotate = keyframes`
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 `;
 
-export default function ReplyLoad() {
-    const { mode } = useContext(ThemeContext);
+const floatDots = keyframes`
+  0% { transform: translateY(0); opacity: 0.3; }
+  50% { transform: translateY(-4px); opacity: 1; }
+  100% { transform: translateY(0); opacity: 0.3; }
+`;
 
-    return (
-        <Box
+export default function ReplyLoad({ isWebSearch, isMemorySearch }) {
+  const { mode } = useContext(ThemeContext);
+
+  return (
+    <Box sx={{ mb: 20, mt: 2 }}>
+
+      {/* Thinking... */}
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', gap: 2 }}>
+        <PulseDotAnim mode={mode} />
+        <Typography
+          variant="body2"
+          sx={{
+            ml: 1,
+            color: mode === 'light' ? '#333' : '#c7c7c7ff',
+            display: 'flex',
+            alignItems: 'center'
+          }}
+        >
+          Thinking
+          <Box component="span" sx={{ animation: `${floatDots} 1s infinite`, ml: 0.3 }}>.</Box>
+          <Box component="span" sx={{ animation: `${floatDots} 1s infinite 0.2s`, ml: 0.3 }}>.</Box>
+          <Box component="span" sx={{ animation: `${floatDots} 1s infinite 0.4s`, ml: 0.3 }}>.</Box>
+        </Typography>
+      </Box>
+
+      {/* Web Searches... */}
+      {isWebSearch && (
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', mt: -2, mb: 1.5, gap: 2 }}>
+          <AutorenewTwoToneIcon
             sx={{
-                width: 15,
-                height: 15,
-                borderRadius: '50%',
-                backgroundColor: mode === 'light' ? '#000000ff' : '#ffffffff',
-                mt: 5,
-                mb: 5,
-                ml: 1,
-                animation: `${pulse} 1.2s ease-in-out infinite`,
+              animation: `${rotate} 0.7s linear infinite`,
+              fontSize: 24,
+              ml: 0.7,
+              color: '#0ca37f',
             }}
-        />
-    );
-};
+          />
+          <Typography variant="body2" sx={{ ml: 1, color: mode === 'light' ? '#444' : '#9c9c9cff' }}>
+            Searching web...
+          </Typography>
+        </Box>
+      )}
 
+      {/* Looking at Memories... */}
+      {isMemorySearch && (
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', gap: 2 }}>
+          <AutorenewTwoToneIcon
+            sx={{
+              animation: `${rotate} 1s linear infinite`,
+              fontSize: 24,
+              ml: 0.7,
+              color: '#0ca37f',
+            }}
+          />
+          <Typography variant="body2" sx={{ ml: 1, color: mode === 'light' ? '#444' : '#9c9c9cff' }}>
+            Looking at memories...
+          </Typography>
+        </Box>
+      )}
+    </Box>
+  );
+};
