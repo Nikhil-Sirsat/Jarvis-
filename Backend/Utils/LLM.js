@@ -16,69 +16,38 @@ export const aiResponse = async (user, relevantMemories, historyMessages, messag
 
         // Build Prompt
         const promptParts = [
-            {
-                text: `
-    You are Jarvis, an intelligent, evolving AI created by Nikhil Sirsat.
-    Your role is to assist ${nickname || user.name} with clarity, depth, and accuracy.
-
-    Instructions:
-
-    1. Analyze the user query and the underlying intent using user memories and past conversations.
-
-    2. Internally classify the query as:
-       - SIMPLE → direct/factual, short response.
-       - COMPLEX → requires reasoning, analysis, or multi-step explanation.
-
-    3. For COMPLEX queries:
-       - Use internal chain-of-thought: analyze intent → break down → reason → conclude.
-       - Combine multiple knowledge sources: user memories, general knowledge, and web search.
-       - Treat web search results as supporting context, if given, not the only source.
-       - Expand on the topic to provide a rich, in-depth, and comprehensive answer.
-       - DO NOT show the classification or thought process in the final output.
-
-    4. When responding:
-       - Start by acknowledging or appreciating the query.
-       - **Answer**: For SIMPLE → be clear and direct. For COMPLEX → provide a thorough, well-reasoned explanation with details, insights, and examples when possible.
-       - **Conclusion**: Briefly recap the main points.
-       - Ask a follow-up question like:
-         - "Would you like me to go deeper into any part?"
-         - "Should I provide examples or comparisons?"
-         - "Do you want me to break this into actionable steps?"
-
-    5. Always use a clear, friendly, and professional tone like a helpful expert advisor.
-
-    6. Validate logic before answering. Always aim to provide full, detailed information in the final answer, even if the web search context is minimal.
-
-    7. When using web search:
-       - Treat it as **additional reference material**.
-       - Fill in missing gaps using reasoning and general knowledge.
-       - If web content is short, **expand** it into a complete, informative answer.
-
-    Respond only with the final answer following the above structure.
-    `
-            },
-
             { text: personaPrefix },
 
             ...(relevantMemories.length > 0
-                ? [{ text: `Some important memories about ${nickname || user.name}: \n${relevantMemories.map(m => `- ${m}`).join('\n')}` }]
+                ? [{ text: `Relevant user memories:\n${relevantMemories.map(m => `- ${m}`).join('\n')}` }]
                 : []),
 
-            ...historyMessages.map((msg) => ({
+            ...historyMessages.map(msg => ({
                 text: `${msg.sender === "user" ? "user" : "ai"}: ${msg.message}`,
             })),
 
-            { text: `New query: ${nickname || user.name}: ${message}` },
+            { text: `New query from ${nickname || user.name}: ${message}` },
 
             ...(webContext
-                ? [{
-                    text: `Here are web search results for additional reference. Use them as context, but combine with reasoning and general knowledge to give a complete and detailed answer: ${webContext}`
-                }]
-                : [])
+                ? [{ text: `Web search reference for answering New query (use for context, not as sole source):\n${webContext}` }]
+                : []),
+
+            {
+                text: `
+Instructions:
+1. Analyze the query intent using user memories + past conversations.
+2. Classify internally:
+   - SIMPLE → answer concisely.
+   - COMPLEX → reason step-by-step, combine sources, give in-depth answer.
+3. Use hidden chain-of-thought: understand → break down → reason → conclude.
+4. Validate logic before responding.
+5. Use a clear, professional yet friendly tone.
+6. For COMPLEX: provide examples, insights, and conclude with a summary.
+7. Optionally end with a follow-up question (only if natural).
+Respond only with the final answer.
+        `
+            }
         ];
-
-
-        // console.log('prompt : ', promptParts);
 
         // Gemini Call
         const response = await ai.models.generateContent({
