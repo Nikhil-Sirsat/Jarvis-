@@ -6,6 +6,8 @@ import axios from 'axios';
 const SERPAPI_KEY = process.env.SERPAPI_KEY;
 
 export const searchSerpAPI = async (query) => {
+
+    console.time('web search');
     try {
         const response = await axios.get('https://serpapi.com/search.json', {
             params: {
@@ -32,7 +34,7 @@ export const searchSerpAPI = async (query) => {
 
         const data = { webContext, sourcesForUI };
 
-        // console.log('SEARCH : ', results);
+        console.timeEnd('web search');
 
         return data;
     } catch (error) {

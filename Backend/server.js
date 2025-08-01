@@ -36,7 +36,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const server = createServer(app);
 
-// app.set("trust proxy", 1);
+app.set("trust proxy", 1);
 
 app.use(cors({
     origin: process.env.FRONTEND_URL,
@@ -84,8 +84,8 @@ const sessionMiddleware = session({
     cookie: {
         maxAge: 7 * 24 * 60 * 60 * 1000,
         httpOnly: true,
-        // secure: true,
-        // sameSite: "none",
+        secure: true,
+        sameSite: "none",
     }
 });
 app.use(sessionMiddleware);
@@ -100,7 +100,6 @@ passport.deserializeUser(User.deserializeUser());
 // database connection
 connectDB();
 
-console.log(process.env.FRONTEND_URL);
 // socket.io setup
 const io = new Server(server, {
     cors: {
@@ -111,10 +110,10 @@ const io = new Server(server, {
 });
 
 io.on("connection", (socket) => {
-    console.log("Client connected:", socket.id);
+    // console.log("Client connected:", socket.id);
 
     socket.on("disconnect", () => {
-        console.log("Client disconnected:", socket.id);
+        // console.log("Client disconnected:", socket.id);
     });
 });
 // Attach io to the app instance

@@ -273,7 +273,7 @@ Return ONLY a JSON object in this format (without any explanation):
             permissions = permissions.replace(/^```[a-zA-Z]*\n?/, '').replace(/```$/, '').trim();
         }
 
-        console.log("PERMISSIONS : ", permissions);
+        // console.log("PERMISSIONS : ", permissions);
 
         permissions = JSON.parse(permissions);
 

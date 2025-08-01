@@ -11,9 +11,7 @@ import { getConvHistory, newConv } from '../Utils/conv.js';
 export const askQuestion = async (req, res) => {
     const { message, conversationId, socketId } = req.body;
 
-    console.log('socketId : ', socketId);
-
-    const io = req.app.get('io'); // Get the io instance from the app
+    const io = req.app.get('io');
 
     let convId = conversationId || null;
     const user = req.user;
@@ -29,6 +27,7 @@ export const askQuestion = async (req, res) => {
         throw new ExpressError(400, 'Message required');
     };
 
+    console.time('conv init -------------------');
     // Conversation logic
     if (!convId) {
         // Create new conversation 
@@ -37,12 +36,15 @@ export const askQuestion = async (req, res) => {
         // Get conv History
         convHistory = await getConvHistory(convId);
     };
+    console.timeEnd('conv init -------------------');
 
     // get last LLM response for follow Up question reference
     if (convHistory.length > 0) { lastLLMresponse = convHistory[convHistory.length - 1].message; };
 
+    console.time('get permissions -------------------');
     // LLM Call For Smart Decision Making (web search && memory search)
     let permissions = await classifyMessageForMemoryAndSearch(message, lastLLMresponse);
+    console.timeEnd('get permissions -------------------');
 
     // get clarified follow updated query for better web & memory search
     let clarifiedFollowupQuery = permissions.clarifiedFollowupQuery;
@@ -51,6 +53,7 @@ export const askQuestion = async (req, res) => {
     if (permissions.isWebSearchRequired) { io.to(socketId).emit("web-search", { status: true }); };
     if (permissions.isMemoryRequired) { io.to(socketId).emit("memory-search", { status: true }); };
 
+    console.time('web and memo -------------------');
     await Promise.all([
         // Web Search
         permissions.isWebSearchRequired === true
@@ -67,14 +70,18 @@ export const askQuestion = async (req, res) => {
             })
             : null
     ]);
+    console.timeEnd('web and memo -------------------');
 
+    console.time('LLM Resp -------------------');
     // get ai response
     let aiReply = await aiResponse(user, relevantMemories, convHistory, message, webContext);
+    console.timeEnd('LLM Resp -------------------');
 
     // timestamp of user message : 1 second earlier than ai
     const now = new Date();
     const userTimestamp = new Date(now.getTime() - 1000);
 
+    console.time('save all msg -------------------');
     const [userMessage, aiMessage, writtenCache] = await Promise.all([
         new ChatMessage({
             conversationId: convId, sender: "user", message, createdAt: userTimestamp,
@@ -99,6 +106,7 @@ export const askQuestion = async (req, res) => {
             timestamp: now
         }])
     ]);
+    console.timeEnd('save all msg -------------------');
 
     // memory push if worth
     if (shouldStoreMemory(message)) {

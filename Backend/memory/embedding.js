@@ -19,7 +19,6 @@ export async function getEmbedding(text) {
         });
 
         if (response.data?.embedding && Array.isArray(response.data.embedding)) {
-            console.log('OUTPUT : ', response.data.embedding);
             console.timeEnd('getEmbedding');
             return response.data.embedding;
         } else {

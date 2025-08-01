@@ -95,6 +95,7 @@ export async function searchMemory(userId, query, topK = 5) {
         throw new ExpressError(400, "Invalid embedding vector received for query.");
     }
 
+    console.time('search memory');
     let lastError;
 
     for (let attempt = 1; attempt <= 3; attempt++) {
@@ -112,7 +113,8 @@ export async function searchMemory(userId, query, topK = 5) {
                     ],
                 },
             });
-            // console.log("fetched memory : ", result.map(item => item.payload.text));
+
+            console.timeEnd('search memory');
             return result.map(item => item.payload.text);
         } catch (error) {
             lastError = error;
