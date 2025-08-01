@@ -61,11 +61,11 @@ export const askQuestion = async (req, res) => {
             : null,
 
         // Memory Search
-        // permissions.isMemoryRequired === true
-        //     ? searchMemory(userId, clarifiedFollowupQuery || message, 5).then(results => {
-        //         relevantMemories = results;
-        //     })
-        //     : null
+        permissions.isMemoryRequired === true
+            ? searchMemory(userId, clarifiedFollowupQuery || message, 5).then(results => {
+                relevantMemories = results;
+            })
+            : null
     ]);
 
     // get ai response
@@ -89,13 +89,21 @@ export const askQuestion = async (req, res) => {
         }).save(),
 
         // Cache messages
-        // writeToChatCache(convId, [{ sender: 'user', message, createdAt: userMessage.createdAt }, { sender: 'ai', message: aiReply, createdAt: aiMessage.createdAt }])
+        writeToChatCache(convId, [{
+            sender: 'user', message, createdAt: userTimestamp,
+            updatedAt: userTimestamp,
+            timestamp: userTimestamp
+        }, {
+            sender: 'ai', message: aiReply, createdAt: now,
+            updatedAt: now,
+            timestamp: now
+        }])
     ]);
 
     // memory push if worth
-    // if (shouldStoreMemory(message)) {
-    //     setImmediate(() => { pushToMemoryQueue({ userId, message }); });
-    // };
+    if (shouldStoreMemory(message)) {
+        setImmediate(() => { pushToMemoryQueue({ userId, message }); });
+    };
 
     return res.status(200).json({ reply: aiReply, conversationId: convId, memoryUsed: relevantMemories, aiMsgId: aiMessage._id, sources: sourcesForUI });
 };

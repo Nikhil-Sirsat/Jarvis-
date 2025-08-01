@@ -32,7 +32,7 @@ export const getConvHistory = async (convId) => {
         let convHistory = [];
 
         // Try Redis for history
-        // convHistory = (await getCachedChatHistory(convId.toString()));
+        convHistory = (await getCachedChatHistory(convId.toString()));
 
         // If Redis empty → fetch from DB and cache
         if (convHistory.length === 0) {
@@ -42,7 +42,7 @@ export const getConvHistory = async (convId) => {
                 .select("sender message createdAt");
             convHistory = dbMessages.map(m => ({ sender: m.sender, message: m.message, createdAt: m.createdAt }));
 
-            // await writeToChatCache(convId.toString(), convHistory, { overwrite: true });
+            await writeToChatCache(convId.toString(), convHistory, { overwrite: true });
         }
 
         return convHistory;
