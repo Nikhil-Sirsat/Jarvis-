@@ -84,7 +84,7 @@ export default function NewChat() {
             <Typography variant="h3" sx={{ m: 'auto' }}>
                 Hey {user.persona.nickname || user.name}!
             </Typography>
-            <Typography variant="h4" sx={{ m: 'auto' }}>
+            <Typography variant="h4" sx={{ m: 'auto', mb: 3 }}>
                 what can I help with?
             </Typography>
 
