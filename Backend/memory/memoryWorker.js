@@ -65,7 +65,7 @@ const memoryWorker = new Worker(
     memoryWorker.on('waiting', async () => {
         if (memoryWorker.isPaused()) {
             console.log('[Worker] New job detected. Resuming...');
-            await memoryWorker.resume();
+            memoryWorker.resume();
         }
     });
 })();
