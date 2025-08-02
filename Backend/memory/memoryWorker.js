@@ -39,10 +39,26 @@ const memoryWorker = new Worker(
     await memoryWorker.waitUntilReady();
     memoryWorker.run();
 
-    // ⬅Auto-pause after queue is empty
+    // Auto-pause after queue is empty
     memoryWorker.on('drained', async () => {
         console.log('[Worker] Queue drained. Pausing...');
         await memoryWorker.pause();
+
+        //Periodically check wake flag when paused
+        const wakeCheck = setInterval(async () => {
+            if (!memoryWorker.isPaused()) {
+                clearInterval(wakeCheck);
+                return;
+            }
+
+            const shouldWake = await connection.get('memory-worker:wake');
+            if (shouldWake) {
+                console.log('[Worker] Wake flag detected. Resuming...');
+                clearInterval(wakeCheck);
+                await connection.del('memory-worker:wake');
+                await memoryWorker.resume();
+            }
+        }, 2000); // check every 2s when idle
     });
 
     // Auto-resume when new job arrives

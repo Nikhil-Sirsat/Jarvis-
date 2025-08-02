@@ -8,7 +8,7 @@ const connection = new IORedis({
     port: Number(process.env.REDIS_PORT),
     password: process.env.REDIS_TOKEN,
     username: process.env.REDIS_USERNAME,
-    tls: {},
+    tls: process.env.REDIS_TLS === 'true' ? {} : undefined,
     maxRetriesPerRequest: null,
     enableReadyCheck: false,
 });
@@ -29,4 +29,7 @@ export const pushToMemoryQueue = async (data) => {
             removeOnFail: false     // keep failed jobs for inspection
         }
     );
+
+    // wake flag to wake the worker
+    await connection.set('memory-worker:wake', '1', 'EX', 30);
 };
