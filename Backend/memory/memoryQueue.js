@@ -30,6 +30,6 @@ export const pushToMemoryQueue = async (data) => {
         }
     );
 
-    // wake flag to wake the worker
-    await connection.set('memory-worker:wake', '1', 'EX', 30);
+    // Publish a wake message to the channel
+    await connection.publish('memory-worker:wake', 'resume');
 };
