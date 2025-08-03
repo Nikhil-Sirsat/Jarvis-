@@ -122,7 +122,8 @@ const Message = ({ msg, index }) => {
                 <Box sx={{
                     lineHeight: 1.7,
                     fontSize: '16px',
-                    // p: 1
+                    pl: msg.sender === "user" ? 1 : 0,
+                    pr: msg.sender === "user" ? 1 : 0,
                 }}>
 
                     {/* Sources Section */}
@@ -198,6 +199,7 @@ const Message = ({ msg, index }) => {
                     {msg.memoryUsed && msg.memoryUsed.length > 0 && (
                         <Typography variant="body2" sx={{ color: 'text.secondary', mb: 5, ml: 2, mt: 3 }}>
                             memory used
+                            <br />
                             <br />
                             {msg.memoryUsed.map(m => ` ${m}`).join('\n')}
                         </Typography>

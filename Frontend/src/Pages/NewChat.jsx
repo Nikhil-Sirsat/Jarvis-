@@ -3,26 +3,31 @@ import { useNavigate, useOutletContext } from "react-router-dom";
 import {
     Box,
     Typography,
-    Skeleton,
     Stack,
 } from "@mui/material";
 import axiosInstance from '../AxiosInstance.jsx';
 import { useSnackbar } from '../Context/SnackBarContext';
 import UserInput from "../Components/UserInput.jsx";
 import HelpOutlineRoundedIcon from '@mui/icons-material/HelpOutlineRounded';
-import { ThemeContext } from "../Context/ThemeContext.jsx";
 import { AuthContext } from '../Context/AuthContext.jsx';
+import { useSocket } from "../Context/SocketContext.jsx";
+import ReplyLoad from "../Components/ReplyLoad.jsx";
 
 export default function NewChat() {
     const [input, setInput] = useState("");
     const [msgLoading, setMsgLoading] = useState(false);
+    const [isWebSearch, setIsWebSearch] = useState(false);
+    const [isMemorySearch, setIsMemorySearch] = useState(false);
+    const [isConvInit, setIsConvInit] = useState(false);
     const [suggestions, setSuggestions] = useState([]);
     const [suggestionsLoading, setSuggestionsLoading] = useState(true);
+
     const { reFreshFetchConvHist } = useOutletContext();
+    const { user } = useContext(AuthContext);
+
     const navigate = useNavigate();
     const showSnackbar = useSnackbar();
-    const { mode } = useContext(ThemeContext);
-    const { user } = useContext(AuthContext);
+    const socket = useSocket();
 
     // fetch proactive suggestions
     useEffect(() => {
@@ -41,8 +46,37 @@ export default function NewChat() {
         fetchSuggestions();
     }, []);
 
+    // socket events
+    useEffect(() => {
+        if (!socket) return;
+
+        // new conv init indicator
+        socket.on("new-conv-init", (data) => {
+            setIsConvInit(data.status);
+        });
+
+        // web search indicator
+        socket.on("web-search", (data) => {
+            setIsWebSearch(data.status);
+        });
+
+        // memory search indicator
+        socket.on("memory-search", (data) => {
+            setIsMemorySearch(data.status);
+        });
+
+        return () => {
+            socket.off("new-conv-init");
+            socket.off("web-search");
+            socket.off("memory-search");
+        };
+    }, [socket]);
+
     const handleSend = async () => {
-        console.log('send message called');
+        if (!socket || !socket.id) {
+            return;
+        }
+
         if (!input.trim()) return;
 
         setMsgLoading(true);
@@ -52,6 +86,7 @@ export default function NewChat() {
                 "/api/chat",
                 {
                     message: input,
+                    socketId: socket.id,
                 },
             );
 
@@ -63,6 +98,9 @@ export default function NewChat() {
             showSnackbar(`Message send error : ${error.status} : ${error.response?.data?.message || error.message}`);
         } finally {
             setMsgLoading(false);
+            isWebSearch(false);
+            isMemorySearch(false);
+            isConvInit(false);
         }
     };
 
@@ -88,6 +126,8 @@ export default function NewChat() {
                 what can I help with?
             </Typography>
 
+            {msgLoading ? (<ReplyLoad isConvInit={isConvInit} isWebSearch={isWebSearch} isMemorySearch={isMemorySearch} />) : null}
+
             {/* user input */}
             <UserInput
                 handleSend={handleSend}
@@ -102,7 +142,7 @@ export default function NewChat() {
             </Typography>
 
             {/* Suggestions Section */}
-            {suggestions || suggestionsLoading ? (
+            {suggestions ? (
                 <Box sx={{ mt: 3, mb: 3 }}>
                     {suggestions.length > 0 ? (<Typography variant="body2" color="text.secondary" mb={1}>
                         you might wanna ask.....
@@ -110,17 +150,7 @@ export default function NewChat() {
                     }
 
                     {suggestionsLoading ? (
-                        <Stack direction="column" spacing={1} flexWrap="wrap">
-                            {[...Array(3)].map((_, idx) => (
-                                <Skeleton
-                                    key={idx}
-                                    variant="rectangular"
-                                    width={220}
-                                    height={40}
-                                    sx={{ borderRadius: 2, mb: 1 }}
-                                />
-                            ))}
-                        </Stack>
+                        null
                     ) : (
                         <Stack direction="column" spacing={2} sx={{ mt: 4, mb: 4 }}>
                             {suggestions.map((text, index) => (

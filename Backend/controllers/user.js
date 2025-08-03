@@ -72,14 +72,18 @@ export const deleteOneMemory = async (req, res) => {
 
 export const getReflection = async (req, res) => {
     const { userId } = req.params;
-    // console.log('req hit for reflection');
+    const { socketId } = req.query;
+
+    const io = req.app.get('io'); // io instance 
 
     // Validate userId
     if (!userId || userId !== req.user._id.toString()) {
         throw new ExpressError(403, 'Unauthorized access to reflection');
     }
 
+
     // Get vector memories from the past 7 days
+    io.to(socketId).emit("weekly-memory", { status: true }); // socket indicator
     const memories = await getMemoryByUserIdWithinDays(userId, 7);
 
     if (!memories.length) {
@@ -93,6 +97,7 @@ export const getReflection = async (req, res) => {
 
     const memoryTexts = memories.map((m) => m.payload.text);
 
+    io.to(socketId).emit("generating-reflection", { status: true }); // socket indicator
     const reflection = await callLLMForReflection(memoryTexts);
 
     return res.status(200).json({

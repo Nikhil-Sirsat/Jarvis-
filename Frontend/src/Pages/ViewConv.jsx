@@ -11,11 +11,7 @@ import { useSnackbar } from '../Context/SnackBarContext';
 import Message from '../Components/Message.jsx';
 import UserInput from "../Components/UserInput.jsx";
 import ThreeDotLoading from "../Components/ThreeDotLoading.jsx";
-import { io } from "socket.io-client";
-
-const socket = io(import.meta.env.VITE_API_BASE_URL, {
-    withCredentials: true,
-});
+import { useSocket } from "../Context/SocketContext.jsx";
 
 export default function ViewConv() {
     const [input, setInput] = useState("");
@@ -27,6 +23,7 @@ export default function ViewConv() {
     const showSnackbar = useSnackbar();
     const [isWebSearch, setIsWebSearch] = useState(false);
     const [isMemorySearch, setIsMemorySearch] = useState(false);
+    const socket = useSocket();
 
     // Ref for auto-scrolling
     const messagesEndRef = useRef(null);
@@ -38,29 +35,24 @@ export default function ViewConv() {
 
     // socket connections
     useEffect(() => {
-        socket.on("connect", () => {
-            console.log("Connected to socket : ", socket.id);
-        });
+        if (!socket) return;
 
         // web search indicator
         socket.on("web-search", (data) => {
-            console.log("Web Search Status:", data.status);
             setIsWebSearch(data.status);
         });
 
         // memory search indicator
         socket.on("memory-search", (data) => {
-            console.log("Memeory Search Status:", data.status);
             setIsMemorySearch(data.status);
         });
 
         return () => {
-            socket.off("connect", () => {
-                console.log('socket disconnected');
-            });
+            socket.off("web-search");
+            socket.off("memory-search");
         };
 
-    }, []);
+    }, [socket]);
 
     // fetch old conversation 
     useEffect(() => {
@@ -102,58 +94,62 @@ export default function ViewConv() {
 
     // send message and receive ai reply
     const handleSend = async () => {
-        if (socket.id) {
-            if (!input.trim()) return;
 
-            setMsgLoading(true);
+        if (!socket || !socket.id) {
+            console.log('Socket not connected yet');
+            return;
+        }
 
-            setInput("");
+        if (!input.trim()) return;
 
-            const userMessage = {
-                sender: "user",
-                message: input,
-            };
+        setMsgLoading(true);
 
-            setMessages((prev) => [...prev, userMessage]);
+        setInput("");
+
+        const userMessage = {
+            sender: "user",
+            message: input,
+        };
+
+        setMessages((prev) => [...prev, userMessage]);
+        setTimeout(scrollToBottom, 100);
+
+        try {
+            const res = await axiosInstance.post(
+                "/api/chat",
+                {
+                    message: input,
+                    conversationId: convId,
+                    socketId: socket.id,
+                },
+            );
+
+            // console.log("SOURCES : ", res.data.sources);
+
+            setMessages((prev) => [
+                ...prev,
+                {
+                    sender: "ai",
+                    message: res.data.reply,
+                    memoryUsed: res.data.memoryUsed,
+                    _id: res.data.aiMsgId,
+                    sources: res.data.sources,
+
+                },
+            ]);
             setTimeout(scrollToBottom, 100);
 
-            try {
-                const res = await axiosInstance.post(
-                    "/api/chat",
-                    {
-                        message: input,
-                        conversationId: convId,
-                        socketId: socket.id,
-                    },
-                );
+        } catch (error) {
+            console.log("Message send error:", error);
 
-                // console.log("SOURCES : ", res.data.sources);
+            //remove new message if error occurs
+            setMessages((prev) => prev.filter((msg) => msg.sender !== "user" || msg.message !== input));
 
-                setMessages((prev) => [
-                    ...prev,
-                    {
-                        sender: "ai",
-                        message: res.data.reply,
-                        memoryUsed: res.data.memoryUsed,
-                        _id: res.data.aiMsgId,
-                        sources: res.data.sources,
-
-                    },
-                ]);
-                setTimeout(scrollToBottom, 100);
-
-            } catch (error) {
-                console.log("Message send error:", error);
-
-                //remove new message if error occurs
-                setMessages((prev) => prev.filter((msg) => msg.sender !== "user" || msg.message !== input));
-
-                showSnackbar(`Error sending message: ${error.status} : ${error.response?.data?.message || error.message}`);
-            } finally {
-                setMsgLoading(false);
-                setIsMemorySearch(false);
-                setIsWebSearch(false);
-            }
+            showSnackbar(`Error sending message: ${error.status} : ${error.response?.data?.message || error.message}`);
+        } finally {
+            setMsgLoading(false);
+            setIsMemorySearch(false);
+            setIsWebSearch(false);
         }
     };
 

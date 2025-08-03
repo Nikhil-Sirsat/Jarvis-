@@ -31,6 +31,7 @@ export const askQuestion = async (req, res) => {
     // Conversation logic
     if (!convId) {
         // Create new conversation 
+        io.to(socketId).emit("new-conv-init", { status: true });
         convId = await newConv(userId, message);
     } else {
         // Get conv History

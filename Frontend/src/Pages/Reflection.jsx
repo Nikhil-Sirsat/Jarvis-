@@ -12,33 +12,64 @@ import axiosInstance from '../AxiosInstance.jsx';
 import { AuthContext } from '../Context/AuthContext.jsx';
 import { useSnackbar } from '../Context/SnackBarContext.jsx';
 import { AcUnit } from "@mui/icons-material";
-import ThreeDotLoading from '../Components/ThreeDotLoading.jsx';
+import { useSocket } from "../Context/SocketContext.jsx";
+import ReplyLoad from "../Components/ReplyLoad.jsx";
 
 export default function Reflection() {
     const [reflection, setReflection] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [isMemorySearch, setIsMemorySearch] = useState(false);
+    const [generatingReflection, setGeneratingReflection] = useState(false);
     const { user } = useContext(AuthContext);
-
+    const socket = useSocket();
     const showSnackbar = useSnackbar();
 
+    // socket events
+    useEffect(() => {
+
+        if (!socket) return;
+
+        // memory search indicator
+        socket.on("weekly-memory", (data) => {
+            setIsMemorySearch(data.status);
+        });
+
+        // generating reflection indicator
+        socket.on("generating-reflection", (data) => {
+            setGeneratingReflection(data.status);
+        });
+
+        return () => {
+            socket.off("weekly-memory");
+            socket.off("generating-reflection");
+        };
+    }, [socket]);
+
     const fetchReflection = async () => {
+        if (!socket || !socket.id) {
+            return;
+        }
+
         setLoading(true);
         try {
-            const res = await axiosInstance.get(`/api/user/reflection/${user._id}`);
+            const res = await axiosInstance.get(`/api/user/reflection/${user._id}`, { params: { socketId: socket.id } });
             setReflection(res.data);
         } catch (error) {
             console.error('Failed to fetch reflection:', error);
             showSnackbar(`Failed to fetch reflection : ${error.status} : ${error.response?.data?.message || error.message}`);
             setReflection(null);
+        } finally {
+            setLoading(false);
+            setIsMemorySearch(false);
+            setGeneratingReflection(false);
         }
-        setLoading(false);
     };
 
     useEffect(() => {
         fetchReflection();
     }, [user]);
 
-    if (loading) return <ThreeDotLoading />;
+    if (loading) return <ReplyLoad isMemorySearch={isMemorySearch} isReflectionGen={generatingReflection} />;
 
     if (!reflection) return (
         <Box mt={5} textAlign="center">
@@ -97,7 +128,7 @@ export default function Reflection() {
                                     key={index}
                                     label={theme}
                                     icon={<PsychologyIcon />}
-                                    sx={{ backgroundColor: '#0ca37f', color: '#fff' }}
+                                    sx={{ backgroundColor: '#0ca37f', color: '#fff', mb: 1, mr: 1 }}
                                 />
                             ))}
                         </Box>
@@ -109,7 +140,7 @@ export default function Reflection() {
                         </Typography>
                         <List>
                             {reflection.suggestions.map((suggestion, index) => (
-                                <ListItem key={index} disablePadding>
+                                <ListItem key={index} sx={{ mb: 3 }} disablePadding>
                                     <ListItemIcon sx={{ minWidth: '40px' }}>
                                         <AcUnit sx={{ color: '#0ca37f' }} />
                                     </ListItemIcon>
@@ -120,11 +151,11 @@ export default function Reflection() {
                     </Box>
 
                     <Box mt={4}>
-                        <Typography variant="h6" gutterBottom>
+                        <Typography variant="h6" sx={{ mb: 2 }} gutterBottom>
                             Memories Reviewed
                         </Typography>
                         {reflection.memoriesUsed.map((mem, index) => (
-                            <Accordion key={index} sx={{ mb: 2 }}>
+                            <Accordion key={index} sx={{ mb: 3 }}>
                                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                                     <MemoryIcon sx={{ color: '#0ca37f', mr: 2 }} />
                                     <Typography >

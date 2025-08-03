@@ -19,11 +19,11 @@ const floatDots = keyframes`
   100% { transform: translateY(0); opacity: 0.3; }
 `;
 
-export default function ReplyLoad({ isWebSearch, isMemorySearch }) {
+export default function ReplyLoad({ isConvInit, isWebSearch, isMemorySearch, isReflectionGen }) {
   const { mode } = useContext(ThemeContext);
 
   return (
-    <Box sx={{ mb: 20, mt: 2 }}>
+    <Box sx={{ mb: isConvInit ? 11 : 20, mt: 2 }}>
 
       {/* Thinking... */}
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', gap: 2 }}>
@@ -44,9 +44,26 @@ export default function ReplyLoad({ isWebSearch, isMemorySearch }) {
         </Typography>
       </Box>
 
+      {/* new conv init*/}
+      {isConvInit && (
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', mt: -2, mb: 1.5, gap: 2 }}>
+          <AutorenewTwoToneIcon
+            sx={{
+              animation: `${rotate} 0.7s linear infinite`,
+              fontSize: 24,
+              ml: 0.7,
+              color: '#0ca37f',
+            }}
+          />
+          <Typography variant="body2" sx={{ ml: 1, color: mode === 'light' ? '#444' : '#9c9c9cff' }}>
+            Initializing new converstion...
+          </Typography>
+        </Box>
+      )}
+
       {/* Web Searches... */}
       {isWebSearch && (
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', mt: -2, mb: 1.5, gap: 2 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', mt: isConvInit ? 0 : -2, mb: 1.5, gap: 2 }}>
           <AutorenewTwoToneIcon
             sx={{
               animation: `${rotate} 0.7s linear infinite`,
@@ -74,6 +91,23 @@ export default function ReplyLoad({ isWebSearch, isMemorySearch }) {
           />
           <Typography variant="body2" sx={{ ml: 1, color: mode === 'light' ? '#444' : '#9c9c9cff' }}>
             Looking at memories...
+          </Typography>
+        </Box>
+      )}
+
+      {/* Generating Reflection... */}
+      {isReflectionGen && (
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', gap: 2, mt: 2 }}>
+          <AutorenewTwoToneIcon
+            sx={{
+              animation: `${rotate} 1s linear infinite`,
+              fontSize: 24,
+              ml: 0.7,
+              color: '#0ca37f',
+            }}
+          />
+          <Typography variant="body2" sx={{ ml: 1, color: mode === 'light' ? '#444' : '#9c9c9cff' }}>
+            Generating Reflection...
           </Typography>
         </Box>
       )}
