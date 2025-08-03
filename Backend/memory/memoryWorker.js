@@ -32,6 +32,7 @@ const memoryWorker = new Worker(
     'memory-validation',
     async job => {
         const { userId, message } = job.data;
+        console.log(`[Worker] Processing job for user ${userId}`);
         const canonicalMemory = await validateMemoryLLM(message);
         if (!canonicalMemory) return;
         await storeMemory(userId, canonicalMemory);
@@ -47,24 +48,27 @@ const memoryWorker = new Worker(
     await memoryWorker.waitUntilReady();
     memoryWorker.run();
 
+    console.log('[Worker] Started and ready.');
+
+    // Subscribe to wake channel (correct handler)
+    await subscriber.subscribe('memory-worker:wake');
+    subscriber.on('message', async (channel, message) => {
+        if (channel === 'memory-worker:wake' && memoryWorker.isPaused()) {
+            console.log('[Worker] Wake signal received via pub/sub. Resuming...');
+            await memoryWorker.resume();
+        }
+    });
+
     // Pause after queue drains
     memoryWorker.on('drained', async () => {
         console.log('[Worker] Queue drained. Pausing...');
         await memoryWorker.pause();
     });
 
-    // Wake worker when new job added in same process
+    // Local wake if in same process
     memoryWorker.on('waiting', async () => {
         if (memoryWorker.isPaused()) {
-            console.log('[Worker] New job detected (same process). Resuming...');
-            await memoryWorker.resume();
-        }
-    });
-
-    // Subscribe to wake channel for cross-process wake
-    await subscriber.subscribe('memory-worker:wake', async (msg) => {
-        if (memoryWorker.isPaused()) {
-            console.log('[Worker] Wake message received. Resuming...');
+            console.log('[Worker] Local waiting event. Resuming...');
             await memoryWorker.resume();
         }
     });

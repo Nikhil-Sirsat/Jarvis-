@@ -16,20 +16,13 @@ const connection = new IORedis({
 export const memoryQueue = new Queue('memory-validation', { connection });
 
 export const pushToMemoryQueue = async (data) => {
-    await memoryQueue.add(
-        'validate-and-store',
-        data,
-        {
-            attempts: 3, // Retry job up to 3 times if it fails
-            backoff: {
-                type: 'exponential', // exponential backoff
-                delay: 500,          // start with 500ms delay
-            },
-            removeOnComplete: true, // auto-remove job after success
-            removeOnFail: false     // keep failed jobs for inspection
-        }
-    );
+    await memoryQueue.add('validate-and-store', data, {
+        attempts: 3,
+        backoff: { type: 'exponential', delay: 500 },
+        removeOnComplete: true,
+        removeOnFail: false,
+    });
 
-    // Publish a wake message to the channel
+    console.log('[Producer] Job added. Publishing wake signal...');
     await connection.publish('memory-worker:wake', 'resume');
 };
