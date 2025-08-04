@@ -8,7 +8,7 @@ export default function Layout() {
     return (
         <>
             {/* navbar */}
-            <main className="hero-cont" style={{ backgroundColor: mode == 'dark' ? "#212121" : 'white', height: '91vh', overflow: 'scroll', paddingBottom: 0 }}>
+            <main className="hero-cont" style={{ backgroundColor: mode == 'dark' ? "#212121" : 'white', height: '91vh', overflowY: 'scroll', overflowX: 'hidden', paddingBottom: 0 }}>
                 <Outlet />
             </main>
             {/* footer */}

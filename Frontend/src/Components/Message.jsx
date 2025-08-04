@@ -111,6 +111,7 @@ const Message = ({ msg, index }) => {
                 sx={{
                     display: "inline-block",
                     maxWidth: msg.sender === "user" ? { xs: '90%', md: '70%' } : '100%',
+                    overflowX: 'auto',
                     px: msg.sender === "user" ? { xs: 1, md: 2 } : { xs: 0, md: 0 },
                     py: 2,
                     borderRadius: 7,
