@@ -44,7 +44,12 @@ Instructions:
 5. Use a clear, professional yet friendly tone.
 6. For COMPLEX: provide examples, insights, and conclude with a summary.
 7. Optionally end with a follow-up question (only if natural).
-Respond only with the final answer.
+final output structure should be like this : 
+-admire user question with friendly tone
+-answer
+-conclusion
+-follow-up question
+Respond only with the final structured answer.
         `
             }
         ];

@@ -20,7 +20,6 @@ export async function getEmbedding(text) {
     });
 
     console.timeEnd('getEmbedding');
-    console.log(output.data);
     return Array.from(output.data);
 
 };

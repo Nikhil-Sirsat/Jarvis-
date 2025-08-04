@@ -36,7 +36,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const server = createServer(app);
 
-// app.set("trust proxy", 1);
+app.set("trust proxy", 1);
 
 app.use(cors({
     origin: process.env.FRONTEND_URL,
@@ -64,7 +64,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // SESSION SETUP
-// Session Setup
 const store = MongoStore.create({
     mongoUrl: process.env.DB_URL,
     crypto: { secret: process.env.EXPRESS_SESSION_KEY },
@@ -84,8 +83,8 @@ const sessionMiddleware = session({
     cookie: {
         maxAge: 7 * 24 * 60 * 60 * 1000,
         httpOnly: true,
-        // secure: true,
-        // sameSite: "none",
+        secure: true,
+        sameSite: "none",
     }
 });
 app.use(sessionMiddleware);

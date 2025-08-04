@@ -23,7 +23,7 @@ export default function ReplyLoad({ isConvInit, isWebSearch, isMemorySearch, isR
   const { mode } = useContext(ThemeContext);
 
   return (
-    <Box sx={{ mb: isConvInit ? 11 : 20, mt: 2 }}>
+    <Box sx={{ mb: 14, mt: 2 }}>
 
       {/* Thinking... */}
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', gap: 2 }}>

@@ -98,9 +98,9 @@ export default function NewChat() {
             showSnackbar(`Message send error : ${error.status} : ${error.response?.data?.message || error.message}`);
         } finally {
             setMsgLoading(false);
-            isWebSearch(false);
-            isMemorySearch(false);
-            isConvInit(false);
+            setIsWebSearch(false);
+            setIsMemorySearch(false);
+            setIsConvInit(false);
         }
     };
 

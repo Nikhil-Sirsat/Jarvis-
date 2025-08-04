@@ -23,6 +23,5 @@ export const pushToMemoryQueue = async (data) => {
         removeOnFail: false,
     });
 
-    console.log('[Producer] Job added. Publishing wake signal...');
     await connection.publish('memory-worker:wake', 'resume');
 };
