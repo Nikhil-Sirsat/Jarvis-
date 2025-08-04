@@ -1,34 +1,26 @@
-import dotenv from 'dotenv';
-dotenv.config();
+import { pipeline } from '@xenova/transformers';
 
-import axios from 'axios';
-const EMBEDDING_API_URL = process.env.EMBEDDING_API_URL;
+
+let embedderPromise = null;
+
 
 export async function getEmbedding(text) {
-
     console.time('getEmbedding');
 
-    if (!text || typeof text !== "string") {
-        console.error("Invalid text provided for embedding");
-        return null;
+    if (!embedderPromise) {
+        // Memoize promise to avoid re-instantiating pipeline multiple times
+        embedderPromise = pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2');
+
     }
+    const embedder = await embedderPromise;
 
-    try {
-        const response = await axios.post(EMBEDDING_API_URL, { text }, {
-            timeout: 5000, // 5s timeout
-        });
+    const output = await embedder(text, {
+        pooling: 'mean',
+        normalize: true,
+    });
 
-        if (response.data?.embedding && Array.isArray(response.data.embedding)) {
-            console.timeEnd('getEmbedding');
-            return response.data.embedding;
-        } else {
-            console.error("Invalid response from embedding service:", response.data);
-            return null;
-        }
+    console.timeEnd('getEmbedding');
+    console.log(output.data);
+    return Array.from(output.data);
 
-    } catch (err) {
-        console.error("Embedding service error:", err.message);
-        return null;
-    }
 };
-
