@@ -17,6 +17,7 @@
 - 🧠 **Memory Management** – Save and retrieve contextual memories to maintain long-term context
 - ⚙️ **Background Job Handling** – Scheduled tasks and delayed processing powered by BullMQ
 - 📌 **Vector-Based Memory Storage** – Context and memories stored using Qdrant vector database
+- 🧾 **Real time web search** - Real time web search for accurate and latest information
 - 📦 Built with MERN Stack (MongoDB, Express.js, React, Node.js)
 
 ---
@@ -28,6 +29,7 @@
 - Material UI (MUI)
 - Web Speech API (for STT and TTS)
 - Axios
+- socket.io-client
 
 ### Backend:
 - Node.js
@@ -36,19 +38,21 @@
 - MongoDB + Mongoose
 - **BullMQ** – For background job scheduling and queue management
 - **Qdrant** – High-performance vector database for storing and querying user memory embeddings
+- **Socket.io** - Real time req processing indicators
 
 ### AI & External APIs:
 - Google Gemini API
 - Web Speech Synthesis API
-- Qdrant (via API or SDK)
+- Serp API for Real time web search
 
 ---
 
 ## 🚀 Coming Soon
 
-- 🧩 Plugin System for Extensibility
-- 📊 Personalized Analytics Dashboard
-- 🔔 Smart Notification System
-- 📚 Integration with External Knowledge Bases
+- File and document analysis (PDFs, CSVs, JSON)
+- Emotion-aware response generation
+- Mobile app + cross-device sync
+- Custom plugin builder and third-party integrations
+- Fine-grained control over memory and tool permissions
 
 ---

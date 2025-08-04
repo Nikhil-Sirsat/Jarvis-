@@ -79,11 +79,12 @@ const About = () => {
                     <li>Custom user persona management for more personalization</li>
                     <li>Interactive Reflection page for weekly insights and feedback</li>
                     <li>Memory store to view and manage memory</li>
-                    <li>smart proactive follow-up question suggestion based on your past conversations</li>
+                    <li>Smart proactive follow-up question suggestion based on your past conversations</li>
+                    <li>Real time web search for more accurate and latest information</li>
                 </ul>
             </Section>
 
-            <Section title="Technology Stack" icon={<Code sx={{ color: '#0ca37f' }} />}>
+            <Section title="Tools & Technology Stack" icon={<Code sx={{ color: '#0ca37f' }} />}>
                 <Grid container spacing={2}>
                     <Grid item xs={12} sm={6}>
                         <Typography variant="body2">
@@ -98,6 +99,9 @@ const About = () => {
                         <Typography variant="body2">
                             <strong>Vector DB:</strong> Qdrant for semantic memory and document retrieval
                         </Typography>
+                        <Typography variant="body2">
+                            <strong>Serp API:</strong> Serp API for real time web search
+                        </Typography>
                     </Grid>
                     <Grid item xs={12} sm={6}>
                         <Typography variant="body2">
@@ -110,7 +114,10 @@ const About = () => {
                             <strong>Architecture:</strong> Modular, API-driven, scalable and privacy-aware
                         </Typography>
                         <Typography variant="body2">
-                            <strong>BullMQ:</strong> background job scheduling and queue management
+                            <strong>BullMQ:</strong> background job scheduling and queue management (deployed on Railway)
+                        </Typography>
+                        <Typography variant="body2">
+                            <strong>Socket.io:</strong> Socket.io for displaying real time req processing on frontend
                         </Typography>
                     </Grid>
                 </Grid>
