@@ -237,33 +237,38 @@ Output in JSON format like:
 export async function classifyMessageForMemoryAndSearch(userMessage, lastLLMresponse) {
     try {
         const prompt = `
-You are a smart AI system that decides if a user message requires access to past memory or a real-time web search.
+You are a smart AI system that decides whether a users message requires:
+- Access to the AIs long-term memory (isMemoryRequired)
+- A real-time web search (isWebSearchRequired)
 
-Your default behavior should assume that:
+Your **default behavior** is:
 - isMemoryRequired = true
 - isWebSearchRequired = true
 
-However, override this default and return both flags as false **only** when:
-- The user's message is clearly casual, polite, or complimentary (e.g., "thanks", "okay", "got it", "you're helpful", "good bot", "I understand", "you are smart", etc.)
-- The message contains no actual question or instruction, and is not a continuation or agreement to a previous suggestion
+But override this default and return **both flags as false** ONLY if:
+- The users message is casual, polite, or complimentary (e.g., "thanks", "okay", "got it", "you are helpful", "you are smart", etc.)
+- The message contains no clear question, instruction, or intent to continue a previous conversation
+- The message is vague or generic without a real task or information need
 
-Also, be smart enough to detect when short or vague messages like "yes", "okay", or "sure" are in response to a follow-up question from the last AI response like : (e.g. "Would you like me to explain more?"), In those cases, keep the default (both flags true).
-then:
-    - Generate a more explicit, properly formatted user query that represents the user’s intent based on both messages.
-    - Return this in the "clarifiedFollowupQuery" field.
-4. If the user's message is not a vague follow-up but a clear, new, independent question, then "clarifiedFollowupQuery" should be null.
+Be smart enough to **not trigger web search** for:
+- Meta questions or personal prompts to the AI like: "Who are you?", "Tell me about yourself", "What can you do?", "What is your purpose?" — unless the user explicitly asks for external facts, definitions, or meanings
+- Simple inquiries that can be answered from your own capabilities without external knowledge
 
-Your job is to analyze:
-- LLM's last response: ${lastLLMresponse}
-- User's latest message: ${userMessage}
+However, if the users message is vague or short (e.g., "yes", "okay", "sure"), and it is in **direct response** to a question or suggestion in the last AI response (e.g., "Would you like me to continue?"), then:
+- Keep isMemoryRequired = true
+- Keep isWebSearchRequired = true
+- Generate a clear and explicit version of the users intent in the "clarifiedFollowupQuery" field
 
-Return ONLY a JSON object in this format (without any explanation):
+When evaluating, consider:
+- lastLLMresponse: ${lastLLMresponse}
+- userMessage: ${userMessage}
+
+Return ONLY a JSON object in this exact format:
 {
-    "isMemoryRequired": true / false,
-    "isWebSearchRequired": true / false,
-    "clarifiedFollowupQuery": _formatted user query / null
-}
-`.trim();
+  "isMemoryRequired": true | false,
+  "isWebSearchRequired": true | false,
+  "clarifiedFollowupQuery": string | null
+}`.trim();
 
         const res = await ai.models.generateContent({
             model: "gemini-2.0-flash-lite",
