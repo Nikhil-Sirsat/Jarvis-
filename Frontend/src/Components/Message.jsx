@@ -18,6 +18,7 @@ import {
     TableRow,
     TableCell,
     TableContainer,
+    useMediaQuery, useTheme
 } from "@mui/material";
 
 import { useSnackbar } from '../Context/SnackBarContext';
@@ -27,6 +28,8 @@ const Message = ({ msg, index }) => {
     const [speakingMsgIndex, setSpeakingMsgIndex] = useState(null);
     const showSnackbar = useSnackbar();
     const { mode } = useContext(ThemeContext);
+    const theme = useTheme();
+    const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
     // handle ai voice response
     const aiVoiceRes = (message, index) => {
@@ -232,7 +235,7 @@ const Message = ({ msg, index }) => {
                                         mt: 5,
                                         mb: 3,
                                         fontWeight: 700,
-                                        pl: 1.2,
+                                        pl: { xs: 0, md: 1.2 },
                                         borderLeft: '4px solid #42a5f5',
                                         backgroundColor: '#f8f9fb',
                                         padding: '10px',
@@ -248,7 +251,7 @@ const Message = ({ msg, index }) => {
                                         mt: 4,
                                         mb: 2,
                                         fontWeight: 600,
-                                        pl: 1,
+                                        pl: { xs: 0, md: 1 },
                                         borderLeft: '3px solid #90caf9',
                                         backgroundColor: '#fafbfc',
                                         padding: '8px',
@@ -261,7 +264,7 @@ const Message = ({ msg, index }) => {
                                 <Typography
                                     sx={{
                                         mb: msg.sender === 'user' ? 0 : 2,
-                                        pl: msg.sender === 'user' ? 0 : 2,
+                                        pl: msg.sender === 'user' ? 0 : { xs: 0, md: 2 },
                                         lineHeight: 1.8,
                                     }}
                                     {...props}
@@ -271,8 +274,8 @@ const Message = ({ msg, index }) => {
                                 <li
                                     style={{
                                         marginBottom: '12px',
-                                        paddingLeft: '0.5rem', // 1 rem is ideal of large screen
-                                        marginLeft: '1.5rem',
+                                        paddingLeft: isSmallScreen ? 0 : '0.5rem', // 1 rem is ideal of large screen
+                                        marginLeft: isSmallScreen ? 0 : '1.5rem',
                                     }}
                                 >
                                     <Typography
@@ -287,7 +290,7 @@ const Message = ({ msg, index }) => {
                             ul: ({ node, ...props }) => (
                                 <ul
                                     style={{
-                                        paddingLeft: '2rem',
+                                        paddingLeft: isSmallScreen ? 0 : '2rem',
                                         marginBottom: '1.5rem',
                                     }}
                                     {...props}
@@ -296,7 +299,7 @@ const Message = ({ msg, index }) => {
                             ol: ({ node, ...props }) => (
                                 <ol
                                     style={{
-                                        paddingLeft: '2rem',
+                                        paddingLeft: isSmallScreen ? 0 : '2rem',
                                         marginBottom: '1.5rem',
                                     }}
                                     {...props}
