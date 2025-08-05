@@ -186,7 +186,7 @@ export default function ViewConv() {
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'space-evenly',
-                position: 'absolute',
+                position: 'fixed',
                 bottom: 0,
                 width: { xs: '87vw', md: '60vw' },
                 backgroundColor: mode == 'light' ? 'white' : '#212121',

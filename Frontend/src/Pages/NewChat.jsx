@@ -4,6 +4,7 @@ import {
     Box,
     Typography,
     Stack,
+    useMediaQuery, useTheme
 } from "@mui/material";
 import axiosInstance from '../AxiosInstance.jsx';
 import { useSnackbar } from '../Context/SnackBarContext';
@@ -21,6 +22,9 @@ export default function NewChat() {
     const [isConvInit, setIsConvInit] = useState(false);
     const [suggestions, setSuggestions] = useState([]);
     const [suggestionsLoading, setSuggestionsLoading] = useState(true);
+
+    const theme = useTheme();
+    const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
     const { reFreshFetchConvHist } = useOutletContext();
     const { user } = useContext(AuthContext);
@@ -122,7 +126,7 @@ export default function NewChat() {
             <Typography variant="h3" sx={{ m: 'auto' }}>
                 Hey {user.persona.nickname || user.name}!
             </Typography>
-            <Typography variant="h4" sx={{ m: 'auto', mb: 3 }}>
+            <Typography variant={isSmallScreen ? 'h5' : 'h4'} sx={{ m: 'auto', mb: 3, mt: 2 }}>
                 what can I help with?
             </Typography>
 
