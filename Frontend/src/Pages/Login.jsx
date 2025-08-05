@@ -20,7 +20,7 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../Context/AuthContext.jsx';
-import logo from '../assets/jarvisLogo.png';
+import logo from '../assets/jarvisLogo.jpg';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { useSnackbar } from '../Context/SnackBarContext';

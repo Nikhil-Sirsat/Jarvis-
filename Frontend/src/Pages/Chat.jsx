@@ -14,7 +14,7 @@ import AccountCircleRoundedIcon from '@mui/icons-material/AccountCircleRounded';
 import { ThemeContext } from "../Context/ThemeContext.jsx";
 import LogoutButton from '../Components/Logout.jsx';
 import { useSnackbar } from '../Context/SnackBarContext.jsx';
-import logo from '../assets/jarvisLogo.png';
+import logo from '../assets/jarvisLogo.jpg';
 import BubbleChartIcon from '@mui/icons-material/BubbleChart';
 import InfoIcon from "@mui/icons-material/Info";
 import SettingsIcon from "@mui/icons-material/Settings";
@@ -211,7 +211,7 @@ export default function Chat() {
                     <Avatar
                         src={logo}
                         alt="Jarvis Logo"
-                        sx={{ width: 35, height: 35, p: 0.5, backgroundColor: 'black', right: 20, position: 'absolute' }}
+                        sx={{ width: 30, height: 30, p: 0.5, backgroundColor: 'black', right: 20, position: 'absolute' }}
                     />
 
                 </Toolbar>

@@ -187,7 +187,7 @@ export default function ViewConv() {
                 alignItems: 'center',
                 justifyContent: 'space-evenly',
                 position: 'fixed',
-                bottom: 0,
+                bottom: 1.5,
                 width: { xs: '87vw', md: '60vw' },
                 backgroundColor: mode == 'light' ? 'white' : '#212121',
             }}>
@@ -201,7 +201,7 @@ export default function ViewConv() {
                 />
 
                 {/* warning */}
-                <Typography sx={{ p: 0.5, fontSize: { xs: 11, md: 14 }, color: 'grey' }}>
+                <Typography sx={{ p: 1, fontSize: { xs: 11, md: 14 }, color: 'grey' }}>
                     <i>Jarvis can make mistakes. Check important info.</i>
                 </Typography>
 

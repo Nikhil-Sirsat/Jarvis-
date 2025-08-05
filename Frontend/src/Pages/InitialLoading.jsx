@@ -1,4 +1,4 @@
-import JarvisLogo from '../assets/jarvisLogo.png';
+import JarvisLogo from '../assets/jarvisLogo.jpg';
 import { Box, Typography, Avatar, Paper } from '@mui/material';
 import ThreeDotLoading from '../Components/ThreeDotLoading';
 

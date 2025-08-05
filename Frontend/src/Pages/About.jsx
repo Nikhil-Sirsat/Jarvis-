@@ -8,7 +8,7 @@ import {
     Grid,
     IconButton,
 } from '@mui/material';
-import logo from '../assets/jarvisLogo.png';
+import logo from '../assets/jarvisLogo.jpg';
 import { useNavigate } from 'react-router-dom';
 import { LinkedIn, GitHub, X, AcUnit, Code, Person, KeyboardBackspace } from "@mui/icons-material";
 

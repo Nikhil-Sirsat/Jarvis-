@@ -123,7 +123,7 @@ export default function NewChat() {
                 justifyContent: 'space-evenly'
             }}
         >
-            <Typography variant="h3" sx={{ m: 'auto' }}>
+            <Typography variant="h3" sx={{ m: 'auto', mb: 0 }}>
                 Hey {user.persona.nickname || user.name}!
             </Typography>
             <Typography variant={isSmallScreen ? 'h5' : 'h4'} sx={{ m: 'auto', mb: 3, mt: 2 }}>
