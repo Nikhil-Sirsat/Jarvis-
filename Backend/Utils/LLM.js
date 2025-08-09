@@ -8,7 +8,8 @@ export const aiResponse = async (user, relevantMemories, historyMessages, messag
     try {
         // personality prefix
         const personaPrefix = `
-    You are speaking to ${nickname || user.name}.
+    You are speaking to ${user.name}.
+    user's nickname is ${nickname}.
     They are: ${userRole || 'a valued user'}.
     Be ${traits?.join(', ') || 'friendly'}.
     Notes: ${extraNotes || 'No extra instructions.'}
@@ -297,5 +298,30 @@ Return ONLY a JSON object in this exact format:
             "isWebSearchRequired": true,
             "clarifiedFollowupQuery": null
         };
+    }
+};
+
+export const mergeDuplicateMemory = async (final) => {
+    try {
+        const mergePrompt = `
+                You are a memory consolidation system.
+                Combine these memories into a concise non-redundant summary:\n\n${final.map((m, i) => `${i + 1}. ${m}`).join('\n')}\n\nSummary:
+                `;
+        const merged = await ai.models.generateContent({
+            model: "gemini-2.0-flash-lite",
+            contents: mergePrompt,
+        });
+
+        let mergedMemories = merged.text?.trim();
+
+        if (!mergedMemories || mergedMemories.length === 0) {
+            console.log("Failed Memory Merge LLM call");
+            return;
+        }
+
+        return mergedMemories;
+    } catch (err) {
+        console.log('Failed Memory Merge LLM call :', err.message || err);
+        return;
     }
 };

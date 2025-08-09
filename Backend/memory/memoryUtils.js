@@ -3,6 +3,8 @@ import { getEmbedding } from './embedding.js';
 import { v4 as uuidv4 } from 'uuid';
 const COLLECTION_NAME = 'jarvis_memory';
 import ExpressError from '../Utils/ExpressError.js';
+import { cosineSimilarity } from '../Utils/cosineSimilarity.js';
+import { mergeDuplicateMemory } from '../Utils/LLM.js';
 
 // arr for checking weather the message is worth store in vector memories or not
 const memoryTriggers = [
@@ -88,8 +90,7 @@ export async function storeMemory(userId, text) {
 };
 
 // Search memory
-export async function searchMemory(userId, query, topK = 5) {
-
+export async function searchMemory(userId, query, topK = 7) {
     const vector = await getEmbedding(query);
     if (!vector || vector.length !== 384) {
         throw new ExpressError(400, "Invalid embedding vector received for query.");
@@ -100,31 +101,67 @@ export async function searchMemory(userId, query, topK = 5) {
 
     for (let attempt = 1; attempt <= 3; attempt++) {
         try {
-
-            const result = await client.search(COLLECTION_NAME, {
+            const raw = await client.search(COLLECTION_NAME, {
                 vector,
                 limit: topK,
                 filter: {
                     must: [
-                        {
-                            key: 'userId',
-                            match: { value: userId },
-                        },
+                        { key: 'userId', match: { value: userId } }
                     ],
                 },
+                with_vector: true, // to compare between results
             });
 
+            // normalize result shape 
+            const hits = Array.isArray(raw) ? raw : (raw?.result ?? raw?.data ?? []);
+            if (!Array.isArray(hits)) {
+                throw new ExpressError(500, "'Unexpected Qdrant response shape.");
+            }
+
+            // Deduplicate by checking similarity between retrieved results
+            const deduped = [];
+            for (let h of raw) {
+                const itemVec = h.vector ?? h.payload?.vector ?? h.payload?.embedding ?? null;
+                if (!itemVec) {
+                    console.warn(`searchMemory: point id=${h.id} missing vector — skipping this hit`);
+                    continue; // skip items without vectors
+                }
+
+                const isDuplicate = deduped.some(existing => {
+                    try {
+                        return cosineSimilarity(existing.vector, itemVec) > 0.9;
+                    } catch (e) {
+                        console.warn('cosine check failed for id=', h.id, e.message);
+                        return false;
+                    }
+                });
+
+                if (!isDuplicate) {
+                    deduped.push({ id: h.id, vector: itemVec, payload: h.payload });
+                }
+            }
+
+            // topK after deduplication
+            let final = deduped.slice(0, topK).map(x => x.payload?.text ?? x.payload?.content ?? '');
+
+            if (final.length > 1) {
+
+                let mergedMemories = await mergeDuplicateMemory(final);
+
+                final = [mergedMemories];
+            }
+
             console.timeEnd('search memory');
-            return result.map(item => item.payload.text);
+            return final;
+
         } catch (error) {
             lastError = error;
             console.warn(`Qdrant search attempt ${attempt} failed:`, error.message || error);
-            // Wait a bit before retrying
             await new Promise(res => setTimeout(res, 300 * attempt));
         }
     }
     throw new ExpressError(500, "Error in Searching Qdrant: " + (lastError?.message));
-};
+}
 
 // check weather to store in memory or not
 export function shouldStoreMemory(text) {
@@ -137,7 +174,7 @@ export function shouldStoreMemory(text) {
 
 export const getAllVectorMemory = async (userId) => {
     try {
-        const result = await client.scroll(COLLECTION_NAME, {
+        const raw = await client.scroll(COLLECTION_NAME, {
             filter: {
                 must: [
                     {
@@ -149,8 +186,8 @@ export const getAllVectorMemory = async (userId) => {
             limit: 100,
         });
 
-        // console.log("all vec memo : ", result.points.map(item => item.payload.text));
-        return result.points;
+        // console.log("all vec memo : ", raw.points.map(h => h.payload.text));
+        return raw.points;
     } catch (error) {
         console.error("Error fetching all vector memory:", error);
         throw new ExpressError(500, "Error fetching all vector memory");
@@ -159,15 +196,15 @@ export const getAllVectorMemory = async (userId) => {
 
 export const getMemoryById = async (memoryId, userId) => {
     try {
-        const result = await client.retrieve(COLLECTION_NAME, {
+        const raw = await client.retrieve(COLLECTION_NAME, {
             ids: [memoryId],
         });
-        if (result && result.length > 0) {
-            // console.log('Fetched memory by ID:', result[0]);
-            if (result[0].payload && result[0].payload.userId !== userId) {
+        if (raw && raw.length > 0) {
+            // console.log('Fetched memory by ID:', raw[0]);
+            if (raw[0].payload && raw[0].payload.userId !== userId) {
                 throw new ExpressError(404, "Memory not found or does not belong to this user");
             }
-            return result[0];
+            return raw[0];
         }
         return null;
     } catch (error) {
@@ -206,7 +243,7 @@ export async function getMemoryByUserIdWithinDays(userId, days = 7) {
             with_payload: true,
         });
 
-        // console.log("Fetched memory within days:", searchResult.points.map(item => item.payload.text));
+        // console.log("Fetched memory within days:", searchResult.points.map(h => h.payload.text));
 
         return searchResult.points || [];
     } catch (error) {
